@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.carbon.mapper.CarbonQualificationMapper">
+    
+    <resultMap type="CarbonQualification" id="CarbonQualificationResult">
+        <result property="qualificationId"    column="qualification_id"    />
+        <result property="qualificationName"    column="qualification_name"    />
+        <result property="qualificationContent"    column="qualification_content"    />
+        <result property="qualificationLeader"    column="qualification_leader"    />
+        <result property="qualificationAddress"    column="qualification_address"    />
+        <result property="qualificationIndustry"    column="qualification_industry"    />
+        <result property="qualificationUserName"    column="qualification_user_name"    />
+        <result property="qualificationUserEmail"    column="qualification_user_email"    />
+        <result property="qualificationUrl"    column="qualification_url"    />
+        <result property="qualificationUploadTime"    column="qualification_upload_time"    />
+        <result property="qualificationAuditTime"    column="qualification_audit_time"    />
+        <result property="qualificationVerifiedRegulator"    column="qualification_verified_regulator"    />
+        <result property="qualificationEmissionLimit"    column="qualification_emission_limit"    />
+    </resultMap>
+
+    <sql id="selectCarbonQualificationVo">
+        select qualification_id, qualification_name, qualification_content, qualification_leader, qualification_address, qualification_industry, qualification_user_name, qualification_user_email, qualification_url, qualification_upload_time, qualification_audit_time, qualification_verified_regulator, qualification_emission_limit from carbon_qualification
+    </sql>
+
+    <select id="selectCarbonQualificationList" parameterType="CarbonQualification" resultMap="CarbonQualificationResult">
+        <include refid="selectCarbonQualificationVo"/>
+        <where>  
+            <if test="qualificationName != null  and qualificationName != ''"> and qualification_name like concat('%', #{qualificationName}, '%')</if>
+            <if test="qualificationContent != null  and qualificationContent != ''"> and qualification_content = #{qualificationContent}</if>
+            <if test="qualificationLeader != null  and qualificationLeader != ''"> and qualification_leader = #{qualificationLeader}</if>
+            <if test="qualificationAddress != null  and qualificationAddress != ''"> and qualification_address = #{qualificationAddress}</if>
+            <if test="qualificationIndustry != null  and qualificationIndustry != ''"> and qualification_industry = #{qualificationIndustry}</if>
+            <if test="qualificationUserName != null  and qualificationUserName != ''"> and qualification_user_name like concat('%', #{qualificationUserName}, '%')</if>
+            <if test="qualificationUserEmail != null  and qualificationUserEmail != ''"> and qualification_user_email = #{qualificationUserEmail}</if>
+            <if test="qualificationUrl != null  and qualificationUrl != ''"> and qualification_url = #{qualificationUrl}</if>
+            <if test="qualificationUploadTime != null "> and qualification_upload_time = #{qualificationUploadTime}</if>
+            <if test="qualificationAuditTime != null "> and qualification_audit_time = #{qualificationAuditTime}</if>
+            <if test="qualificationVerifiedRegulator != null  and qualificationVerifiedRegulator != ''"> and qualification_verified_regulator = #{qualificationVerifiedRegulator}</if>
+            <if test="qualificationEmissionLimit != null "> and qualification_emission_limit = #{qualificationEmissionLimit}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarbonQualificationByQualificationId" parameterType="Long" resultMap="CarbonQualificationResult">
+        <include refid="selectCarbonQualificationVo"/>
+        where qualification_id = #{qualificationId}
+    </select>
+    <select id="selectCarbonQualificationByName" parameterType="String" resultMap="CarbonQualificationResult">
+        <include refid="selectCarbonQualificationVo"/>
+        <where>
+            <if test="qualificationName != null  and qualificationName != ''"> and qualification_name like concat('%', #{qualificationName}, '%')</if>
+        </where>
+    </select>
+
+    <insert id="insertCarbonQualification" parameterType="CarbonQualification">
+        insert into carbon_qualification
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qualificationId != null">qualification_id,</if>
+            <if test="qualificationName != null">qualification_name,</if>
+            <if test="qualificationContent != null">qualification_content,</if>
+            <if test="qualificationLeader != null">qualification_leader,</if>
+            <if test="qualificationAddress != null">qualification_address,</if>
+            <if test="qualificationIndustry != null">qualification_industry,</if>
+            <if test="qualificationUserName != null">qualification_user_name,</if>
+            <if test="qualificationUserEmail != null">qualification_user_email,</if>
+            <if test="qualificationUrl != null">qualification_url,</if>
+            <if test="qualificationUploadTime != null">qualification_upload_time,</if>
+            <if test="qualificationAuditTime != null">qualification_audit_time,</if>
+            <if test="qualificationVerifiedRegulator != null">qualification_verified_regulator,</if>
+            <if test="qualificationEmissionLimit != null">qualification_emission_limit,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qualificationId != null">#{qualificationId},</if>
+            <if test="qualificationName != null">#{qualificationName},</if>
+            <if test="qualificationContent != null">#{qualificationContent},</if>
+            <if test="qualificationLeader != null">#{qualificationLeader},</if>
+            <if test="qualificationAddress != null">#{qualificationAddress},</if>
+            <if test="qualificationIndustry != null">#{qualificationIndustry},</if>
+            <if test="qualificationUserName != null">#{qualificationUserName},</if>
+            <if test="qualificationUserEmail != null">#{qualificationUserEmail},</if>
+            <if test="qualificationUrl != null">#{qualificationUrl},</if>
+            <if test="qualificationUploadTime != null">#{qualificationUploadTime},</if>
+            <if test="qualificationAuditTime != null">#{qualificationAuditTime},</if>
+            <if test="qualificationVerifiedRegulator != null">#{qualificationVerifiedRegulator},</if>
+            <if test="qualificationEmissionLimit != null">#{qualificationEmissionLimit},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarbonQualification" parameterType="CarbonQualification">
+        update carbon_qualification
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qualificationName != null">qualification_name = #{qualificationName},</if>
+            <if test="qualificationContent != null">qualification_content = #{qualificationContent},</if>
+            <if test="qualificationLeader != null">qualification_leader = #{qualificationLeader},</if>
+            <if test="qualificationAddress != null">qualification_address = #{qualificationAddress},</if>
+            <if test="qualificationIndustry != null">qualification_industry = #{qualificationIndustry},</if>
+            <if test="qualificationUserName != null">qualification_user_name = #{qualificationUserName},</if>
+            <if test="qualificationUserEmail != null">qualification_user_email = #{qualificationUserEmail},</if>
+            <if test="qualificationUrl != null">qualification_url = #{qualificationUrl},</if>
+            <if test="qualificationUploadTime != null">qualification_upload_time = #{qualificationUploadTime},</if>
+            <if test="qualificationAuditTime != null">qualification_audit_time = #{qualificationAuditTime},</if>
+            <if test="qualificationVerifiedRegulator != null">qualification_verified_regulator = #{qualificationVerifiedRegulator},</if>
+            <if test="qualificationEmissionLimit != null">qualification_emission_limit = #{qualificationEmissionLimit},</if>
+        </trim>
+        where qualification_id = #{qualificationId}
+    </update>
+
+
+    <delete id="deleteCarbonQualificationByQualificationId" parameterType="Long">
+        delete from carbon_qualification where qualification_id = #{qualificationId}
+    </delete>
+
+    <delete id="deleteCarbonQualificationByQualificationIds" parameterType="String">
+        delete from carbon_qualification where qualification_id in 
+        <foreach item="qualificationId" collection="array" open="(" separator="," close=")">
+            #{qualificationId}
+        </foreach>
+    </delete>
+</mapper>

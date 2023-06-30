@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.carbon.mapper.CarbonRegulatorMapper">
+
+    <resultMap type="CarbonRegulator" id="CarbonRegulatorResult">
+        <result property="regulatorId"    column="regulator_id"    />
+        <result property="regulatorAddress"    column="regulator_address"    />
+        <result property="regulatorName"    column="regulator_name"    />
+        <result property="privateKey"    column="private_key"    />
+        <result property="userType"    column="user_type"    />
+    </resultMap>
+
+    <sql id="selectCarbonRegulatorVo">
+        select regulator_id, regulator_address, regulator_name, private_key, user_type from carbon.carbon_regulator
+    </sql>
+
+    <select id="selectCarbonRegulatorList" parameterType="CarbonRegulator" resultMap="CarbonRegulatorResult">
+        <include refid="selectCarbonRegulatorVo"/>
+        <where>
+            <if test="regulatorAddress != null  and regulatorAddress != ''"> and regulator_address = #{regulatorAddress}</if>
+            <if test="regulatorName != null  and regulatorName != ''"> and regulator_name like concat('%', #{regulatorName}, '%')</if>
+            <if test="privateKey != null  and privateKey != ''"> and private_key = #{privateKey}</if>
+            <if test="userType != null "> and user_type = #{userType}</if>
+        </where>
+    </select>
+
+    <select id="selectCarbonRegulatorByRegulatorId" parameterType="Long" resultMap="CarbonRegulatorResult">
+        <include refid="selectCarbonRegulatorVo"/>
+        where regulator_id = #{regulatorId}
+    </select>
+    <select id="selectRegulatorByName" parameterType="String" resultMap="CarbonRegulatorResult">
+        select regulator_id, regulator_address, regulator_name, private_key, user_type from carbon.carbon_regulator where regulator_name = #{regulatorName}
+    </select>
+
+    <select id="selectRegulatorByAddress" parameterType="String" resultMap="CarbonRegulatorResult">
+        <include refid="selectCarbonRegulatorVo"/>
+        <where>
+            <if test="regulatorAddress != null  and regulatorAddress != ''"> and regulator_address = #{regulatorAddress}</if>
+        </where>
+    </select>
+
+    <insert id="insertCarbonRegulator" parameterType="CarbonRegulator">
+        insert into carbon_regulator
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="regulatorId != null">regulator_id,</if>
+            <if test="regulatorAddress != null">regulator_address,</if>
+            <if test="regulatorName != null">regulator_name,</if>
+            <if test="privateKey != null and privateKey != ''">private_key,</if>
+            <if test="userType != null">user_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="regulatorId != null">#{regulatorId},</if>
+            <if test="regulatorAddress != null">#{regulatorAddress},</if>
+            <if test="regulatorName != null">#{regulatorName},</if>
+            <if test="privateKey != null and privateKey != ''">#{privateKey},</if>
+            <if test="userType != null">#{userType},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCarbonRegulator" parameterType="CarbonRegulator">
+        update carbon_regulator
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="regulatorAddress != null">regulator_address = #{regulatorAddress},</if>
+            <if test="regulatorName != null">regulator_name = #{regulatorName},</if>
+            <if test="privateKey != null and privateKey != ''">private_key = #{privateKey},</if>
+            <if test="userType != null">user_type = #{userType},</if>
+        </trim>
+        where regulator_id = #{regulatorId}
+    </update>
+
+    <delete id="deleteCarbonRegulatorByRegulatorId" parameterType="Long">
+        delete from carbon_regulator where regulator_id = #{regulatorId}
+    </delete>
+
+    <delete id="deleteCarbonRegulatorByRegulatorIds" parameterType="String">
+        delete from carbon_regulator where regulator_id in
+        <foreach item="regulatorId" collection="array" open="(" separator="," close=")">
+            #{regulatorId}
+        </foreach>
+    </delete>
+</mapper>

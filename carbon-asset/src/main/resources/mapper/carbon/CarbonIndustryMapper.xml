@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.carbon.mapper.CarbonIndustryMapper">
+    
+    <resultMap type="CarbonIndustry" id="CarbonIndustryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectCarbonIndustryVo">
+        select id, name, description from carbon_industry
+    </sql>
+
+    <select id="selectCarbonIndustryList" parameterType="CarbonIndustry" resultMap="CarbonIndustryResult">
+        <include refid="selectCarbonIndustryVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarbonIndustryById" parameterType="Long" resultMap="CarbonIndustryResult">
+        <include refid="selectCarbonIndustryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCarbonIndustry" parameterType="CarbonIndustry" useGeneratedKeys="true" keyProperty="id">
+        insert into carbon_industry
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarbonIndustry" parameterType="CarbonIndustry">
+        update carbon_industry
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCarbonIndustryById" parameterType="Long">
+        delete from carbon_industry where id = #{id}
+    </delete>
+
+    <delete id="deleteCarbonIndustryByIds" parameterType="String">
+        delete from carbon_industry where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

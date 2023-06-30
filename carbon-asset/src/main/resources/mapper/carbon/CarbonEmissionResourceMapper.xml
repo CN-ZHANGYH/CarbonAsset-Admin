@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.carbon.mapper.CarbonEmissionResourceMapper">
+    
+    <resultMap type="CarbonEmissionResource" id="CarbonEmissionResourceResult">
+        <result property="emissionId"    column="emission_id"    />
+        <result property="enterpriseId"    column="enterprise_id"    />
+        <result property="enterpriseAddress"    column="enterprise_address"    />
+        <result property="emissions"    column="emissions"    />
+        <result property="description"    column="description"    />
+        <result property="emissionWay"    column="emission_way"    />
+        <result property="isApprove"    column="is_approve"    />
+        <result property="emissionTime"    column="emission_time"    />
+    </resultMap>
+
+    <sql id="selectCarbonEmissionResourceVo">
+        select emission_id, enterprise_id, enterprise_address, emissions, description, emission_way, is_approve, emission_time from carbon_emission_resource
+    </sql>
+
+    <select id="selectCarbonEmissionResourceList" parameterType="CarbonEmissionResource" resultMap="CarbonEmissionResourceResult">
+        <include refid="selectCarbonEmissionResourceVo"/>
+        <where>  
+            <if test="enterpriseId != null "> and enterprise_id = #{enterpriseId}</if>
+            <if test="enterpriseAddress != null  and enterpriseAddress != ''"> and enterprise_address = #{enterpriseAddress}</if>
+            <if test="emissions != null "> and emissions = #{emissions}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="emissionWay != null  and emissionWay != ''"> and emission_way = #{emissionWay}</if>
+            <if test="isApprove != null "> and is_approve = #{isApprove}</if>
+            <if test="emissionTime != null "> and emission_time = #{emissionTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarbonEmissionResourceByEmissionId" parameterType="Long" resultMap="CarbonEmissionResourceResult">
+        <include refid="selectCarbonEmissionResourceVo"/>
+        where emission_id = #{emissionId}
+    </select>
+    <select id="selectEmissionResourceByAddress" resultMap="CarbonEmissionResourceResult">
+        <include refid="selectCarbonEmissionResourceVo"/>
+        <where>
+            <if test="enterpriseAddress != null  and enterpriseAddress != ''"> and enterprise_address = #{enterpriseAddress}</if>
+        </where>
+    </select>
+
+    <insert id="insertCarbonEmissionResource" parameterType="CarbonEmissionResource">
+        insert into carbon_emission_resource
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="emissionId != null">emission_id,</if>
+            <if test="enterpriseId != null">enterprise_id,</if>
+            <if test="enterpriseAddress != null">enterprise_address,</if>
+            <if test="emissions != null">emissions,</if>
+            <if test="description != null">description,</if>
+            <if test="emissionWay != null">emission_way,</if>
+            <if test="isApprove != null">is_approve,</if>
+            <if test="emissionTime != null">emission_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="emissionId != null">#{emissionId},</if>
+            <if test="enterpriseId != null">#{enterpriseId},</if>
+            <if test="enterpriseAddress != null">#{enterpriseAddress},</if>
+            <if test="emissions != null">#{emissions},</if>
+            <if test="description != null">#{description},</if>
+            <if test="emissionWay != null">#{emissionWay},</if>
+            <if test="isApprove != null">#{isApprove},</if>
+            <if test="emissionTime != null">#{emissionTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarbonEmissionResource" parameterType="CarbonEmissionResource">
+        update carbon_emission_resource
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseId != null">enterprise_id = #{enterpriseId},</if>
+            <if test="enterpriseAddress != null">enterprise_address = #{enterpriseAddress},</if>
+            <if test="emissions != null">emissions = #{emissions},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="emissionWay != null">emission_way = #{emissionWay},</if>
+            <if test="isApprove != null">is_approve = #{isApprove},</if>
+            <if test="emissionTime != null">emission_time = #{emissionTime},</if>
+        </trim>
+        where emission_id = #{emissionId}
+    </update>
+
+    <delete id="deleteCarbonEmissionResourceByEmissionId" parameterType="Long">
+        delete from carbon_emission_resource where emission_id = #{emissionId}
+    </delete>
+
+    <delete id="deleteCarbonEmissionResourceByEmissionIds" parameterType="String">
+        delete from carbon_emission_resource where emission_id in 
+        <foreach item="emissionId" collection="array" open="(" separator="," close=")">
+            #{emissionId}
+        </foreach>
+    </delete>
+</mapper>

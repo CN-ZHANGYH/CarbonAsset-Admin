@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.carbon.mapper.CarbonTransactionMapper">
+
+    <resultMap type="CarbonTransaction" id="CarbonTransactionResult">
+        <result property="transactionId"    column="transaction_id"    />
+        <result property="txHash"    column="tx_hash"    />
+        <result property="buyerId"    column="buyer_id"    />
+        <result property="sellerId"    column="seller_id"    />
+        <result property="transactionOrderName"    column="transaction_order_name"    />
+        <result property="buyAddress"    column="buy_address"    />
+        <result property="sellerAddress"    column="seller_address"    />
+        <result property="transactionTime"    column="transaction_time"    />
+        <result property="transactionQuantity"    column="transaction_quantity"    />
+    </resultMap>
+
+    <sql id="selectCarbonTransactionVo">
+        select transaction_id, tx_hash, buyer_id, seller_id, transaction_order_name, buy_address, seller_address, transaction_time, transaction_quantity from carbon_transaction
+    </sql>
+
+    <select id="selectCarbonTransactionList" parameterType="CarbonTransaction" resultMap="CarbonTransactionResult">
+        <include refid="selectCarbonTransactionVo"/>
+        <where>
+            <if test="txHash != null  and txHash != ''"> and tx_hash = #{txHash}</if>
+            <if test="buyerId != null "> and buyer_id = #{buyerId}</if>
+            <if test="sellerId != null "> and seller_id = #{sellerId}</if>
+            <if test="transactionOrderName != null  and transactionOrderName != ''"> and transaction_order_name like concat('%', #{transactionOrderName}, '%')</if>
+            <if test="buyAddress != null  and buyAddress != ''"> and buy_address = #{buyAddress}</if>
+            <if test="sellerAddress != null  and sellerAddress != ''"> and seller_address = #{sellerAddress}</if>
+            <if test="transactionTime != null "> and transaction_time = #{transactionTime}</if>
+            <if test="transactionQuantity != null  and transactionQuantity != ''"> and transaction_quantity = #{transactionQuantity}</if>
+        </where>
+    </select>
+
+    <select id="selectCarbonTransactionByTransactionId" parameterType="Long" resultMap="CarbonTransactionResult">
+        <include refid="selectCarbonTransactionVo"/>
+        where transaction_id = #{transactionId}
+    </select>
+
+    <select id="selectTransactionListByAddress" parameterType="String" resultMap="CarbonTransactionResult">
+        <include refid="selectCarbonTransactionVo"/>
+        <where>
+            <if test="buyAddress != null  and buyAddress != ''">buy_address = #{address}</if>
+        </where>
+    </select>
+
+    <insert id="insertCarbonTransaction" parameterType="CarbonTransaction">
+        insert into carbon_transaction
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="transactionId != null">transaction_id,</if>
+            <if test="txHash != null">tx_hash,</if>
+            <if test="buyerId != null">buyer_id,</if>
+            <if test="sellerId != null">seller_id,</if>
+            <if test="transactionOrderName != null">transaction_order_name,</if>
+            <if test="buyAddress != null">buy_address,</if>
+            <if test="sellerAddress != null">seller_address,</if>
+            <if test="transactionTime != null">transaction_time,</if>
+            <if test="transactionQuantity != null">transaction_quantity,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="transactionId != null">#{transactionId},</if>
+            <if test="txHash != null">#{txHash},</if>
+            <if test="buyerId != null">#{buyerId},</if>
+            <if test="sellerId != null">#{sellerId},</if>
+            <if test="transactionOrderName != null">#{transactionOrderName},</if>
+            <if test="buyAddress != null">#{buyAddress},</if>
+            <if test="sellerAddress != null">#{sellerAddress},</if>
+            <if test="transactionTime != null">#{transactionTime},</if>
+            <if test="transactionQuantity != null">#{transactionQuantity},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCarbonTransaction" parameterType="CarbonTransaction">
+        update carbon_transaction
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="txHash != null">tx_hash = #{txHash},</if>
+            <if test="buyerId != null">buyer_id = #{buyerId},</if>
+            <if test="sellerId != null">seller_id = #{sellerId},</if>
+            <if test="transactionOrderName != null">transaction_order_name = #{transactionOrderName},</if>
+            <if test="buyAddress != null">buy_address = #{buyAddress},</if>
+            <if test="sellerAddress != null">seller_address = #{sellerAddress},</if>
+            <if test="transactionTime != null">transaction_time = #{transactionTime},</if>
+            <if test="transactionQuantity != null">transaction_quantity = #{transactionQuantity},</if>
+        </trim>
+        where transaction_id = #{transactionId}
+    </update>
+
+    <delete id="deleteCarbonTransactionByTransactionId" parameterType="Long">
+        delete from carbon_transaction where transaction_id = #{transactionId}
+    </delete>
+
+    <delete id="deleteCarbonTransactionByTransactionIds" parameterType="String">
+        delete from carbon_transaction where transaction_id in
+        <foreach item="transactionId" collection="array" open="(" separator="," close=")">
+            #{transactionId}
+        </foreach>
+    </delete>
+</mapper>

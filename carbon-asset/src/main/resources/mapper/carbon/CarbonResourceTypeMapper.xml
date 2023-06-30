@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.carbon.mapper.CarbonResourceTypeMapper">
+    
+    <resultMap type="CarbonResourceType" id="CarbonResourceTypeResult">
+        <result property="id"    column="id"    />
+        <result property="resourceType"    column="resource_type"    />
+        <result property="category"    column="category"    />
+        <result property="description"    column="description"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="updatedAt"    column="updated_at"    />
+    </resultMap>
+
+    <sql id="selectCarbonResourceTypeVo">
+        select id, resource_type, category, description, created_at, updated_at from carbon_resource_type
+    </sql>
+
+    <select id="selectCarbonResourceTypeList" parameterType="CarbonResourceType" resultMap="CarbonResourceTypeResult">
+        <include refid="selectCarbonResourceTypeVo"/>
+        <where>  
+            <if test="resourceType != null  and resourceType != ''"> and resource_type = #{resourceType}</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="updatedAt != null "> and updated_at = #{updatedAt}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarbonResourceTypeById" parameterType="Long" resultMap="CarbonResourceTypeResult">
+        <include refid="selectCarbonResourceTypeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCarbonResourceType" parameterType="CarbonResourceType" useGeneratedKeys="true" keyProperty="id">
+        insert into carbon_resource_type
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resourceType != null and resourceType != ''">resource_type,</if>
+            <if test="category != null and category != ''">category,</if>
+            <if test="description != null">description,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="updatedAt != null">updated_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resourceType != null and resourceType != ''">#{resourceType},</if>
+            <if test="category != null and category != ''">#{category},</if>
+            <if test="description != null">#{description},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarbonResourceType" parameterType="CarbonResourceType">
+        update carbon_resource_type
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="resourceType != null and resourceType != ''">resource_type = #{resourceType},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCarbonResourceTypeById" parameterType="Long">
+        delete from carbon_resource_type where id = #{id}
+    </delete>
+
+    <delete id="deleteCarbonResourceTypeByIds" parameterType="String">
+        delete from carbon_resource_type where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

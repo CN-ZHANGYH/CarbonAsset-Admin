@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.carbon.mapper.CarbonEnterpriseAssetMapper">
+    
+    <resultMap type="CarbonEnterpriseAsset" id="CarbonEnterpriseAssetResult">
+        <result property="assetId"    column="asset_id"    />
+        <result property="enterpriseId"    column="enterprise_id"    />
+        <result property="enterpriseAddress"    column="enterprise_address"    />
+        <result property="assetQuantity"    column="asset_quantity"    />
+        <result property="assetAmount"    column="asset_amount"    />
+        <result property="time"    column="time"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectCarbonEnterpriseAssetVo">
+        select asset_id, enterprise_id, enterprise_address, asset_quantity, asset_amount, time, status from carbon_enterprise_asset
+    </sql>
+
+    <select id="selectCarbonEnterpriseAssetList" parameterType="CarbonEnterpriseAsset" resultMap="CarbonEnterpriseAssetResult">
+        <include refid="selectCarbonEnterpriseAssetVo"/>
+        <where>  
+            <if test="enterpriseId != null "> and enterprise_id = #{enterpriseId}</if>
+            <if test="enterpriseAddress != null  and enterpriseAddress != ''"> and enterprise_address = #{enterpriseAddress}</if>
+            <if test="assetQuantity != null "> and asset_quantity = #{assetQuantity}</if>
+            <if test="assetAmount != null "> and asset_amount = #{assetAmount}</if>
+            <if test="time != null "> and time = #{time}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarbonEnterpriseAssetByAssetId" parameterType="Long" resultMap="CarbonEnterpriseAssetResult">
+        <include refid="selectCarbonEnterpriseAssetVo"/>
+        where asset_id = #{assetId}
+    </select>
+    <select id="selectCarbonEnterpriseAssetByAddress" parameterType="string" resultMap="CarbonEnterpriseAssetResult">
+        <include refid="selectCarbonEnterpriseAssetVo"/>
+        <where>
+            <if test="enterpriseAddress != null  and enterpriseAddress != ''"> and enterprise_address = #{enterpriseAddress}</if>
+        </where>
+    </select>
+
+    <insert id="insertCarbonEnterpriseAsset" parameterType="CarbonEnterpriseAsset">
+        insert into carbon_enterprise_asset
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="assetId != null">asset_id,</if>
+            <if test="enterpriseId != null">enterprise_id,</if>
+            <if test="enterpriseAddress != null">enterprise_address,</if>
+            <if test="assetQuantity != null">asset_quantity,</if>
+            <if test="assetAmount != null">asset_amount,</if>
+            <if test="time != null">time,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="assetId != null">#{assetId},</if>
+            <if test="enterpriseId != null">#{enterpriseId},</if>
+            <if test="enterpriseAddress != null">#{enterpriseAddress},</if>
+            <if test="assetQuantity != null">#{assetQuantity},</if>
+            <if test="assetAmount != null">#{assetAmount},</if>
+            <if test="time != null">#{time},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarbonEnterpriseAsset" parameterType="CarbonEnterpriseAsset">
+        update carbon_enterprise_asset
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseId != null">enterprise_id = #{enterpriseId},</if>
+            <if test="enterpriseAddress != null">enterprise_address = #{enterpriseAddress},</if>
+            <if test="assetQuantity != null">asset_quantity = #{assetQuantity},</if>
+            <if test="assetAmount != null">asset_amount = #{assetAmount},</if>
+            <if test="time != null">time = #{time},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where asset_id = #{assetId}
+    </update>
+
+    <delete id="deleteCarbonEnterpriseAssetByAssetId" parameterType="Long">
+        delete from carbon_enterprise_asset where asset_id = #{assetId}
+    </delete>
+
+    <delete id="deleteCarbonEnterpriseAssetByAssetIds" parameterType="String">
+        delete from carbon_enterprise_asset where asset_id in 
+        <foreach item="assetId" collection="array" open="(" separator="," close=")">
+            #{assetId}
+        </foreach>
+    </delete>
+</mapper>
