@@ -10,6 +10,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.data.annotation.Transient;
 
+import java.math.BigInteger;
+
 /**
  * 企业资质信息对象 carbon_qualification
  *
@@ -78,7 +80,7 @@ public class CarbonQualification extends BaseEntity
 
     /** 碳排放额度 */
     @Excel(name = "碳排放额度")
-    private Long qualificationEmissionLimit;
+    private BigInteger qualificationEmissionLimit;
 
 
     @Override

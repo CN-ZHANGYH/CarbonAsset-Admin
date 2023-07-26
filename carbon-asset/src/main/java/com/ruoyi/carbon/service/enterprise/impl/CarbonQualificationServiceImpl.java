@@ -120,9 +120,8 @@ public class CarbonQualificationServiceImpl implements ICarbonQualificationServi
                     JSONArray resultObject = Objects.requireNonNull(JSON.parseArray(transactionResponse.getValues())).getJSONArray(2);
                     carbonQualification.setQualificationAddress(carbonQualification.getQualificationAddress());
                     carbonQualification.setQualificationId(resultObject.getIntValue(0));
-                    carbonQualification.setQualificationEmissionLimit(resultObject.getLongValue(9));
+                    carbonQualification.setQualificationEmissionLimit(resultObject.getBigInteger(9));
                     carbonQualification.setQualificationUploadTime(BlockTimestampUtil.convert(resultObject.getLongValue(6)));
-                    carbonQualification.setQualificationAuditTime(resultObject.getLongValue(7) == 0 ? "0000-0-0" : BlockTimestampUtil.convert(resultObject.getLongValue(7)));
                     carbonQualification.setQualificationVerifiedRegulator(resultObject.getString(8).equals(emptyAddress) ? "暂未认证" : carbonQualification.getQualificationContent());
                     return carbonQualificationMapper.insertCarbonQualification(carbonQualification);
                 }
@@ -220,7 +219,7 @@ public class CarbonQualificationServiceImpl implements ICarbonQualificationServi
                 JSONArray result = JSON.parseArray(transactionResponse.getValues()).getJSONArray(1);
                 carbonQualification.setQualificationAuditTime(BlockTimestampUtil.convert(result.getLongValue(7)));
                 carbonQualification.setQualificationVerifiedRegulator(result.getString(8));
-                carbonQualification.setQualificationEmissionLimit(result.getLongValue(9));
+                carbonQualification.setQualificationEmissionLimit(result.getBigInteger(9));
 
                 // 异步执行两个数据库更新的任务
                 this.auditQualificationOver(carbonQualification);

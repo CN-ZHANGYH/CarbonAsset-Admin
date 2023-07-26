@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
+import com.ruoyi.carbon.domain.carbon.CarbonQualification;
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.domain.user.UserKey;
 import com.ruoyi.carbon.domain.vo.BuyVo;
@@ -14,6 +15,7 @@ import com.ruoyi.carbon.model.bo.*;
 import com.ruoyi.carbon.service.carbon.CarbonAssetServiceService;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
+import com.ruoyi.carbon.service.enterprise.ICarbonQualificationService;
 import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.carbon.service.user.UserRegisterService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
@@ -70,6 +72,10 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
 
     @Autowired
     private ICarbonTransactionService carbonTransactionService;
+
+
+    @Autowired
+    private ICarbonQualificationService qualificationService;
 
     /**
      * 手动创建线程
@@ -229,11 +235,15 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
                 enterpriseAsset.setAssetId(result.getLongValue(0));
                 enterpriseAsset.setEnterpriseId(result.getLongValue(1));
                 enterpriseAsset.setEnterpriseAddress(result.getString(2));
-                enterpriseAsset.setAssetQuantity(result.getLongValue(3));
-                enterpriseAsset.setAssetAmount(result.getLongValue(4));
+                enterpriseAsset.setAssetQuantity(result.getBigInteger(3));
+                enterpriseAsset.setAssetAmount(result.getBigInteger(4));
                 enterpriseAsset.setTime(BlockTimestampUtil.convert(result.getLongValue(5)));
                 enterpriseAsset.setStatus(result.getIntValue(6));
-                int code = this.insertOrder(enterpriseAsset);
+
+
+                // 企业需要更新自己的碳额度
+                Integer qualificationId = carbonEnterprise.getQualificationId();
+                int code = this.insertOrder(enterpriseAsset,qualificationId,sellVo.getQuality());
                 if (code > 0){
                     AjaxResult ajax = AjaxResult.success("出售成功");
                     ajax.put("assetOrder",enterpriseAsset);
@@ -269,6 +279,32 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         buyEmissionLimitInputBO.set_quantity(buyVo.getQuality());
         buyEmissionLimitInputBO.set_eassetId(assetId);
         List<Object> params = buyEmissionLimitInputBO.toArgs();
+
+
+        // 更新用户的信息 买家 卖家 碳额度
+        CarbonEnterprise buyer = carbonEnterpriseMapper.selectCarbonEnterpriseByAddress(ownerAddress);
+        CarbonEnterprise seller = carbonEnterpriseMapper.selectCarbonEnterpriseByAddress(sellerAddress);
+        CarbonQualification qualification = qualificationService.selectCarbonQualificationByQualificationId(Long.valueOf(buyer.getQualificationId()));
+        CarbonEnterpriseAsset enterpriseAsset = enterpriseAssetService.selectCarbonEnterpriseAssetByAssetId(Long.valueOf(String.valueOf(assetId)));
+
+        BigInteger oldBalance = buyer.getEnterpriseBalance();
+        buyer.setEnterpriseBalance(oldBalance.subtract(enterpriseAsset.getAssetAmount().multiply(buyVo.getQuality())));
+        BigInteger oldEmissionLimit = qualification.getQualificationEmissionLimit();
+        qualification.setQualificationEmissionLimit(oldEmissionLimit.add(buyVo.getQuality()));
+
+        BigInteger sellerBalance = seller.getEnterpriseBalance();
+        buyer.setEnterpriseBalance(sellerBalance.add(enterpriseAsset.getAssetAmount().multiply(buyVo.getQuality())));
+
+        System.out.println(enterpriseAsset);
+        System.out.println(buyer);
+        System.out.println(seller);
+        BigInteger oldQuantity = enterpriseAsset.getAssetQuantity();
+        enterpriseAsset.setAssetQuantity(oldQuantity.subtract(buyVo.getQuality()));
+
+        carbonEnterpriseMapper.updateCarbonEnterprise(buyer);
+        carbonEnterpriseMapper.updateCarbonEnterprise(seller);
+        qualificationService.updateCarbonQualification(qualification);
+        enterpriseAssetService.updateCarbonEnterpriseAsset(enterpriseAsset);
 
         return txTransactionByAsset(carbonEnterprise.getPriavateKey(), params);
     }
@@ -410,7 +446,15 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
 
 
     @Async("taskExecutor")
-    public int insertOrder(CarbonEnterpriseAsset enterpriseAsset){
+    public int insertOrder(CarbonEnterpriseAsset enterpriseAsset, Integer qualificationId, BigInteger quality){
+        // 查询企业的资质进行更新操作
+        CarbonQualification qualification = qualificationService.selectCarbonQualificationByQualificationId(Long.valueOf(qualificationId));
+        if(Objects.isNull(qualification)){
+            return 0;
+        }
+        BigInteger oldEmissionLimit = qualification.getQualificationEmissionLimit();
+        qualification.setQualificationEmissionLimit(oldEmissionLimit.subtract(quality));
+        qualificationService.updateCarbonQualification(qualification);
         return enterpriseAssetService.insertCarbonEnterpriseAsset(enterpriseAsset);
     }
 
