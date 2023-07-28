@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.6.10;
 pragma experimental ABIEncoderV2;
 
 import "./CarbonDataStorage.sol"; 
@@ -11,7 +11,7 @@ contract CarbonUserService is CarbonDataStorage{
      * @dev 注册用户
      * 
      */
-     function registerEnterprise(address _enterpriseAddress,string memory _enterpriseName) public returns(int,Enterprise){
+     function registerEnterprise(address _enterpriseAddress,string memory _enterpriseName) public returns(int,Enterprise memory){
          int res_code = 0;
          userIdQueryAddress[EnterpriseID] = _enterpriseAddress;
          Enterprise storage _enterprise = EnterprisesMap[_enterpriseAddress];
@@ -36,11 +36,19 @@ contract CarbonUserService is CarbonDataStorage{
          return(res_code = 60001,_enterprise);
     }
     
+    
+    // 更新企业的信息
+    function updateEnterprise(address _enterpriseAddress,string memory _enterpriseName) public {
+        Enterprise storage _enterprise = EnterprisesMap[_enterpriseAddress];
+        _enterprise.enterpriseAddress = _enterpriseAddress;
+        _enterprise.enterpriseName = _enterpriseName;
+    }
+    
     /**
      * @dev 注册监管机构
      * 
      */
-    function registerRegulator(address _regulatorAddress,string memory _regulatorName) public returns(int,Regulator){
+    function registerRegulator(address _regulatorAddress,string memory _regulatorName) public returns(int,Regulator memory){
         int res_code = 0;
         Regulator storage _regulator = RegulatorsMap[_regulatorAddress];
         // TODO: 已完成已注册机构的校验
@@ -70,7 +78,7 @@ contract CarbonUserService is CarbonDataStorage{
          string memory _qualificationLeader,
          string memory _qualificationIndustry,
          string memory _qualificationUserName
-    ) public returns(int,string memory,Qualification)
+    ) public returns(int,string memory,Qualification memory)
     {
         // TODO: 后端查询当前的资质是否已经上传
         int res_code = 0;
@@ -96,7 +104,7 @@ contract CarbonUserService is CarbonDataStorage{
      * @dev 监管机构审核企业资质
      * 
      */    
-    function verifyQualification(address _regulatorAddress,address _enterpriseAddress,bool _isApprove) public  returns(int,Qualification){
+    function verifyQualification(address _regulatorAddress,address _enterpriseAddress,bool _isApprove) public  returns(int,Qualification memory){
         int res_code = 0;
         Enterprise storage _enterprise = EnterprisesMap[_enterpriseAddress];
         Qualification storage _qualification = QualificationsMap[_enterprise.qualificationId];
@@ -147,7 +155,7 @@ contract CarbonUserService is CarbonDataStorage{
      * @dev 查询企业用户信息
      * 
      */
-     function selectEnterpriseInfo(address _enterpriseAddress) public view returns(Enterprise){
+     function selectEnterpriseInfo(address _enterpriseAddress) public view returns(Enterprise memory){
          require(EnterprisesMap[_enterpriseAddress].enterpriseAddress != address(0),"当前用户未注册");
          return EnterprisesMap[_enterpriseAddress];
      }
@@ -156,7 +164,7 @@ contract CarbonUserService is CarbonDataStorage{
      * @dev 查询企业的资质信息
      * 
      */
-     function selectQualificationInfo(address _enterpriseAddress) public returns(int,Qualification){
+     function selectQualificationInfo(address _enterpriseAddress) public returns(int,Qualification memory){
          int res_code = 0;
          Enterprise memory _enterprise = EnterprisesMap[_enterpriseAddress];
          Qualification memory _qualification = QualificationsMap[_enterprise.qualificationId];
