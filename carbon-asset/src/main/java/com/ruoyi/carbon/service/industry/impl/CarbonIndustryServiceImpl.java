@@ -107,7 +107,7 @@ public class CarbonIndustryServiceImpl implements ICarbonIndustryService
                 .map((Function<CarbonIndustry, Object>) industry -> {
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("label", industry.getName());
-                    map.put("key", industry.getName());
+                    map.put("value", industry.getName());
                     return map;
         }).collect(Collectors.toList());
         AjaxResult ajax = AjaxResult.success();

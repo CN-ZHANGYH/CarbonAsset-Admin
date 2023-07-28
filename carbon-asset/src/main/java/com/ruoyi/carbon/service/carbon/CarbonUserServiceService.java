@@ -1,6 +1,32 @@
 package com.ruoyi.carbon.service.carbon;
 
-import com.ruoyi.carbon.model.bo.*;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceEmissionResourceIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceEmissionResourcesMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceEnterpriseAssetIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceEnterpriseAssetsMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceEnterpriseIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceEnterprisesMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceQualificationIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceQualificationsMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceRegisterEnterpriseInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceRegisterRegulatorInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceRegulatorIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceRegulatorsMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceSelectEnterpriseInfoInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceSelectQualificationInfoInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceSelectUserAddressInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceSignInInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceTransactionIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceTransactionsMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceUpdateBalanceInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceUpdateEnterpriseInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceUploadQualificationInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceUserIdQueryAddressInputBO;
+import com.ruoyi.carbon.model.bo.CarbonUserServiceVerifyQualificationInputBO;
+import java.lang.Exception;
+import java.lang.String;
+import java.util.Arrays;
+import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.fisco.bcos.sdk.client.Client;
@@ -11,9 +37,6 @@ import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 @Service
 @NoArgsConstructor

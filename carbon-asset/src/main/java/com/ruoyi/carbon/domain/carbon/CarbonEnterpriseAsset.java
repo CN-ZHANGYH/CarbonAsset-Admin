@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.math.BigInteger;
+
 /**
  * 企业出售资产对象 carbon_enterprise_asset
  * 
@@ -36,11 +38,11 @@ public class CarbonEnterpriseAsset extends BaseEntity
 
     /** 企业出售碳资产的数量 */
     @Excel(name = "企业出售碳资产的数量")
-    private Long assetQuantity;
+    private BigInteger assetQuantity;
 
     /** 企业出售碳资产的价钱 */
     @Excel(name = "企业出售碳资产的价钱")
-    private Long assetAmount;
+    private BigInteger assetAmount;
 
     /** 企业出售碳资产的时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")

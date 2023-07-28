@@ -1,6 +1,47 @@
 package com.ruoyi.carbon.service.carbon;
 
-import com.ruoyi.carbon.model.bo.*;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceBuyEmissionLimitInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceByCreditsExchangedEmissionInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceEmissionResourceIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceEmissionResourcesMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceEnterpriseAssetIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceEnterpriseAssetsMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceEnterpriseEmissionInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceEnterpriseIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceEnterprisesMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceInitEmissionLimitInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceInitPointsRewardsInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceQualificationIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceQualificationsMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceQueryEmissionResourceByPageInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceQueryEnterpriseAssetByPageInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceQueryTransactionsByPageInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceRegisterEnterpriseInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceRegisterRegulatorInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceRegulatorIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceRegulatorsMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSelectEmissionResourceInfoInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSelectEnterpriseInfoInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSelectQualificationInfoInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSelectSellerAssetInfoInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSelectTransactionInfoInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSelectUserAddressInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSellEmissionLimitInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSignInInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceTransactionIDListInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceTransactionsMapInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceUpdateBalanceInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceUpdateEnterpriseEmissionInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceUpdateEnterpriseInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceUploadEnterpriseEmissionInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceUploadQualificationInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceUserIdQueryAddressInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceVerifyEnterpriseEmissionInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceVerifyQualificationInputBO;
+import java.lang.Exception;
+import java.lang.String;
+import java.util.Arrays;
+import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.fisco.bcos.sdk.client.Client;
@@ -11,9 +52,6 @@ import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 @Service
 @NoArgsConstructor

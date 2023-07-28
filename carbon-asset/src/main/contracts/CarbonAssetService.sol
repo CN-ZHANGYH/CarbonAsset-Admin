@@ -1,4 +1,4 @@
-pragma solidity ^0.4.25;
+pragma solidity ^0.6.10;
 pragma experimental ABIEncoderV2;
 
 import "./CarbonUserService.sol";
@@ -22,7 +22,7 @@ contract CarbonAssetService is CarbonUserService {
     * @dev 积分奖励
     *
     */
-    function initPointsRewards(address[] _enterpriseAddressList,uint256 _credited) public {
+    function initPointsRewards(address[] memory _enterpriseAddressList,uint256 _credited) public {
         uint256 enterpriseLength = _enterpriseAddressList.length;
         for (uint256 i = 0; i < enterpriseLength; ++i) {
             address _enterpriseAddress = _enterpriseAddressList[i];
@@ -42,14 +42,14 @@ contract CarbonAssetService is CarbonUserService {
     * @param _emissionLimitCount 企业的碳额度数量
     * @param _amount 企业出售的单价
     */
-    function sellEmissionLimit(uint256 _emissionLimitCount,uint256 _amount) public returns(int,uint256){
+    function sellEmissionLimit(uint256 _emissionLimitCount,uint256 _amount) public returns(int,EnterpriseAsset memory){
         int res_code = 0;
         Enterprise memory _enterprise = EnterprisesMap[msg.sender];
         Qualification storage _qualification = QualificationsMap[_enterprise.qualificationId];
-        if (_qualification.qualificationEmissionLimit < _emissionLimitCount){
-            return (res_code = 70001,0);
-        }
         EnterpriseAsset storage _enterpriseAsset = EnterpriseAssetsMap[EnterpriseAssetID];
+        if (_qualification.qualificationEmissionLimit < _emissionLimitCount){
+            return (res_code = 70001,_enterpriseAsset);
+        }
         _enterpriseAsset.assetId = EnterpriseAssetID;
         _enterpriseAsset.enterpriseId = _enterprise.enterpriseId;
         _enterpriseAsset.enterpriseAddress = _enterprise.enterpriseAddress;
@@ -62,7 +62,7 @@ contract CarbonAssetService is CarbonUserService {
         
         _qualification.qualificationEmissionLimit -= _emissionLimitCount;
         emit SellEmissionLimit(_emissionLimitCount,_amount);
-        return (res_code = 200,_emissionLimitCount);
+        return (res_code = 200,_enterpriseAsset);
     }
     
     /**
@@ -71,7 +71,7 @@ contract CarbonAssetService is CarbonUserService {
      *  @param _eassetId 资产ID
      *  @param _quantity 购买碳排放额度的数量
      */
-    function buyEmissionLimit(address _enterpriseSeller,uint256 _eassetId,uint256 _quantity) public returns(int,Transaction) {
+    function buyEmissionLimit(address _enterpriseSeller,uint256 _eassetId,uint256 _quantity) public returns(int,Transaction memory) {
         int res_code = 0;
         Enterprise storage _buyer = EnterprisesMap[msg.sender];
         Enterprise storage _seller =  EnterprisesMap[_enterpriseSeller];
@@ -116,7 +116,7 @@ contract CarbonAssetService is CarbonUserService {
      *  @param _description  企业排放的描述
      *  @param _emissionWay 排放的方式
      */
-    function uploadEnterpriseEmission(address _enterpriseAddr,uint256 _emissionEmission,string memory _description,string memory _emissionWay) public returns(int,EmissionResource) {
+    function uploadEnterpriseEmission(address _enterpriseAddr,uint256 _emissionEmission,string memory _description,string memory _emissionWay) public returns(int,EmissionResource memory) {
         // TODO:
         int res_code = 0;
         EmissionResource storage _emissionResource = EmissionResourcesMap[EmissionResourceID];
@@ -277,15 +277,15 @@ contract CarbonAssetService is CarbonUserService {
         QualificationsMap[_enterprise.qualificationId].qualificationEmissionLimit += _credits;
     }
     
-    function selectTransactionInfo(uint256 _transactionId) public view returns(Transaction){
+    function selectTransactionInfo(uint256 _transactionId) public view returns(Transaction memory){
         return TransactionsMap[_transactionId];
     }
     
-    function selectSellerAssetInfo(uint256 _eassetId) public view returns(EnterpriseAsset) {
+    function selectSellerAssetInfo(uint256 _eassetId) public view returns(EnterpriseAsset memory) {
         return EnterpriseAssetsMap[_eassetId];
     }
     
-    function selectEmissionResourceInfo(uint256 _emmissionid) public view returns(EmissionResource){
+    function selectEmissionResourceInfo(uint256 _emmissionid) public view returns(EmissionResource memory){
         return EmissionResourcesMap[_emmissionid];
     }
 }

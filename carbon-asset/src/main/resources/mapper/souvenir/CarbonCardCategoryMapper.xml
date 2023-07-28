@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.souvenir.mapper.CarbonCardCategoryMapper">
+    
+    <resultMap type="CarbonCardCategory" id="CarbonCardCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectCarbonCardCategoryVo">
+        select id, name, description from carbon_card_category
+    </sql>
+
+    <select id="selectCarbonCardCategoryList" parameterType="CarbonCardCategory" resultMap="CarbonCardCategoryResult">
+        <include refid="selectCarbonCardCategoryVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarbonCardCategoryById" parameterType="Long" resultMap="CarbonCardCategoryResult">
+        <include refid="selectCarbonCardCategoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCarbonCardCategory" parameterType="CarbonCardCategory" useGeneratedKeys="true" keyProperty="id">
+        insert into carbon_card_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null and description != ''">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null and description != ''">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarbonCardCategory" parameterType="CarbonCardCategory">
+        update carbon_card_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null and description != ''">description = #{description},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCarbonCardCategoryById" parameterType="Long">
+        delete from carbon_card_category where id = #{id}
+    </delete>
+
+    <delete id="deleteCarbonCardCategoryByIds" parameterType="String">
+        delete from carbon_card_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

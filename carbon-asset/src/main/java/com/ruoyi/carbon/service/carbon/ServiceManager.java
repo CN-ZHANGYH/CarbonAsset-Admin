@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
+
+import com.ruoyi.souvenir.service.souvenir.SouvenirCardService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.client.Client;
@@ -33,6 +35,36 @@ public class ServiceManager {
   }
 
   /**
+   * @notice: must use @Qualifier("SouvenirCardService") with @Autowired to get this Bean
+   */
+  @Bean("SouvenirCardService")
+  public Map<String, SouvenirCardService> initSouvenirCardServiceManager() throws Exception {
+    Map<String, SouvenirCardService> serviceMap = new ConcurrentHashMap<>(this.hexPrivateKeyList.size());
+    for (int i = 0; i < this.hexPrivateKeyList.size(); i++) {
+    	String privateKey = this.hexPrivateKeyList.get(i);
+    	if (privateKey.startsWith("0x") || privateKey.startsWith("0X")) {
+    		privateKey = privateKey.substring(2);
+    	}
+    	if (privateKey.isEmpty()) {
+    		continue;
+    	}
+    	org.fisco.bcos.sdk.crypto.CryptoSuite cryptoSuite = new org.fisco.bcos.sdk.crypto.CryptoSuite(this.client.getCryptoType());
+    	org.fisco.bcos.sdk.crypto.keypair.CryptoKeyPair cryptoKeyPair = cryptoSuite.createKeyPair(privateKey);
+    	String userAddress = cryptoKeyPair.getAddress();
+    	log.info("++++++++hexPrivateKeyList[{}]:{},userAddress:{}", i, privateKey, userAddress);
+    	SouvenirCardService souvenirCardService = new SouvenirCardService();
+    	souvenirCardService.setAddress(this.config.getContract().getSouvenirCardAddress());
+    	souvenirCardService.setClient(this.client);
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
+    		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
+    	souvenirCardService.setTxProcessor(txProcessor);
+    	serviceMap.put(userAddress, souvenirCardService);
+    }
+    log.info("++++++++SouvenirCardService map:{}", serviceMap);
+    return serviceMap;
+  }
+
+  /**
    * @notice: must use @Qualifier("CarbonUserServiceService") with @Autowired to get this Bean
    */
   @Bean("CarbonUserServiceService")
@@ -53,7 +85,7 @@ public class ServiceManager {
     	CarbonUserServiceService carbonUserServiceService = new CarbonUserServiceService();
     	carbonUserServiceService.setAddress(this.config.getContract().getCarbonUserServiceAddress());
     	carbonUserServiceService.setClient(this.client);
-    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor = 
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
     		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
     	carbonUserServiceService.setTxProcessor(txProcessor);
     	serviceMap.put(userAddress, carbonUserServiceService);
@@ -83,7 +115,7 @@ public class ServiceManager {
     	CarbonDataStorageService carbonDataStorageService = new CarbonDataStorageService();
     	carbonDataStorageService.setAddress(this.config.getContract().getCarbonDataStorageAddress());
     	carbonDataStorageService.setClient(this.client);
-    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor = 
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
     		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
     	carbonDataStorageService.setTxProcessor(txProcessor);
     	serviceMap.put(userAddress, carbonDataStorageService);
@@ -113,7 +145,7 @@ public class ServiceManager {
     	CarbonAssetServiceService carbonAssetServiceService = new CarbonAssetServiceService();
     	carbonAssetServiceService.setAddress(this.config.getContract().getCarbonAssetServiceAddress());
     	carbonAssetServiceService.setClient(this.client);
-    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor = 
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
     		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
     	carbonAssetServiceService.setTxProcessor(txProcessor);
     	serviceMap.put(userAddress, carbonAssetServiceService);
