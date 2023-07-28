@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.souvenir.mapper.CarbonCardMapper">
+    
+    <resultMap type="CarbonCard" id="CarbonCardResult">
+        <result property="id"    column="id"    />
+        <result property="level"    column="level"    />
+        <result property="name"    column="name"    />
+        <result property="description"    column="description"    />
+        <result property="url"    column="url"    />
+        <result property="category"    column="category"    />
+    </resultMap>
+
+    <sql id="selectCarbonCardVo">
+        select id, level, name, description, url, category from carbon_card
+    </sql>
+
+    <select id="selectCarbonCardList" parameterType="CarbonCard" resultMap="CarbonCardResult">
+        <include refid="selectCarbonCardVo"/>
+        <where>  
+            <if test="level != null "> and level = #{level}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="category != null  and category != ''"> and category = #{category}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarbonCardById" parameterType="Long" resultMap="CarbonCardResult">
+        <include refid="selectCarbonCardVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCarbonCard" parameterType="CarbonCard" useGeneratedKeys="true" keyProperty="id">
+        insert into carbon_card
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="level != null">level,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="description != null">description,</if>
+            <if test="url != null">url,</if>
+            <if test="category != null and category != ''">category,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="level != null">#{level},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="description != null">#{description},</if>
+            <if test="url != null">#{url},</if>
+            <if test="category != null and category != ''">#{category},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarbonCard" parameterType="CarbonCard">
+        update carbon_card
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="level != null">level = #{level},</if>
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="category != null and category != ''">category = #{category},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCarbonCardById" parameterType="Long">
+        delete from carbon_card where id = #{id}
+    </delete>
+
+    <delete id="deleteCarbonCardByIds" parameterType="String">
+        delete from carbon_card where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

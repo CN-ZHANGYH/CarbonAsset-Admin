@@ -67,6 +67,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.carbon</groupId>
+            <artifactId>carbon-souvenir</artifactId>
+            <version>3.8.6</version>
+        </dependency>
+
         <!--  knife4j  ui-->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
