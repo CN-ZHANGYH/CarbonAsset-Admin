@@ -1,16 +1,24 @@
 package com.ruoyi.souvenir.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.math.BigInteger;
+
 /**
  * 纪念卡数据对象 carbon_card
- * 
+ *
  * @author 张宇豪
  * @date 2023-07-28
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CarbonCard extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -38,60 +46,7 @@ public class CarbonCard extends BaseEntity
     @Excel(name = "分类")
     private String category;
 
-    public void setId(Long id) 
-    {
-        this.id = id;
-    }
 
-    public Long getId() 
-    {
-        return id;
-    }
-    public void setLevel(Long level) 
-    {
-        this.level = level;
-    }
-
-    public Long getLevel() 
-    {
-        return level;
-    }
-    public void setName(String name) 
-    {
-        this.name = name;
-    }
-
-    public String getName() 
-    {
-        return name;
-    }
-    public void setDescription(String description) 
-    {
-        this.description = description;
-    }
-
-    public String getDescription() 
-    {
-        return description;
-    }
-    public void setUrl(String url) 
-    {
-        this.url = url;
-    }
-
-    public String getUrl() 
-    {
-        return url;
-    }
-    public void setCategory(String category) 
-    {
-        this.category = category;
-    }
-
-    public String getCategory() 
-    {
-        return category;
-    }
 
     @Override
     public String toString() {

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.PostConstruct;
+
+import com.ruoyi.souvenir.service.souvenir.SouvenirCardService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.client.Client;
@@ -30,6 +32,36 @@ public class ServiceManager {
   @PostConstruct
   public void init() {
     hexPrivateKeyList = Arrays.asList(this.config.getHexPrivateKey().split(","));
+  }
+
+  /**
+   * @notice: must use @Qualifier("SouvenirCardService") with @Autowired to get this Bean
+   */
+  @Bean("SouvenirCardService")
+  public Map<String, SouvenirCardService> initSouvenirCardServiceManager() throws Exception {
+    Map<String, SouvenirCardService> serviceMap = new ConcurrentHashMap<>(this.hexPrivateKeyList.size());
+    for (int i = 0; i < this.hexPrivateKeyList.size(); i++) {
+    	String privateKey = this.hexPrivateKeyList.get(i);
+    	if (privateKey.startsWith("0x") || privateKey.startsWith("0X")) {
+    		privateKey = privateKey.substring(2);
+    	}
+    	if (privateKey.isEmpty()) {
+    		continue;
+    	}
+    	org.fisco.bcos.sdk.crypto.CryptoSuite cryptoSuite = new org.fisco.bcos.sdk.crypto.CryptoSuite(this.client.getCryptoType());
+    	org.fisco.bcos.sdk.crypto.keypair.CryptoKeyPair cryptoKeyPair = cryptoSuite.createKeyPair(privateKey);
+    	String userAddress = cryptoKeyPair.getAddress();
+    	log.info("++++++++hexPrivateKeyList[{}]:{},userAddress:{}", i, privateKey, userAddress);
+    	SouvenirCardService souvenirCardService = new SouvenirCardService();
+    	souvenirCardService.setAddress(this.config.getContract().getSouvenirCardAddress());
+    	souvenirCardService.setClient(this.client);
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
+    		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
+    	souvenirCardService.setTxProcessor(txProcessor);
+    	serviceMap.put(userAddress, souvenirCardService);
+    }
+    log.info("++++++++SouvenirCardService map:{}", serviceMap);
+    return serviceMap;
   }
 
   /**

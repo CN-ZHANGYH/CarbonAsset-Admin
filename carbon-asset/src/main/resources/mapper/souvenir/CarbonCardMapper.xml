@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.souvenir.mapper.CarbonCardMapper">
-    
+
     <resultMap type="CarbonCard" id="CarbonCardResult">
         <result property="id"    column="id"    />
         <result property="level"    column="level"    />
@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectCarbonCardList" parameterType="CarbonCard" resultMap="CarbonCardResult">
         <include refid="selectCarbonCardVo"/>
-        <where>  
+        <where>
             <if test="level != null "> and level = #{level}</if>
             <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
             <if test="description != null  and description != ''"> and description = #{description}</if>
@@ -27,12 +27,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="category != null  and category != ''"> and category = #{category}</if>
         </where>
     </select>
-    
+
     <select id="selectCarbonCardById" parameterType="Long" resultMap="CarbonCardResult">
         <include refid="selectCarbonCardVo"/>
         where id = #{id}
     </select>
-        
+    <select id="selectAllByNameCard" parameterType="string" resultMap="CarbonCardResult">
+        <include refid="selectCarbonCardVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+        </where>
+    </select>
+
     <insert id="insertCarbonCard" parameterType="CarbonCard" useGeneratedKeys="true" keyProperty="id">
         insert into carbon_card
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -68,7 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteCarbonCardByIds" parameterType="String">
-        delete from carbon_card where id in 
+        delete from carbon_card where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

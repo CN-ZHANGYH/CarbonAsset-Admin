@@ -1,18 +1,17 @@
-package com.ruoyi.souvenir.service;
+package com.ruoyi.souvenir.mapper;
 
 import java.util.List;
 
-import com.ruoyi.common.core.domain.AjaxResult;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.souvenir.domain.CarbonCard;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 纪念卡数据Service接口
+ * 纪念卡数据Mapper接口
  *
  * @author 张宇豪
  * @date 2023-07-28
  */
-public interface ICarbonCardService
+public interface CarbonCardMapper
 {
     /**
      * 查询纪念卡数据
@@ -47,20 +46,21 @@ public interface ICarbonCardService
     public int updateCarbonCard(CarbonCard carbonCard);
 
     /**
-     * 批量删除纪念卡数据
-     *
-     * @param ids 需要删除的纪念卡数据主键集合
-     * @return 结果
-     */
-    public int deleteCarbonCardByIds(Long[] ids);
-
-    /**
-     * 删除纪念卡数据信息
+     * 删除纪念卡数据
      *
      * @param id 纪念卡数据主键
      * @return 结果
      */
     public int deleteCarbonCardById(Long id);
 
-    public AjaxResult uploadCardImg(MultipartFile file);
+    /**
+     * 批量删除纪念卡数据
+     *
+     * @param ids 需要删除的数据主键集合
+     * @return 结果
+     */
+    public int deleteCarbonCardByIds(Long[] ids);
+
+
+    public CarbonCard selectAllByNameCard(String name);
 }

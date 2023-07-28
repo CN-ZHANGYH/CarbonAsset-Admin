@@ -7,7 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.souvenir.domain.CarbonCardCategory;
-import com.ruoyi.souvenir.service.ICarbonCardCategoryService;
+import com.ruoyi.souvenir.service.card.ICarbonCardCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -94,5 +94,11 @@ public class CardCategoryController extends BaseController
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(carbonCardCategoryService.deleteCarbonCardCategoryByIds(ids));
+    }
+
+    @Log(title = "获取所有的纪念卡分类",businessType = BusinessType.OTHER)
+    @GetMapping("/nameList")
+    public AjaxResult getCategoryList(CarbonCardCategory carbonCardCategory) {
+        return carbonCardCategoryService.selectCarbonCardCategoryNameList(carbonCardCategory);
     }
 }
