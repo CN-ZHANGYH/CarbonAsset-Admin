@@ -95,4 +95,13 @@ public class EmissionResourceController extends BaseController
     {
         return toAjax(carbonEmissionResourceService.deleteCarbonEmissionResourceByEmissionIds(emissionIds));
     }
+
+    @Log(title = "查询资源申请未审批的企业",businessType = BusinessType.OTHER)
+    @GetMapping("/isNotVerifyList")
+    public TableDataInfo selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource){
+        startPage();
+        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceService.selectIsNotVerifyList(carbonEmissionResource);
+        System.out.println(emissionResources);
+        return getDataTable(emissionResources);
+    }
 }

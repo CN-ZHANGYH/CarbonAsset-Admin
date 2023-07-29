@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
+import com.ruoyi.carbon.domain.carbon.CarbonQualification;
 import com.ruoyi.carbon.domain.vo.EmissionVo;
 import com.ruoyi.carbon.domain.vo.ResourceVo;
 import com.ruoyi.carbon.domain.vo.VerifyVo;
@@ -14,6 +15,7 @@ import com.ruoyi.carbon.model.bo.CarbonAssetServiceEnterpriseEmissionInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceUploadEnterpriseEmissionInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceVerifyEnterpriseEmissionInputBO;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
+import com.ruoyi.carbon.service.enterprise.ICarbonQualificationService;
 import com.ruoyi.carbon.service.regulator.ICarbonRegulatorService;
 import com.ruoyi.carbon.service.resources.ICarbonEmissionResourceService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
@@ -29,6 +31,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 企业排放资源Service业务层处理
@@ -48,6 +51,9 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
 
     @Autowired
     private CarbonEnterpriseMapper enterpriseMapper;
+
+    @Autowired
+    private ICarbonQualificationService qualificationService;
 
     @Autowired
     private RawContractLoaderFactory rawContractLoaderFactory;
@@ -205,13 +211,21 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
         {
             return AjaxResult.error("当前企业不存在");
         }
+
+        Integer qualificationId = enterprise.getQualificationId();
+        CarbonQualification qualification = qualificationService
+                .selectCarbonQualificationByQualificationId(Long.valueOf(qualificationId));
+        if (Objects.isNull(qualification))
+        {
+            return AjaxResult.error("当前企业未认证");
+        }
         CarbonAssetServiceEnterpriseEmissionInputBO emissionInfo = new CarbonAssetServiceEnterpriseEmissionInputBO();
         emissionInfo.set_emmissionid(BigInteger.valueOf(emissionVo.getEmissionId()));
         emissionInfo.set_enterpriseAddr(emissionVo.getEnterpriseAddress());
         emissionInfo.set_emissionEmission(emissionVo.getEmissionLimit());
         List<Object> params = emissionInfo.toArgs();
-
-        try {
+        try
+        {
             TransactionResponse transactionResponse = rawContractLoaderFactory
                     .GetTransactionResponse(enterprise.getPriavateKey(), "enterpriseEmission", params);
             if (transactionResponse.getReturnMessage().equals("Success"))
@@ -223,6 +237,11 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
                     emissionResource.setEmissionTime(BlockTimestampUtil.convert(System.currentTimeMillis()));
                     this.carbonEmissionResourceMapper.updateCarbonEmissionResource(emissionResource);
                     UpdateEnterpriseInfo(emissionVo, enterprise);
+
+                    // 更新一下碳额度
+                    BigInteger oldEmissionLimit = qualification.getQualificationEmissionLimit();
+                    qualification.setQualificationEmissionLimit(oldEmissionLimit.subtract(emissionVo.getEmissionLimit()));
+                    qualificationService.updateCarbonQualification(qualification);
                     return AjaxResult.success("排放成功");
                 }
             }
@@ -298,5 +317,13 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
     @Override
     public ArrayList<CarbonEmissionResource> selectEmissionResourceByAddress(String enterpriseAddress) {
         return carbonEmissionResourceMapper.selectEmissionResourceByAddress(enterpriseAddress);
+    }
+
+    @Override
+    public List<CarbonEmissionResource> selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource) {
+        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceMapper.selectCarbonEmissionResourceList(carbonEmissionResource);
+        return emissionResources.stream()
+                .filter(emissionResource -> emissionResource.getIsApprove() == 0)
+                .collect(Collectors.toList());
     }
 }
