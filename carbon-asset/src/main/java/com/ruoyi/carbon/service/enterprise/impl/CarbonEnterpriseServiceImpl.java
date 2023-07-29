@@ -413,7 +413,6 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
 
 
 
-
     private AjaxResult selectEnterpriseInfoByChain(String address) {
 
         CarbonAssetServiceSelectEnterpriseInfoInputBO infoInputBO = new CarbonAssetServiceSelectEnterpriseInfoInputBO();

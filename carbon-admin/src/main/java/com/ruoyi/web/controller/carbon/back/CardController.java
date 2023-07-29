@@ -73,7 +73,7 @@ CardController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody CarbonCard carbonCard)
     {
-        return toAjax(carbonCardService.insertCarbonCard(carbonCard));
+        return carbonCardService.insertCarbonCard(carbonCard);
     }
 
     /**

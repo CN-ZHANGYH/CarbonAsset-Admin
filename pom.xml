@@ -180,6 +180,7 @@
         <module>carbon-quartz</module>
         <module>carbon-generator</module>
         <module>carbon-common</module>
+        <module>carbon-souvenir</module>
     </modules>
     <packaging>pom</packaging>
 
