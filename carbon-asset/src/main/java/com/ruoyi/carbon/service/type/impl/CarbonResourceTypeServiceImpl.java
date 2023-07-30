@@ -1,6 +1,7 @@
 package com.ruoyi.carbon.service.type.impl;
 
 import com.ruoyi.carbon.domain.carbon.CarbonResourceType;
+import com.ruoyi.carbon.domain.vo.ResourceTypeVo;
 import com.ruoyi.carbon.mapper.CarbonResourceTypeMapper;
 import com.ruoyi.carbon.service.type.ICarbonResourceTypeService;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -111,5 +112,15 @@ public class CarbonResourceTypeServiceImpl implements ICarbonResourceTypeService
         }).collect(Collectors.toList());
         AjaxResult ajax = AjaxResult.success();
         return ajax.put("data",resultMaps);
+    }
+
+    @Override
+    public AjaxResult selectResourceTypeByCount() {
+        List<ResourceTypeVo> resourceTypeVo = carbonResourceTypeMapper.selectResourceTypeByCount();
+        if (resourceTypeVo.size() < 0)
+        {
+            return AjaxResult.error("当前还没有资源分类");
+        }
+        return AjaxResult.success(resourceTypeVo);
     }
 }

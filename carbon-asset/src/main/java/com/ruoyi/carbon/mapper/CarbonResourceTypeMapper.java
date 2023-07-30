@@ -1,6 +1,8 @@
 package com.ruoyi.carbon.mapper;
 
 import com.ruoyi.carbon.domain.carbon.CarbonResourceType;
+import com.ruoyi.carbon.domain.vo.ResourceTypeVo;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -11,7 +13,7 @@ import java.util.List;
  * @author 张宇豪
  * @date 2023-07-25
  */
-public interface CarbonResourceTypeMapper 
+public interface CarbonResourceTypeMapper
 {
     /**
      * 查询资源类型数据
@@ -60,4 +62,9 @@ public interface CarbonResourceTypeMapper
      * @return 结果
      */
     public int deleteCarbonResourceTypeByIds(Long[] ids);
+
+
+    @Select("SELECT category AS name, COUNT(*) AS value FROM carbon.carbon_resource_type GROUP BY category;")
+    public List<ResourceTypeVo> selectResourceTypeByCount();
+
 }

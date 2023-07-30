@@ -63,4 +63,7 @@ public interface ICarbonResourceTypeService
     public int deleteCarbonResourceTypeById(Long id);
 
     public AjaxResult selectResourceTypeNameList(CarbonResourceType resourceType);
+
+    public AjaxResult selectResourceTypeByCount();
+
 }

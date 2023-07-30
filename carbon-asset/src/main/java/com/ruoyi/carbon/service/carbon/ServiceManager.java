@@ -1,21 +1,18 @@
 package com.ruoyi.carbon.service.carbon;
 
 import com.ruoyi.carbon.config.SystemConfig;
-import java.lang.Exception;
-import java.lang.String;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.PostConstruct;
-
-import com.ruoyi.souvenir.service.souvenir.SouvenirCardService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @Data
@@ -55,7 +52,7 @@ public class ServiceManager {
     	SouvenirCardService souvenirCardService = new SouvenirCardService();
     	souvenirCardService.setAddress(this.config.getContract().getSouvenirCardAddress());
     	souvenirCardService.setClient(this.client);
-    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor = 
     		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
     	souvenirCardService.setTxProcessor(txProcessor);
     	serviceMap.put(userAddress, souvenirCardService);
@@ -85,7 +82,7 @@ public class ServiceManager {
     	CarbonUserServiceService carbonUserServiceService = new CarbonUserServiceService();
     	carbonUserServiceService.setAddress(this.config.getContract().getCarbonUserServiceAddress());
     	carbonUserServiceService.setClient(this.client);
-    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor = 
     		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
     	carbonUserServiceService.setTxProcessor(txProcessor);
     	serviceMap.put(userAddress, carbonUserServiceService);
@@ -115,7 +112,7 @@ public class ServiceManager {
     	CarbonDataStorageService carbonDataStorageService = new CarbonDataStorageService();
     	carbonDataStorageService.setAddress(this.config.getContract().getCarbonDataStorageAddress());
     	carbonDataStorageService.setClient(this.client);
-    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor = 
     		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
     	carbonDataStorageService.setTxProcessor(txProcessor);
     	serviceMap.put(userAddress, carbonDataStorageService);
@@ -145,7 +142,7 @@ public class ServiceManager {
     	CarbonAssetServiceService carbonAssetServiceService = new CarbonAssetServiceService();
     	carbonAssetServiceService.setAddress(this.config.getContract().getCarbonAssetServiceAddress());
     	carbonAssetServiceService.setClient(this.client);
-    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor =
+    	org.fisco.bcos.sdk.transaction.manager.AssembleTransactionProcessor txProcessor = 
     		org.fisco.bcos.sdk.transaction.manager.TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, cryptoKeyPair);
     	carbonAssetServiceService.setTxProcessor(txProcessor);
     	serviceMap.put(userAddress, carbonAssetServiceService);

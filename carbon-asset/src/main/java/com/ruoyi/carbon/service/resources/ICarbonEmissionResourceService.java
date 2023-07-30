@@ -91,4 +91,9 @@ public interface ICarbonEmissionResourceService
     public AjaxResult verifyEnterpriseEmission(VerifyVo verifyVo);
 
     public ArrayList<CarbonEmissionResource> selectEmissionResourceByAddress(String enterpriseAddress);
+
+    public List<CarbonEmissionResource> selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource);
+
+    public AjaxResult selectEmissionAndTxAndApplyAndQuaList();
+
 }
