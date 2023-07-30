@@ -45,6 +45,10 @@
             <if test="buyAddress != null  and buyAddress != ''">buy_address = #{address}</if>
         </where>
     </select>
+    <select id="selectTransactionListOfNew" resultMap="CarbonTransactionResult">
+        <include refid="selectCarbonTransactionVo"/>
+        order by transaction_time limit 10
+    </select>
 
     <insert id="insertCarbonTransaction" parameterType="CarbonTransaction">
         insert into carbon_transaction

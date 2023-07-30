@@ -109,7 +109,6 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
     @Override
     public AjaxResult selectTransactionNewTxList() {
         List<CarbonTransaction> carbonTransactions = carbonTransactionMapper.selectTransactionListOfNew();
-        System.out.println(carbonTransactions);
         if (carbonTransactions.size() < 0)
         {
             return AjaxResult.error("当前还没有交易");
