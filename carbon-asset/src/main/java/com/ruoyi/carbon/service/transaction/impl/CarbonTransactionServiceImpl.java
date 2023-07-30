@@ -1,8 +1,10 @@
 package com.ruoyi.carbon.service.transaction.impl;
 
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
+import com.ruoyi.carbon.domain.vo.TransactionVo;
 import com.ruoyi.carbon.mapper.CarbonTransactionMapper;
 import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
+import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,5 +99,21 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
     public ArrayList<CarbonTransaction> selectTransactionListByAddress(String enterpriseAddress) {
 
         return carbonTransactionMapper.selectTransactionListByAddress(enterpriseAddress);
+    }
+
+    @Override
+    public List<TransactionVo> selectTransactionOfWeek() {
+        return carbonTransactionMapper.selectTransactionOfWeek();
+    }
+
+    @Override
+    public AjaxResult selectTransactionNewTxList() {
+        List<CarbonTransaction> carbonTransactions = carbonTransactionMapper.selectTransactionListOfNew();
+        System.out.println(carbonTransactions);
+        if (carbonTransactions.size() < 0)
+        {
+            return AjaxResult.error("当前还没有交易");
+        }
+        return AjaxResult.success(carbonTransactions);
     }
 }

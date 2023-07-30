@@ -1,6 +1,7 @@
 package com.ruoyi.carbon.service.enterprise.impl;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
+import com.ruoyi.carbon.domain.vo.AssetVo;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseAssetMapper;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,5 +96,10 @@ public class CarbonEnterpriseAssetServiceImpl implements ICarbonEnterpriseAssetS
     @Override
     public List<CarbonEnterpriseAsset> selectCarbonEnterpriseAssetByAddress(String address) {
         return carbonEnterpriseAssetMapper.selectCarbonEnterpriseAssetByAddress(address);
+    }
+
+    @Override
+    public List<AssetVo> selectEnterpriseAssetByListOfWeek() {
+        return carbonEnterpriseAssetMapper.selectEnterpriseAssetByListOfWeek();
     }
 }

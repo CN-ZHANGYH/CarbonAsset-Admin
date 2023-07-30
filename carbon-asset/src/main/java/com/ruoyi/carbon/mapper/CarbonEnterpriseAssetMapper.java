@@ -1,6 +1,8 @@
 package com.ruoyi.carbon.mapper;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
+import com.ruoyi.carbon.domain.vo.AssetVo;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -61,5 +63,30 @@ public interface CarbonEnterpriseAssetMapper
     public int deleteCarbonEnterpriseAssetByAssetIds(Long[] assetIds);
 
     public List<CarbonEnterpriseAsset> selectCarbonEnterpriseAssetByAddress(String enterpriseAddress);
+
+    @Select("\n" +
+            "SELECT\n" +
+            "    CASE WHEN WEEKDAY(date_table.date) = 0 THEN '周一'\n" +
+            "         WHEN WEEKDAY(date_table.date) = 1 THEN '周二'\n" +
+            "         WHEN WEEKDAY(date_table.date) = 2 THEN '周三'\n" +
+            "         WHEN WEEKDAY(date_table.date) = 3 THEN '周四'\n" +
+            "         WHEN WEEKDAY(date_table.date) = 4 THEN '周五'\n" +
+            "         WHEN WEEKDAY(date_table.date) = 5 THEN '周六'\n" +
+            "         WHEN WEEKDAY(date_table.date) = 6 THEN '周日'\n" +
+            "        END AS week,\n" +
+            "    IFNULL(SUM(carbon_enterprise_asset.asset_quantity), 0) AS value\n" +
+            "FROM\n" +
+            "    (SELECT\n" +
+            "             CURDATE() - INTERVAL (a.a + (10 * b.a) + (100 * c.a)) DAY AS date\n" +
+            "     FROM\n" +
+            "         (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS a\n" +
+            "             CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS b\n" +
+            "             CROSS JOIN (SELECT 0 AS a UNION ALL SELECT 1 UNION ALL SELECT 2 UNION ALL SELECT 3 UNION ALL SELECT 4 UNION ALL SELECT 5 UNION ALL SELECT 6 UNION ALL SELECT 7 UNION ALL SELECT 8 UNION ALL SELECT 9) AS c) AS date_table\n" +
+            "        LEFT JOIN carbon_enterprise_asset ON DATE(carbon_enterprise_asset.time) = DATE(date_table.date)\n" +
+            "WHERE\n" +
+            "        date_table.date >= CURDATE() - INTERVAL 6 DAY\n" +
+            "GROUP BY date_table.date\n" +
+            "ORDER BY date_table.date ASC;\n")
+    public List<AssetVo> selectEnterpriseAssetByListOfWeek();
 
 }

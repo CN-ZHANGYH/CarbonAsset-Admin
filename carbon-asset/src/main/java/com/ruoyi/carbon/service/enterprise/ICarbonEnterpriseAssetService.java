@@ -1,6 +1,7 @@
 package com.ruoyi.carbon.service.enterprise;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
+import com.ruoyi.carbon.domain.vo.AssetVo;
 
 import java.util.List;
 
@@ -62,4 +63,6 @@ public interface ICarbonEnterpriseAssetService
 
 
     public List<CarbonEnterpriseAsset> selectCarbonEnterpriseAssetByAddress(String address);
+
+    public List<AssetVo> selectEnterpriseAssetByListOfWeek();
 }

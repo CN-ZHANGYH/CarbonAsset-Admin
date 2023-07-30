@@ -1,6 +1,7 @@
 package com.ruoyi.carbon.service.enterprise;
 
 import com.ruoyi.carbon.domain.carbon.CarbonQualification;
+import com.ruoyi.carbon.domain.vo.QualificationVo;
 import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -78,5 +79,8 @@ public interface ICarbonQualificationService
      * @return 返回结果
      */
     public AjaxResult uploadQualification(MultipartFile file);
+
+    public List<QualificationVo> selectQualificationIsVerifyOfWeeek();
+
 
 }

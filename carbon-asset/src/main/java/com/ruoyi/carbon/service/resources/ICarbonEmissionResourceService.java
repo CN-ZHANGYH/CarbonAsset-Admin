@@ -94,4 +94,6 @@ public interface ICarbonEmissionResourceService
 
     public List<CarbonEmissionResource> selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource);
 
+    public AjaxResult selectEmissionAndTxAndApplyAndQuaList();
+
 }

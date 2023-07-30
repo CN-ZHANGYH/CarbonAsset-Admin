@@ -5,19 +5,19 @@ import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.carbon.CarbonQualification;
-import com.ruoyi.carbon.domain.vo.EmissionVo;
-import com.ruoyi.carbon.domain.vo.ResourceVo;
-import com.ruoyi.carbon.domain.vo.VerifyVo;
+import com.ruoyi.carbon.domain.vo.*;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.mapper.CarbonEmissionResourceMapper;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceEnterpriseEmissionInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceUploadEnterpriseEmissionInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceVerifyEnterpriseEmissionInputBO;
+import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
 import com.ruoyi.carbon.service.enterprise.ICarbonQualificationService;
 import com.ruoyi.carbon.service.regulator.ICarbonRegulatorService;
 import com.ruoyi.carbon.service.resources.ICarbonEmissionResourceService;
+import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
@@ -60,6 +60,12 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
 
     @Autowired
     private CarbonEmissionResourceMapper carbonEmissionResourceMapper;
+
+    @Autowired
+    private ICarbonTransactionService transactionService;
+
+    @Autowired
+    private ICarbonEnterpriseAssetService enterpriseAssetService;
 
     /**
      * 查询企业排放资源
@@ -325,5 +331,29 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
         return emissionResources.stream()
                 .filter(emissionResource -> emissionResource.getIsApprove() == 0)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public AjaxResult selectEmissionAndTxAndApplyAndQuaList() {
+        // 查询周一到周日每天的碳排放总量
+        List<EmissionResourceVo> emissionResourceVos = carbonEmissionResourceMapper.selectEmissionResourceOfWeek();
+        List<Integer> resourceValues = emissionResourceVos.stream().map(EmissionResourceVo::getValue).collect(Collectors.toList());
+        // 查询近一周的每天交易总量
+        List<TransactionVo> transactionVos = transactionService.selectTransactionOfWeek();
+        List<Integer> transactionValues = transactionVos.stream().map(TransactionVo::getValue).collect(Collectors.toList());
+        // 查询近一周的每天认证情况
+        List<QualificationVo> qualificationVos = qualificationService.selectQualificationIsVerifyOfWeeek();
+        List<Integer> qualificationValues = qualificationVos.stream().map(QualificationVo::getValue).collect(Collectors.toList());
+        // 查询近一周的每天出售情况
+        List<AssetVo> assetVos = enterpriseAssetService.selectEnterpriseAssetByListOfWeek();
+        List<Integer> assetValues = assetVos.stream().map(AssetVo::getValue).collect(Collectors.toList());
+
+        ArrayList<List<Integer>> arrayList = new ArrayList<>();
+        arrayList.add(resourceValues);
+        arrayList.add(transactionValues);
+        arrayList.add(qualificationValues);
+        arrayList.add(assetValues);
+
+        return AjaxResult.success(arrayList);
     }
 }

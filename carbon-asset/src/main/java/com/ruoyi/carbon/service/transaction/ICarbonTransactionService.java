@@ -1,6 +1,8 @@
 package com.ruoyi.carbon.service.transaction;
 
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
+import com.ruoyi.carbon.domain.vo.TransactionVo;
+import com.ruoyi.common.core.domain.AjaxResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,4 +64,9 @@ public interface ICarbonTransactionService
     public int deleteCarbonTransactionByTransactionId(Long transactionId);
 
     public ArrayList<CarbonTransaction> selectTransactionListByAddress(String enterpriseAddress);
+
+    public List<TransactionVo> selectTransactionOfWeek();
+
+    public AjaxResult selectTransactionNewTxList();
+
 }

@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.carbon.CarbonQualification;
 import com.ruoyi.carbon.domain.user.UserKey;
+import com.ruoyi.carbon.domain.vo.QualificationVo;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
 import com.ruoyi.carbon.mapper.CarbonQualificationMapper;
@@ -193,6 +194,11 @@ public class CarbonQualificationServiceImpl implements ICarbonQualificationServi
         if (StringUtils.isEmpty(imgUrl)) return AjaxResult.error("上传失败");
         ajax.put("imgUrl",imgUrl);
         return ajax;
+    }
+
+    @Override
+    public List<QualificationVo> selectQualificationIsVerifyOfWeeek() {
+        return carbonQualificationMapper.selectQualificationByVerifyListOfWeek();
     }
 
     /**
