@@ -8,6 +8,8 @@ import com.ruoyi.carbon.domain.carbon.CarbonQualification;
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.domain.user.UserKey;
 import com.ruoyi.carbon.domain.vo.BuyVo;
+import com.ruoyi.carbon.domain.vo.EnterpriseVo;
+import com.ruoyi.carbon.domain.vo.ForgetPassVo;
 import com.ruoyi.carbon.domain.vo.SellVo;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
@@ -19,18 +21,21 @@ import com.ruoyi.carbon.service.enterprise.ICarbonQualificationService;
 import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.carbon.service.user.UserRegisterService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
+import com.ruoyi.carbon.utils.TCOSUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
+import org.aspectj.weaver.loadtime.Aj;
 import org.fisco.bcos.sdk.transaction.model.dto.CallResponse;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -60,8 +65,11 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
     private RedisCache redisCache;
 
     @Autowired
+    private TCOSUtil tcosUtil;
+
+    @Autowired
     private UserRegisterService userRegisterService;
-    
+
     @Autowired
     private RawContractLoaderFactory rawContractLoaderFactory;
     @Autowired
@@ -411,6 +419,68 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         return AjaxResult.error("更新失败");
     }
 
+    @Override
+    public AjaxResult updateEnterpriseInfo(EnterpriseVo enterpriseVo) {
+        if (StringUtils.isEmpty(enterpriseVo.getEnterprise_name())) {
+            return AjaxResult.error("该企业不能为空");
+        }
+        if (StringUtils.isEmpty(enterpriseVo.getEnterprise_address())) {
+            return AjaxResult.error("该企业账户不能为空");
+        }
+        // 更新平台用户
+        SysUser sysUser = userService.selectUserByNickName(enterpriseVo.getEnterprise_name());
+        sysUser.setAvatar(enterpriseVo.getAvatar());
+        sysUser.setEmail(enterpriseVo.getEmail());
+        sysUser.setPhonenumber(enterpriseVo.getPhonenumber());
+        int status = userService.updateUserProfile(sysUser);
+        if (status > 0)
+        {
+            return AjaxResult.success("更新成功");
+        }
+        return AjaxResult.error("更新失败");
+    }
+
+    @Override
+    public AjaxResult updateAvatar(MultipartFile file) {
+        if (file != null)
+        {
+            return AjaxResult.error("文件格式错误");
+        }
+        String imgUrl = tcosUtil.uploadFile(file);
+        if (StringUtils.isEmpty(imgUrl))
+        {
+            return AjaxResult.error("上传头像异常");
+        }
+        AjaxResult ajax = AjaxResult.success("更新头像成功");
+        ajax.put("imgUrl",imgUrl);
+        return ajax;
+    }
+
+    @Override
+    public AjaxResult forgetUserPassword(ForgetPassVo forgetPassVo) {
+        if (StringUtils.isEmpty(forgetPassVo.getEnterpriseName()))
+        {
+            return AjaxResult.error("企业名称不能为空");
+        }
+        SysUser sysUser = userService.selectUserByNickName(forgetPassVo.getEnterpriseName());
+        if (Objects.isNull(sysUser))
+        {
+            return AjaxResult.error("企业未注册");
+        }
+        if (!forgetPassVo.getFirstPassword().equals(forgetPassVo.getSecondPassword()))
+        {
+            return AjaxResult.error("两次密码不一致");
+        }
+        sysUser.setPassword(SecurityUtils.encryptPassword(forgetPassVo.getFirstPassword()));
+        int status = userService.updateUserProfile(sysUser);
+        if (status > 0)
+        {
+            return AjaxResult.success("重置密码成功");
+        }
+        return AjaxResult.error("重置密码失败");
+
+
+    }
 
 
     private AjaxResult selectEnterpriseInfoByChain(String address) {

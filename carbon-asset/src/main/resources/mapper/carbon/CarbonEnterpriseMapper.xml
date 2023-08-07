@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.carbon.mapper.CarbonEnterpriseMapper">
-    
+
     <resultMap type="CarbonEnterprise" id="CarbonEnterpriseResult">
         <result property="enterpriseId"    column="enterprise_id"    />
         <result property="enterpriseAddress"    column="enterprise_address"    />
@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectUserWithEnterpriseByAddress" parameterType="String" resultType="enterpriseVo">
       <![CDATA[
-            SELECT ce.*, sys_user.user_name, sys_user.avatar,sys_user.email,sys_user.password
+            SELECT ce.*, sys_user.user_name, sys_user.avatar,sys_user.email,sys_user.password,sys_user.phonenumber,sys_user.create_time
             FROM sys_user
                      JOIN carbon_enterprise ce ON sys_user.nick_name = ce.enterprise_name
             WHERE enterprise_address = #{address}
@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectCarbonEnterpriseList" parameterType="CarbonEnterprise" resultMap="CarbonEnterpriseResult">
         <include refid="selectCarbonEnterpriseVo"/>
-        <where>  
+        <where>
             <if test="enterpriseAddress != null  and enterpriseAddress != ''"> and enterprise_address = #{enterpriseAddress}</if>
             <if test="priavateKey != null  and priavateKey != ''"> and priavate_key = #{priavateKey}</if>
             <if test="enterpriseName != null  and enterpriseName != ''"> and enterprise_name like concat('%', #{enterpriseName}, '%')</if>
@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="qualificationId != null "> and qualification_id = #{qualificationId}</if>
         </where>
     </select>
-    
+
     <select id="selectCarbonEnterpriseByEnterpriseId" parameterType="Long" resultMap="CarbonEnterpriseResult">
         <include refid="selectCarbonEnterpriseVo"/>
         where enterprise_id = #{enterpriseId}
@@ -131,7 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteCarbonEnterpriseByEnterpriseIds" parameterType="String">
-        delete from carbon_enterprise where enterprise_id in 
+        delete from carbon_enterprise where enterprise_id in
         <foreach item="enterpriseId" collection="array" open="(" separator="," close=")">
             #{enterpriseId}
         </foreach>
