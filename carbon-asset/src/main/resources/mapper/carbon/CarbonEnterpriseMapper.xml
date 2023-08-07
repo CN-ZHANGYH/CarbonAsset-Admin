@@ -19,12 +19,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
 
-    <select id="selectUserWithEnterpriseByAddress" parameterType="String" resultType="enterpriseVo">
+    <select id="selectUserWithEnterpriseEnterpriseName" parameterType="String" resultType="enterpriseVo">
       <![CDATA[
             SELECT ce.*, sys_user.user_name, sys_user.avatar,sys_user.email,sys_user.password,sys_user.phonenumber,sys_user.create_time
             FROM sys_user
                      JOIN carbon_enterprise ce ON sys_user.nick_name = ce.enterprise_name
-            WHERE enterprise_address = #{address}
+            WHERE enterprise_name = #{enterprise}
             ]]>
     </select>
 
