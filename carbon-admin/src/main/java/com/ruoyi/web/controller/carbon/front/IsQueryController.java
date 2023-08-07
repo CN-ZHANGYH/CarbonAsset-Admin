@@ -26,8 +26,8 @@ public class IsQueryController {
     @ApiOperation("查询企业的详细信息")
     @PostMapping("/enterpriseInfo")
     @Log(title = "查询企业的详细信息",businessType = BusinessType.OTHER)
-    public AjaxResult queryEnterpriseInfo(@RequestParam("address") String address){
-        return enterpriseQueryService.queryEnterpriseInfo(address);
+    public AjaxResult queryEnterpriseInfo(@RequestParam("enterprise") String enterprise){
+        return enterpriseQueryService.queryEnterpriseInfo(enterprise);
     }
 
 

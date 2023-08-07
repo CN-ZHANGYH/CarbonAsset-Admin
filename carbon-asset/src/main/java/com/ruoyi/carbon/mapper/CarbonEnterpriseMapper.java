@@ -8,15 +8,15 @@ import java.util.List;
 
 /**
  * 企业信息Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2023-07-08
  */
-public interface CarbonEnterpriseMapper 
+public interface CarbonEnterpriseMapper
 {
     /**
      * 查询企业信息
-     * 
+     *
      * @param enterpriseId 企业信息主键
      * @return 企业信息
      */
@@ -24,7 +24,7 @@ public interface CarbonEnterpriseMapper
 
     /**
      * 查询企业信息列表
-     * 
+     *
      * @param carbonEnterprise 企业信息
      * @return 企业信息集合
      */
@@ -32,7 +32,7 @@ public interface CarbonEnterpriseMapper
 
     /**
      * 新增企业信息
-     * 
+     *
      * @param carbonEnterprise 企业信息
      * @return 结果
      */
@@ -40,7 +40,7 @@ public interface CarbonEnterpriseMapper
 
     /**
      * 修改企业信息
-     * 
+     *
      * @param carbonEnterprise 企业信息
      * @return 结果
      */
@@ -48,7 +48,7 @@ public interface CarbonEnterpriseMapper
 
     /**
      * 删除企业信息
-     * 
+     *
      * @param enterpriseId 企业信息主键
      * @return 结果
      */
@@ -56,7 +56,7 @@ public interface CarbonEnterpriseMapper
 
     /**
      * 批量删除企业信息
-     * 
+     *
      * @param enterpriseIds 需要删除的数据主键集合
      * @return 结果
      */
@@ -68,7 +68,7 @@ public interface CarbonEnterpriseMapper
 
     public List<CarbonEnterprise> selectEnterpriseListByAddress(HashMap<String,Object> map);
 
-    public EnterpriseVo selectUserWithEnterpriseByAddress( String address);
+    public EnterpriseVo selectUserWithEnterpriseEnterpriseName(String enterprise);
 
 
 }

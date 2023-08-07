@@ -42,17 +42,16 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
     /**
      * 查询企业用户的链上实时的信息
      *
-     * @param address 企业的的账户地址
+     * @param enterpriseName 企业的的账户地址
      * @return 返回结果
      */
     @Override
-    public AjaxResult queryEnterpriseInfo(String address) {
-        if (StringUtils.isEmpty(address))
+    public AjaxResult queryEnterpriseInfo(String enterpriseName) {
+        if (StringUtils.isEmpty(enterpriseName))
         {
             return AjaxResult.error("当前的用户地址为空");
         }
-        EnterpriseVo enterprise = carbonEnterpriseMapper.selectUserWithEnterpriseByAddress(address);
-        System.out.println(enterprise);
+        EnterpriseVo enterprise = carbonEnterpriseMapper.selectUserWithEnterpriseEnterpriseName(enterpriseName);
         if (Objects.isNull(enterprise))
         {
             return AjaxResult.error("查询失败");
@@ -76,7 +75,7 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         {
             return AjaxResult.error("当前的用户地址为空");
         }
-        EnterpriseVo enterpriseVo = carbonEnterpriseMapper.selectUserWithEnterpriseByAddress(address);
+        EnterpriseVo enterpriseVo = carbonEnterpriseMapper.selectUserWithEnterpriseEnterpriseName(address);
         if (Objects.isNull(enterpriseVo))
         {
             return AjaxResult.error("该企业不存在");
