@@ -10,6 +10,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.framework.web.service.SysLoginService;
 import com.ruoyi.framework.web.service.SysPermissionService;
 import com.ruoyi.system.service.ISysMenuService;
+import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ import java.util.Set;
 
 /**
  * 登录验证
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -28,6 +29,9 @@ public class SysLoginController
     private SysLoginService loginService;
 
     @Autowired
+    private ISysUserService userService;
+
+    @Autowired
     private ISysMenuService menuService;
 
     @Autowired
@@ -35,7 +39,7 @@ public class SysLoginController
 
     /**
      * 登录方法
-     * 
+     *
      * @param loginBody 登录信息
      * @return 结果
      */
@@ -57,9 +61,14 @@ public class SysLoginController
         return ajax.put("regulator", carbonRegulator);
     }
 
+    @GetMapping("/getEnterpriseInfo")
+    public AjaxResult getEnterpriseInfo(@RequestParam("username") String username){
+        return userService.getEnterpriseInfo(username);
+    }
+
     /**
      * 获取用户信息
-     * 
+     *
      * @return 用户信息
      */
     @GetMapping("getInfo")
@@ -80,7 +89,7 @@ public class SysLoginController
 
     /**
      * 获取路由信息
-     * 
+     *
      * @return 路由信息
      */
     @GetMapping("getRouters")

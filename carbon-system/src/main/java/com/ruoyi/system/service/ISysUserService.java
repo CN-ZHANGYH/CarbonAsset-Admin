@@ -1,6 +1,8 @@
 package com.ruoyi.system.service;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 
 /**
@@ -207,4 +209,11 @@ public interface ISysUserService
      * @return 结果
      */
     public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
+
+    /**
+     * 根据用户名查询用户信息
+     * @param username 用户名
+     * @return 返回结果
+     */
+    public AjaxResult getEnterpriseInfo(String username);
 }
