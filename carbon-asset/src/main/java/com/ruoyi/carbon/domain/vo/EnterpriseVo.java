@@ -58,4 +58,10 @@ public class EnterpriseVo {
     /** 用户密码 */
     private String password;
 
+    /** 用户手机号 */
+    private String phonenumber;
+
+    /** 注册时间 */
+    private String create_time;
+
 }

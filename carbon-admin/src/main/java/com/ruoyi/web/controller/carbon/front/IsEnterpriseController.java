@@ -3,6 +3,8 @@ package com.ruoyi.web.controller.carbon.front;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.vo.BuyVo;
+import com.ruoyi.carbon.domain.vo.EnterpriseVo;
+import com.ruoyi.carbon.domain.vo.ForgetPassVo;
 import com.ruoyi.carbon.domain.vo.SellVo;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
 import com.ruoyi.common.annotation.Log;
@@ -13,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 
@@ -69,6 +72,28 @@ public class IsEnterpriseController extends BaseController {
                                           @RequestParam("count")BigInteger count
     ) throws Exception {
         return enterpriseService.updateTotalEmission(address,count);
+    }
+
+    @ApiOperation("企业更新个人信息")
+    @PostMapping("/updateInfo")
+    @Log(title = "企业更新个人信息",businessType = BusinessType.UPDATE)
+    public AjaxResult updateEnterpriseInfo(@RequestBody EnterpriseVo enterpriseVo){
+        return enterpriseService.updateEnterpriseInfo(enterpriseVo);
+    }
+
+
+    @ApiOperation("上传头像")
+    @PostMapping("/uploadAvatar")
+    @Log(title = "上传头像",businessType = BusinessType.UPDATE)
+    public AjaxResult updateAvatar(@RequestParam("file") MultipartFile file){
+        return enterpriseService.updateAvatar(file);
+    }
+
+    @ApiOperation("更新企业账户密码")
+    @PostMapping("/updatePass")
+    @Log(title = "更新企业账户密码",businessType = BusinessType.UPDATE)
+    public AjaxResult updatePassword(@RequestBody ForgetPassVo forgetPassVo){
+        return enterpriseService.forgetUserPassword(forgetPassVo);
     }
 
 }
