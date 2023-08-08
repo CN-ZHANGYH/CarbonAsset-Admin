@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 import javax.validation.Validator;
 
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.sun.corba.se.spi.ior.ObjectKey;
+import org.aspectj.weaver.loadtime.Aj;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +67,9 @@ public class SysUserServiceImpl implements ISysUserService
 
     @Autowired
     protected Validator validator;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 根据条件分页查询用户列表
@@ -563,5 +569,15 @@ public class SysUserServiceImpl implements ISysUserService
             return AjaxResult.error("该用户不存在");
         }
         return AjaxResult.success().put("data",sysUser);
+    }
+
+    @Override
+    public AjaxResult checkTokenIsTimeOut(String userKey) {
+        Object token = redisCache.getCacheObject(userKey);
+        if (Objects.isNull(token))
+        {
+            return AjaxResult.success("false");
+        }
+        return AjaxResult.success("true");
     }
 }

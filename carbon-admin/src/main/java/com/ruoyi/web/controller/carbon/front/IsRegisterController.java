@@ -45,7 +45,7 @@ public class IsRegisterController extends BaseController
         AjaxResult ajax = AjaxResult.success();
         String code = emailUserService.sendEmailCode(email);
         ajax.put("msg","发送成功");
-        ajax.put("code",code);
+        System.out.println(code);
         return ajax;
     }
 }

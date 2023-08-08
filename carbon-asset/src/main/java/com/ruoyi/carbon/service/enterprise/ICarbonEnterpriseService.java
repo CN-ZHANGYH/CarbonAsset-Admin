@@ -110,4 +110,6 @@ public interface ICarbonEnterpriseService
      * @return 返回结果
      */
     public AjaxResult forgetUserPassword(ForgetPassVo forgetPassVo);
+
+    public AjaxResult updateAvatarByName(String enterprise, String avatar);
 }

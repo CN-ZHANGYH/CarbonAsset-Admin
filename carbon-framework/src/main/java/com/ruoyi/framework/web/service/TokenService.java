@@ -1,5 +1,6 @@
 package com.ruoyi.framework.web.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -106,16 +107,20 @@ public class TokenService
      * @param loginUser 用户信息
      * @return 令牌
      */
-    public String createToken(LoginUser loginUser)
+    public ArrayList<String> createToken(LoginUser loginUser)
     {
         String token = IdUtils.fastUUID();
+        System.out.println(token);
         loginUser.setToken(token);
         setUserAgent(loginUser);
-        refreshToken(loginUser);
+        String userKey = refreshToken(loginUser);
 
         Map<String, Object> claims = new HashMap<>();
         claims.put(Constants.LOGIN_USER_KEY, token);
-        return createToken(claims);
+        ArrayList<String> result = new ArrayList<>();
+        result.add(createToken(claims));
+        result.add(userKey);
+        return result;
     }
 
     /**
@@ -139,13 +144,14 @@ public class TokenService
      *
      * @param loginUser 登录信息
      */
-    public void refreshToken(LoginUser loginUser)
+    public String refreshToken(LoginUser loginUser)
     {
         loginUser.setLoginTime(System.currentTimeMillis());
         loginUser.setExpireTime(loginUser.getLoginTime() + expireTime * MILLIS_MINUTE);
         // 根据uuid将loginUser缓存
         String userKey = getTokenKey(loginUser.getToken());
         redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.MINUTES);
+        return userKey;
     }
 
     /**

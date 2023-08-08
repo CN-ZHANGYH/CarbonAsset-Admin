@@ -442,7 +442,7 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
 
     @Override
     public AjaxResult updateAvatar(MultipartFile file) {
-        if (file != null)
+        if (file == null)
         {
             return AjaxResult.error("文件格式错误");
         }
@@ -480,6 +480,26 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         return AjaxResult.error("重置密码失败");
 
 
+    }
+
+    @Override
+    public AjaxResult updateAvatarByName(String enterprise, String avatar) {
+        if (StringUtils.isEmpty(enterprise) || StringUtils.isEmpty(avatar))
+        {
+            return AjaxResult.error("企业和头像不能为空");
+        }
+        SysUser sysUser = userService.selectUserByNickName(enterprise);
+        if (Objects.isNull(sysUser))
+        {
+            return AjaxResult.error("该企业不存在");
+        }
+        sysUser.setAvatar(avatar);
+        int status = userService.updateUserProfile(sysUser);
+        if (status > 0)
+        {
+            return AjaxResult.success("更新头像成功");
+        }
+        return AjaxResult.error("更新失败");
     }
 
 

@@ -96,4 +96,10 @@ public class IsEnterpriseController extends BaseController {
         return enterpriseService.forgetUserPassword(forgetPassVo);
     }
 
+    @ApiOperation("更新用户的头像")
+    @PostMapping("/updateAvatar")
+    @Log(title = "更新企业的的头像",businessType = BusinessType.UPDATE)
+    public AjaxResult updateAvatarByName(@RequestParam("enterprise") String enterprise,@RequestParam("avatar") String avatar){
+        return enterpriseService.updateAvatarByName(enterprise,avatar);
+    }
 }
