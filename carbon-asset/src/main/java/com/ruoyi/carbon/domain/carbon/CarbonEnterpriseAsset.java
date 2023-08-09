@@ -13,7 +13,7 @@ import java.math.BigInteger;
 
 /**
  * 企业出售资产对象 carbon_enterprise_asset
- * 
+ *
  * @author 张宇豪
  * @date 2023-07-08
  */
@@ -53,16 +53,12 @@ public class CarbonEnterpriseAsset extends BaseEntity
     @Excel(name = "出售订单的状态")
     private Integer status;
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("assetId", getAssetId())
-            .append("enterpriseId", getEnterpriseId())
-            .append("enterpriseAddress", getEnterpriseAddress())
-            .append("assetQuantity", getAssetQuantity())
-            .append("assetAmount", getAssetAmount())
-            .append("time", getTime())
-            .append("status", getStatus())
-            .toString();
-    }
+    @Excel(name = "出售名称")
+    private String title;
+
+    @Excel(name = "出售订单描述")
+    private String description;
+
+    @Excel(name = "出售的碳额度封面")
+    private String image;
 }

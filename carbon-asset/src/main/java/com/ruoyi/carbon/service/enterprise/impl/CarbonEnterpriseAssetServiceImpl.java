@@ -4,6 +4,7 @@ import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.AssetVo;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseAssetMapper;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
+import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -102,4 +103,19 @@ public class CarbonEnterpriseAssetServiceImpl implements ICarbonEnterpriseAssetS
     public List<AssetVo> selectEnterpriseAssetByListOfWeek() {
         return carbonEnterpriseAssetMapper.selectEnterpriseAssetByListOfWeek();
     }
+
+    @Override
+    public AjaxResult queryEnterpriseNewSellerAssetLimitFive(String address) {
+        List<CarbonEnterpriseAsset> enterpriseAssets = carbonEnterpriseAssetMapper.queryEnterpriseNewSellerAssetLimitFive(address);
+        System.out.println(enterpriseAssets);
+        if (enterpriseAssets.size() <= 0)
+        {
+            return AjaxResult.error("最新暂无出售记录");
+        }
+        AjaxResult ajax = AjaxResult.success();
+        return ajax.put("data", enterpriseAssets);
+    }
+
+
+
 }

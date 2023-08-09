@@ -102,4 +102,14 @@ public class IsEnterpriseController extends BaseController {
     public AjaxResult updateAvatarByName(@RequestParam("enterprise") String enterprise,@RequestParam("avatar") String avatar){
         return enterpriseService.updateAvatarByName(enterprise,avatar);
     }
+
+
+    @ApiOperation("上传商品的图片")
+    @PostMapping("/uploadProductImage")
+    @Log(title = "上传商品的图片",businessType = BusinessType.UPDATE)
+    public AjaxResult uploadProductImage(@RequestParam("file") MultipartFile file){
+        return enterpriseService.uploadProductImage(file);
+    }
+
+
 }

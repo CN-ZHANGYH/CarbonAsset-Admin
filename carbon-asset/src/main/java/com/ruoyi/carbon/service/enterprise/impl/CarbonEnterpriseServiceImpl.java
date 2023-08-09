@@ -38,10 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -223,6 +220,10 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         {
             return AjaxResult.error("当前用户未认证");
         }
+        if (StringUtils.isEmpty(sellVo.getImage()))
+        {
+            return AjaxResult.error("请上传商品封面");
+        }
         // 调用链上数据
         CarbonAssetServiceSellEmissionLimitInputBO emissionLimitInputBO = new CarbonAssetServiceSellEmissionLimitInputBO();
         emissionLimitInputBO.set_amount(sellVo.getAmount());
@@ -232,11 +233,10 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         // get(1)
         // [ 0, 0, "0x0000000000000000000000000000000000000000", 0, 0, 0, 0 ]"
         // 切换用户私钥
-        UserKey userKey = rawContractLoaderFactory.GetUserPrivateKey(sellVo.getUserAddress());
         try {
             // 业务上链
             TransactionResponse transactionResponse = rawContractLoaderFactory
-                    .GetTransactionResponse(userKey.getPrivateKey(), "sellEmissionLimit", params);
+                    .GetTransactionResponse(carbonEnterprise.getPriavateKey(), "sellEmissionLimit", params);
             if (transactionResponse.getReturnMessage().equals("Success")){
                 JSONArray result = JSON.parseArray(transactionResponse.getValues()).getJSONArray(1);
                 CarbonEnterpriseAsset enterpriseAsset = new CarbonEnterpriseAsset();
@@ -247,8 +247,9 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
                 enterpriseAsset.setAssetAmount(result.getBigInteger(4));
                 enterpriseAsset.setTime(BlockTimestampUtil.convert(result.getLongValue(5)));
                 enterpriseAsset.setStatus(result.getIntValue(6));
-
-
+                enterpriseAsset.setTitle(sellVo.getTitle());
+                enterpriseAsset.setDescription(sellVo.getDescription());
+                enterpriseAsset.setImage(sellVo.getImage());
                 // 企业需要更新自己的碳额度
                 Integer qualificationId = carbonEnterprise.getQualificationId();
                 int code = this.insertOrder(enterpriseAsset,qualificationId,sellVo.getQuality());
@@ -500,6 +501,21 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
             return AjaxResult.success("更新头像成功");
         }
         return AjaxResult.error("更新失败");
+    }
+
+    @Override
+    public AjaxResult uploadProductImage(MultipartFile file) {
+        if (file == null)
+        {
+            return AjaxResult.error("文件不能为空");
+        }
+        String imageUrl = tcosUtil.uploadFile(file);
+        if (StringUtils.isEmpty(imageUrl))
+        {
+            return AjaxResult.error("上传失败");
+        }
+        AjaxResult ajax = AjaxResult.success();
+        return ajax.put("imageUrl", imageUrl);
     }
 
 

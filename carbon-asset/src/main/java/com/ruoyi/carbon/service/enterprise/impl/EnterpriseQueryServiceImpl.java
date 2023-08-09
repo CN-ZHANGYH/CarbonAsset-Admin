@@ -1,8 +1,14 @@
 package com.ruoyi.carbon.service.enterprise.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.Query;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.IPage;
 import com.ruoyi.carbon.domain.carbon.*;
 import com.ruoyi.carbon.domain.vo.EnterpriseVo;
+import com.ruoyi.carbon.domain.vo.QueryErPage;
+import com.ruoyi.carbon.mapper.CarbonEmissionResourceMapper;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
 import com.ruoyi.carbon.mapper.CarbonQualificationMapper;
 import com.ruoyi.carbon.service.enterprise.EnterpriseQueryService;
@@ -11,6 +17,7 @@ import com.ruoyi.carbon.service.resources.ICarbonEmissionResourceService;
 import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +30,9 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
 
     @Autowired
     private CarbonEnterpriseMapper carbonEnterpriseMapper;
+
+    @Autowired
+    private CarbonEmissionResourceMapper carbonEmissionResourceMapper;
 
     @Autowired
     private CarbonQualificationMapper qualificationMapper;
@@ -66,16 +76,16 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
     /**
      * 企业通过自己的资质ID进行查询
      *
-     * @param address 资质ID
+     * @param enterprise 资质ID
      * @return 返回结果
      */
     @Override
-    public AjaxResult queryQualificationInfo(String address) {
-        if (StringUtils.isEmpty(address))
+    public AjaxResult queryQualificationInfo(String enterprise) {
+        if (StringUtils.isEmpty(enterprise))
         {
             return AjaxResult.error("当前的用户地址为空");
         }
-        EnterpriseVo enterpriseVo = carbonEnterpriseMapper.selectUserWithEnterpriseEnterpriseName(address);
+        EnterpriseVo enterpriseVo = carbonEnterpriseMapper.selectUserWithEnterpriseEnterpriseName(enterprise);
         if (Objects.isNull(enterpriseVo))
         {
             return AjaxResult.error("该企业不存在");
@@ -84,7 +94,7 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
                 .selectCarbonQualificationByQualificationId(Long.valueOf(enterpriseVo.getQualification_id()));
         if (Objects.isNull(qualification))
         {
-            return AjaxResult.error("当前的企业资质不存在");
+            return AjaxResult.error("当前企业未认证");
         }
         return AjaxResult.success("qualification",qualification);
     }
@@ -142,4 +152,24 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         ajax.put("total",enterpriseAssets.size());
         return ajax;
     }
+
+    @Override
+    public AjaxResult queryEnterpriseErListByPage(QueryErPage queryErPage) {
+        if (StringUtils.isEmpty(queryErPage.getUserAddress()))
+        {
+            return AjaxResult.error("该企业不存在");
+        }
+        QueryWrapper<CarbonEmissionResource> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(CarbonEmissionResource::getEnterpriseAddress,queryErPage.getUserAddress());
+        Page<CarbonEmissionResource> page = new Page<>(queryErPage.getPage(), queryErPage.getPageSize());
+
+        Page<CarbonEmissionResource> Ipage = carbonEmissionResourceMapper.selectPage(page, wrapper);
+        if (Ipage.getTotal() == 0)
+        {
+            return AjaxResult.error("还没有排放记录");
+        }
+        return AjaxResult.success().put("data",Ipage);
+    }
+
+
 }

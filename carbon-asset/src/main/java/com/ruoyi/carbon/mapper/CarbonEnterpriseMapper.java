@@ -1,7 +1,11 @@
 package com.ruoyi.carbon.mapper;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
+import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.EnterpriseVo;
+import com.ruoyi.common.core.domain.AjaxResult;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +73,8 @@ public interface CarbonEnterpriseMapper
     public List<CarbonEnterprise> selectEnterpriseListByAddress(HashMap<String,Object> map);
 
     public EnterpriseVo selectUserWithEnterpriseEnterpriseName(String enterprise);
+
+
 
 
 }

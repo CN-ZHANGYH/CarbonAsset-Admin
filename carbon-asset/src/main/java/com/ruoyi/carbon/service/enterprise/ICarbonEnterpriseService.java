@@ -111,5 +111,19 @@ public interface ICarbonEnterpriseService
      */
     public AjaxResult forgetUserPassword(ForgetPassVo forgetPassVo);
 
+    /**
+     * 通过企业名称更新用户头像
+     * @param enterprise 企业名称
+     * @param avatar 用户的头像
+     * @return 返回结果
+     */
     public AjaxResult updateAvatarByName(String enterprise, String avatar);
+
+    /**
+     * 上传商品的图片
+     * @param file 图片文件
+     * @return 返回结果
+     */
+    public AjaxResult uploadProductImage(MultipartFile file);
+
 }
