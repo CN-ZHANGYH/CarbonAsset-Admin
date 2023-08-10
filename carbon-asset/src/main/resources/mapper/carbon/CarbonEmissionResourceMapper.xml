@@ -40,13 +40,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where emission_id = #{emissionId}
     </select>
 
-
-    <select id="selectEmissionResourceByAddress" resultMap="CarbonEmissionResourceResult">
+    <select id="selectEmissionResourceByEnterpriseId"
+            parameterType="integer"
+            resultMap="CarbonEmissionResourceResult">
         <include refid="selectCarbonEmissionResourceVo"/>
-        <where>
-            <if test="enterpriseAddress != null  and enterpriseAddress != ''"> and enterprise_address = #{enterpriseAddress}</if>
-        </where>
+        where enterprise_id = #{enterpriseId}
     </select>
+
+    <select id="selectEmissionResourceList" resultMap="CarbonEmissionResourceResult">
+        <include refid="selectCarbonEmissionResourceVo"/>
+    </select>
+
 
     <insert id="insertCarbonEmissionResource" parameterType="CarbonEmissionResource">
         insert into carbon_emission_resource
@@ -94,7 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteCarbonEmissionResourceByEmissionIds" parameterType="String">
-        delete from carbon_emission_resource where emission_id in 
+        delete from carbon_emission_resource where emission_id in
         <foreach item="emissionId" collection="array" open="(" separator="," close=")">
             #{emissionId}
         </foreach>

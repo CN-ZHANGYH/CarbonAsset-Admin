@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 企业排放资源Controller
@@ -96,12 +97,14 @@ public class EmissionResourceController extends BaseController
         return toAjax(carbonEmissionResourceService.deleteCarbonEmissionResourceByEmissionIds(emissionIds));
     }
 
+    @PreAuthorize("@ss.hasPermi('carbon:resource:list')")
     @Log(title = "查询资源申请未审批的企业",businessType = BusinessType.OTHER)
     @GetMapping("/isNotVerifyList")
     public TableDataInfo selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource){
         startPage();
-        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceService.selectIsNotVerifyList(carbonEmissionResource);
-        System.out.println(emissionResources);
-        return getDataTable(emissionResources);
+        List<CarbonEmissionResource> list = carbonEmissionResourceService.selectCarbonEmissionResourceList(carbonEmissionResource);
+        List<CarbonEmissionResource> resources = list.stream().filter(emissionResource -> emissionResource.getIsApprove() != 1).collect(Collectors.toList());
+        System.out.println(list.size());
+        return getDataTable(resources);
     }
 }

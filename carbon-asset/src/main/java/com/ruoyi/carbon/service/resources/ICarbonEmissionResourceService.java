@@ -92,8 +92,11 @@ public interface ICarbonEmissionResourceService
 
     public ArrayList<CarbonEmissionResource> selectEmissionResourceByAddress(String enterpriseAddress);
 
-    public List<CarbonEmissionResource> selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource);
+    public List<CarbonEmissionResource> selectIsNotVerifyList();
 
     public AjaxResult selectEmissionAndTxAndApplyAndQuaList();
 
+    public List<CarbonEmissionResource> selectEnterpriseIsNotApplyEmissionResource(String enterprise);
+
+    public List<CarbonEmissionResource> selectEnterpriseIsApplyEmissioResource(String enterprise);
 }

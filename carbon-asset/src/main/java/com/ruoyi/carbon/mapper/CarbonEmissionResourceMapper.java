@@ -3,6 +3,7 @@ package com.ruoyi.carbon.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.vo.EmissionResourceVo;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
  * @author 张宇豪
  * @date 2023-07-08
  */
-public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionResource>
+public interface CarbonEmissionResourceMapper
 {
     /**
      * 查询企业排放资源
@@ -64,6 +65,7 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
      */
     public int deleteCarbonEmissionResourceByEmissionIds(Long[] emissionIds);
 
+    @Select("SELECT * FROM carbon.carbon_emission_resource where enterprise_address = #{enterpriseAddress}")
     public ArrayList<CarbonEmissionResource> selectEmissionResourceByAddress(String enterpriseAddress);
 
 
@@ -92,5 +94,8 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
     public List<EmissionResourceVo> selectEmissionResourceOfWeek();
 
 
+    public List<CarbonEmissionResource> selectEmissionResourceByEnterpriseId(@Param("enterpriseId") Integer enterpriseId);
 
+
+    public List<CarbonEmissionResource> selectEmissionResourceList();
 }

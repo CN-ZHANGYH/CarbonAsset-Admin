@@ -365,7 +365,8 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         CarbonAssetServiceUpdateBalanceInputBO inputBO = new CarbonAssetServiceUpdateBalanceInputBO();
         inputBO.set_amount(carbonEnterprise.getEnterpriseBalance());
         List<Object> params = inputBO.toArgs();
-        try {
+        try
+        {
             TransactionResponse transactionResponse = rawContractLoaderFactory
                     .GetTransactionResponse(userKey.getPrivateKey(), "updateBalance", params);
             if (transactionResponse.getReturnMessage().equals("Success")){

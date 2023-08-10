@@ -6,6 +6,7 @@ import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.service.enterprise.EnterpriseQueryService;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
+import com.ruoyi.carbon.service.resources.ICarbonEmissionResourceService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -33,6 +34,9 @@ public class IsQueryController extends BaseController {
 
     @Autowired
     private ICarbonEnterpriseAssetService enterpriseAssetService;
+
+    @Autowired
+    private ICarbonEmissionResourceService emissionResourceService;
 
 
     @ApiOperation("查询企业的详细信息")
@@ -111,4 +115,37 @@ public class IsQueryController extends BaseController {
         return enterpriseAssetService.queryEnterpriseNewSellerAssetLimitFive(address);
     }
 
+
+    @ApiOperation("查询企业所有未审批的碳排放申请")
+    @GetMapping("/enterpriseIsNotApplyEmission")
+    public TableDataInfo getEnterpriseIsNotApplyEmission(@RequestParam("enterprise") String enterprise){
+        startPage();
+        List<CarbonEmissionResource> carbonEmissionResources = emissionResourceService.selectEnterpriseIsNotApplyEmissionResource(enterprise);
+        if (Objects.isNull(carbonEmissionResources))
+        {
+            TableDataInfo nullDataInfo = new TableDataInfo();
+            nullDataInfo.setTotal(0);
+            nullDataInfo.setCode(200);
+            nullDataInfo.setMsg("当前还没有申请");
+            return nullDataInfo;
+        }
+        return getDataTable(carbonEmissionResources);
+    }
+
+
+    @ApiOperation("查询企业所有审批的碳排放申请")
+    @GetMapping("/enterpriseIsApplyEmission")
+    public TableDataInfo getEnterpriseIsApplyEmission(@RequestParam("enterprise") String enterprise){
+        startPage();
+        List<CarbonEmissionResource> carbonEmissionResources = emissionResourceService.selectEnterpriseIsApplyEmissioResource(enterprise);
+        if (Objects.isNull(carbonEmissionResources))
+        {
+            TableDataInfo nullDataInfo = new TableDataInfo();
+            nullDataInfo.setTotal(0);
+            nullDataInfo.setCode(200);
+            nullDataInfo.setMsg("当前还没有申请");
+            return nullDataInfo;
+        }
+        return getDataTable(carbonEmissionResources);
+    }
 }

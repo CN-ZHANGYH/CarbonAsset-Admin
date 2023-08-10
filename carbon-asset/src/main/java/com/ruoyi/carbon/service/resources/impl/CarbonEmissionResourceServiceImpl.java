@@ -327,8 +327,9 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
     }
 
     @Override
-    public List<CarbonEmissionResource> selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource) {
-        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceMapper.selectCarbonEmissionResourceList(carbonEmissionResource);
+    public List<CarbonEmissionResource> selectIsNotVerifyList() {
+        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceMapper.selectEmissionResourceList();
+        System.out.println(emissionResources.size());
         return emissionResources.stream()
                 .filter(emissionResource -> emissionResource.getIsApprove() == 0)
                 .collect(Collectors.toList());
@@ -356,5 +357,32 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
         arrayList.add(assetValues);
 
         return AjaxResult.success(arrayList);
+    }
+
+    @Override
+    public List<CarbonEmissionResource> selectEnterpriseIsNotApplyEmissionResource(String enterprise) {
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(carbonEnterprise)){
+            return null;
+        }
+        List<CarbonEmissionResource> carbonEmissionResources = carbonEmissionResourceMapper.selectEmissionResourceByEnterpriseId(carbonEnterprise.getEnterpriseId());
+        System.out.println(carbonEmissionResources.size());
+        return carbonEmissionResources.stream()
+                .filter(carbonEmissionResource -> carbonEmissionResource.getIsApprove() != 1)
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<CarbonEmissionResource> selectEnterpriseIsApplyEmissioResource(String enterprise) {
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(carbonEnterprise)){
+            return null;
+        }
+        List<CarbonEmissionResource> carbonEmissionResources = carbonEmissionResourceMapper.selectEmissionResourceByEnterpriseId(carbonEnterprise.getEnterpriseId());
+        System.out.println(carbonEmissionResources.size());
+        return carbonEmissionResources.stream()
+                .filter(carbonEmissionResource -> carbonEmissionResource.getIsApprove() == 1)
+                .collect(Collectors.toList());
     }
 }
