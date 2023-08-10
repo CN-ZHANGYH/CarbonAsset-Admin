@@ -3,9 +3,6 @@ package com.ruoyi.carbon.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.vo.EmissionResourceVo;
-import com.ruoyi.carbon.domain.vo.TransactionVo;
-import com.ruoyi.carbon.raw.CarbonAssetService;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.ArrayList;
@@ -17,7 +14,6 @@ import java.util.List;
  * @author 张宇豪
  * @date 2023-07-08
  */
-@Mapper
 public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionResource>
 {
     /**

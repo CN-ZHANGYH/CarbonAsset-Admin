@@ -1,6 +1,5 @@
 package com.ruoyi.carbon.service.enterprise;
 
-import com.ruoyi.carbon.domain.vo.QueryErPage;
 import com.ruoyi.common.core.domain.AjaxResult;
 
 public interface EnterpriseQueryService {
@@ -22,5 +21,4 @@ public interface EnterpriseQueryService {
 
     public AjaxResult queryEnterpriseAList(String enterprise);
 
-    public AjaxResult queryEnterpriseErListByPage(QueryErPage queryErPage);
 }

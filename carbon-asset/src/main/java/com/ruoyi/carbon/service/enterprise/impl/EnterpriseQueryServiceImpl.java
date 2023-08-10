@@ -1,13 +1,8 @@
 package com.ruoyi.carbon.service.enterprise.impl;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.Query;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.github.pagehelper.IPage;
 import com.ruoyi.carbon.domain.carbon.*;
 import com.ruoyi.carbon.domain.vo.EnterpriseVo;
-import com.ruoyi.carbon.domain.vo.QueryErPage;
 import com.ruoyi.carbon.mapper.CarbonEmissionResourceMapper;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
 import com.ruoyi.carbon.mapper.CarbonQualificationMapper;
@@ -17,7 +12,6 @@ import com.ruoyi.carbon.service.resources.ICarbonEmissionResourceService;
 import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
-import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -109,8 +103,8 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         }
         ArrayList<CarbonTransaction> txList = transactionService.selectTransactionListByAddress(enterprise.getEnterpriseAddress());
         if (txList.size() > 0){
-            AjaxResult ajax = AjaxResult.success("txList", txList);
-            ajax.put("total",txList.size());
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("data",txList);
             return ajax;
         }
         return AjaxResult.error("该企业还未交易");
@@ -125,8 +119,8 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         }
         ArrayList<CarbonEmissionResource> erList = emissionResourceService.selectEmissionResourceByAddress(enterprise.getEnterpriseAddress());
         if (erList.size() > 0){
-            AjaxResult ajax = AjaxResult.success("erList", erList);
-            ajax.put("total",erList.size());
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("data",erList);
             return ajax;
         }
         return AjaxResult.error("该企业还未排放");
@@ -148,28 +142,11 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         {
             return AjaxResult.error("当前企业还没出售资产");
         }
-        AjaxResult ajax = AjaxResult.success("查询成功", enterpriseAssets);
-        ajax.put("total",enterpriseAssets.size());
+        AjaxResult ajax = AjaxResult.success("查询成功");
+        ajax.put("data",enterpriseAssets);
         return ajax;
     }
 
-    @Override
-    public AjaxResult queryEnterpriseErListByPage(QueryErPage queryErPage) {
-        if (StringUtils.isEmpty(queryErPage.getUserAddress()))
-        {
-            return AjaxResult.error("该企业不存在");
-        }
-        QueryWrapper<CarbonEmissionResource> wrapper = new QueryWrapper<>();
-        wrapper.lambda().eq(CarbonEmissionResource::getEnterpriseAddress,queryErPage.getUserAddress());
-        Page<CarbonEmissionResource> page = new Page<>(queryErPage.getPage(), queryErPage.getPageSize());
-
-        Page<CarbonEmissionResource> Ipage = carbonEmissionResourceMapper.selectPage(page, wrapper);
-        if (Ipage.getTotal() == 0)
-        {
-            return AjaxResult.error("还没有排放记录");
-        }
-        return AjaxResult.success().put("data",Ipage);
-    }
 
 
 }

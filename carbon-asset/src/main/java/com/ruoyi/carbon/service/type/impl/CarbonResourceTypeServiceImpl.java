@@ -107,7 +107,7 @@ public class CarbonResourceTypeServiceImpl implements ICarbonResourceTypeService
                 .map((Function<CarbonResourceType, Object>) carbonResourceType -> {
                     HashMap<String, Object> map = new HashMap<>();
                     map.put("label", carbonResourceType.getResourceType());
-                    map.put("key", carbonResourceType.getResourceType());
+                    map.put("value", carbonResourceType.getResourceType());
             return map;
         }).collect(Collectors.toList());
         AjaxResult ajax = AjaxResult.success();
