@@ -19,4 +19,6 @@ public class ResourceVo {
     private String description;
 
     private String emissionWay;
+
+    private String resourceType;
 }

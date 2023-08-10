@@ -176,6 +176,7 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
                 emissionResource.setDescription(result.getString(4));
                 emissionResource.setEmissionWay(result.getString(5));
                 emissionResource.setIsApprove(result.getBoolean(6) ? 1 : 0);
+                emissionResource.setResourceType(resourceVo.getResourceType());
 
                 int status = carbonEmissionResourceMapper.insertCarbonEmissionResource(emissionResource);
                 if (status > 0){
