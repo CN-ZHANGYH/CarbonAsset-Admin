@@ -3,19 +3,16 @@ package com.ruoyi.carbon.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.vo.EmissionResourceVo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 企业排放资源Mapper接口
- *
- * @author 张宇豪
- * @date 2023-07-08
- */
-public interface CarbonEmissionResourceMapper
+
+@Mapper
+public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionResource>
 {
     /**
      * 查询企业排放资源

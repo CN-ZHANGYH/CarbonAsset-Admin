@@ -108,7 +108,10 @@ mybatis:
   # 加载全局的配置文件
   configLocation: classpath:mybatis/mybatis-config.xml
 
-
+##mybatis的原生态支持
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  type-aliases-package: com.ruoyi.**.mapper
 
 # PageHelper分页插件
 pagehelper:
