@@ -3,6 +3,7 @@ package com.ruoyi.carbon.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.vo.EmissionResourceVo;
+import com.ruoyi.carbon.domain.vo.RankingEmissionVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -93,4 +94,24 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
 
 
     public List<CarbonEmissionResource> selectEmissionResourceList();
+
+
+    /**
+     * 查询企业碳排放的排行
+     * @return 返回结果
+     */
+
+    @Select("SELECT ce.enterprise_address,\n" +
+            "       ce.enterprise_name,\n" +
+            "       ce.enterprise_carbon_credits,\n" +
+            "       ce.enterprise_verified,\n" +
+            "       user.avatar,\n" +
+            "       cer.total_emissions\n" +
+            "FROM carbon_enterprise ce JOIN\n" +
+            "     (SELECT enterprise_id, SUM(emissions) AS total_emissions\n" +
+            "      FROM carbon_emission_resource\n" +
+            "      GROUP BY enterprise_id) cer ON ce.enterprise_id = cer.enterprise_id\n" +
+            "    JOIN sys_user user ON ce.enterprise_name = user.nick_name limit #{page},#{pageSize}")
+    public List<RankingEmissionVo> selectRankingByEmissionResource(@Param("page") Integer page, @Param("pageSize") Integer pageSize);
+
 }

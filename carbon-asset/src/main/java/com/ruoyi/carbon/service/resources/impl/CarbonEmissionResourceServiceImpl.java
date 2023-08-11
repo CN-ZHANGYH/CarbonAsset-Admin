@@ -396,4 +396,9 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
         System.out.println(emissionResources);
         return emissionResources;
     }
+
+    @Override
+    public List<RankingEmissionVo> selectRankingByEmissionResource(Integer pageNum, Integer pageSize) {
+        return carbonEmissionResourceMapper.selectRankingByEmissionResource(pageNum,pageSize);
+    }
 }

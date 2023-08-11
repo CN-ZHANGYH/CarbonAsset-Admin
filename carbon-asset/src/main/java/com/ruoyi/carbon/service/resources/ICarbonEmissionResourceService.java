@@ -3,6 +3,7 @@ package com.ruoyi.carbon.service.resources;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.vo.EmissionVo;
+import com.ruoyi.carbon.domain.vo.RankingEmissionVo;
 import com.ruoyi.carbon.domain.vo.ResourceVo;
 import com.ruoyi.carbon.domain.vo.VerifyVo;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -102,4 +103,6 @@ public interface ICarbonEmissionResourceService extends IService<CarbonEmissionR
     public List<CarbonEmissionResource> selectEnterpriseIsApplyEmissioResource(String enterprise);
 
     public List<CarbonEmissionResource> selectCarbonEmissionResourceListIsNotVerify(CarbonEmissionResource carbonEmissionResource);
+
+    List<RankingEmissionVo> selectRankingByEmissionResource(Integer pageNum, Integer pageSize);
 }
