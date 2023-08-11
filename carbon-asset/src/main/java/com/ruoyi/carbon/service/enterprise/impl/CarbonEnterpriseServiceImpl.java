@@ -7,10 +7,7 @@ import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.carbon.CarbonQualification;
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.domain.user.UserKey;
-import com.ruoyi.carbon.domain.vo.BuyVo;
-import com.ruoyi.carbon.domain.vo.EnterpriseVo;
-import com.ruoyi.carbon.domain.vo.ForgetPassVo;
-import com.ruoyi.carbon.domain.vo.SellVo;
+import com.ruoyi.carbon.domain.vo.*;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
 import com.ruoyi.carbon.model.bo.*;
@@ -524,6 +521,16 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         }
         AjaxResult ajax = AjaxResult.success();
         return ajax.put("imageUrl", imageUrl);
+    }
+
+    @Override
+    public AjaxResult selectRankingByCredit(Integer page, Integer pageSize) {
+        List<RankingCreditVo> rankingCreditVos = carbonEnterpriseMapper.selectRankingByCredit(page,pageSize);
+        if (rankingCreditVos == null)
+        {
+            return AjaxResult.success("当前没有企业注册");
+        }
+        return AjaxResult.success().put("data",rankingCreditVos);
     }
 
 

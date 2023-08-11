@@ -1,9 +1,8 @@
 package com.ruoyi.carbon.mapper;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
-import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.EnterpriseVo;
-import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.carbon.domain.vo.RankingCreditVo;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -75,6 +74,12 @@ public interface CarbonEnterpriseMapper
     public EnterpriseVo selectUserWithEnterpriseEnterpriseName(String enterprise);
 
 
-
-
+    @Select("SELECT\n" +
+            "    e.enterprise_name,\n" +
+            "    e.enterprise_address,\n" +
+            "    e.enterprise_verified,\n" +
+            "    e.enterprise_carbon_credits,\n" +
+            "    su.avatar\n" +
+            "FROM carbon_enterprise e JOIN sys_user su ON e.enterprise_name = su.nick_name order by e.enterprise_carbon_credits desc limit #{page},#{pageSize}")
+    public List<RankingCreditVo> selectRankingByCredit(@Param("page") Integer page, @Param("pageSize") Integer pageSize);
 }

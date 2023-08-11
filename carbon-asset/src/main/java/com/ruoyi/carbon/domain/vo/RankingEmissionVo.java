@@ -12,6 +12,10 @@ public class RankingEmissionVo {
 
     private Integer enterprise_verified;
 
+    private Long enterprise_over_emission;
+
+    private Long enterprise_total_emission;
+
     private String avatar;
 
     private Long total_emissions;

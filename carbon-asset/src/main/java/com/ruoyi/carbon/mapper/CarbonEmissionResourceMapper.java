@@ -105,6 +105,8 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
             "       ce.enterprise_name,\n" +
             "       ce.enterprise_carbon_credits,\n" +
             "       ce.enterprise_verified,\n" +
+            "       ce.enterprise_over_emission,\n" +
+            "       ce.enterprise_total_emission,\n" +
             "       user.avatar,\n" +
             "       cer.total_emissions\n" +
             "FROM carbon_enterprise ce JOIN\n" +
