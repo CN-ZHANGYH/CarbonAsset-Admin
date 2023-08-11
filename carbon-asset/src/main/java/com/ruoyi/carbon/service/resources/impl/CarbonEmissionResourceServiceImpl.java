@@ -2,6 +2,8 @@ package com.ruoyi.carbon.service.resources.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.carbon.CarbonQualification;
@@ -40,7 +42,7 @@ import java.util.stream.Collectors;
  * @date 2023-07-08
  */
 @Service
-public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourceService
+public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissionResourceMapper,CarbonEmissionResource> implements ICarbonEmissionResourceService
 {
     @Autowired
     private ICarbonEnterpriseService enterpriseService;
@@ -176,6 +178,7 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
                 emissionResource.setDescription(result.getString(4));
                 emissionResource.setEmissionWay(result.getString(5));
                 emissionResource.setIsApprove(result.getBoolean(6) ? 1 : 0);
+                emissionResource.setResourceType(resourceVo.getResourceType());
 
                 int status = carbonEmissionResourceMapper.insertCarbonEmissionResource(emissionResource);
                 if (status > 0){
@@ -326,8 +329,9 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
     }
 
     @Override
-    public List<CarbonEmissionResource> selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource) {
-        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceMapper.selectCarbonEmissionResourceList(carbonEmissionResource);
+    public List<CarbonEmissionResource> selectIsNotVerifyList() {
+        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceMapper.selectEmissionResourceList();
+        System.out.println(emissionResources.size());
         return emissionResources.stream()
                 .filter(emissionResource -> emissionResource.getIsApprove() == 0)
                 .collect(Collectors.toList());
@@ -355,5 +359,46 @@ public class CarbonEmissionResourceServiceImpl implements ICarbonEmissionResourc
         arrayList.add(assetValues);
 
         return AjaxResult.success(arrayList);
+    }
+
+    @Override
+    public List<CarbonEmissionResource> selectEnterpriseIsNotApplyEmissionResource(String enterprise) {
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(carbonEnterprise)){
+            return null;
+        }
+        List<CarbonEmissionResource> carbonEmissionResources = carbonEmissionResourceMapper.selectEmissionResourceByEnterpriseId(carbonEnterprise.getEnterpriseId());
+        System.out.println(carbonEmissionResources.size());
+        return carbonEmissionResources.stream()
+                .filter(carbonEmissionResource -> carbonEmissionResource.getIsApprove() != 1)
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<CarbonEmissionResource> selectEnterpriseIsApplyEmissioResource(String enterprise) {
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(carbonEnterprise)){
+            return null;
+        }
+        List<CarbonEmissionResource> carbonEmissionResources = carbonEmissionResourceMapper.selectEmissionResourceByEnterpriseId(carbonEnterprise.getEnterpriseId());
+        System.out.println(carbonEmissionResources.size());
+        return carbonEmissionResources.stream()
+                .filter(carbonEmissionResource -> carbonEmissionResource.getIsApprove() == 1)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CarbonEmissionResource> selectCarbonEmissionResourceListIsNotVerify(CarbonEmissionResource carbonEmissionResource) {
+        LambdaQueryWrapper<CarbonEmissionResource> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CarbonEmissionResource::getEnterpriseAddress,"0x46b942c6c55f4f32cf3a6edaa2b78a9acbb0edf5");
+        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceMapper.selectList(queryWrapper);
+        System.out.println(emissionResources);
+        return emissionResources;
+    }
+
+    @Override
+    public List<RankingEmissionVo> selectRankingByEmissionResource(Integer pageNum, Integer pageSize) {
+        return carbonEmissionResourceMapper.selectRankingByEmissionResource(pageNum,pageSize);
     }
 }

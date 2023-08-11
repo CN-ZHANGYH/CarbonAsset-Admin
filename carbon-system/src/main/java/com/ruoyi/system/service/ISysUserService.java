@@ -216,4 +216,11 @@ public interface ISysUserService
      * @return 返回结果
      */
     public AjaxResult getEnterpriseInfo(String username);
+
+    /**
+     * 检测当前的redis中用户的key是否已经被删除
+     * @param userKey 用户的key
+     * @return 返回结果
+     */
+    public AjaxResult checkTokenIsTimeOut(String userKey);
 }

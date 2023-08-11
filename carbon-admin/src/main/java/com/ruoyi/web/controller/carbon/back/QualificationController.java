@@ -71,7 +71,6 @@ public class QualificationController extends BaseController
      * 新增企业资质信息
      */
     @ApiOperation("监管机构新增资质")
-    @PreAuthorize("@ss.hasPermi('carbon:qualification:add')")
     @Log(title = "企业资质信息", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody CarbonQualification carbonQualification) throws Exception {

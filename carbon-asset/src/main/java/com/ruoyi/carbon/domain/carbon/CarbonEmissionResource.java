@@ -1,13 +1,12 @@
 package com.ruoyi.carbon.domain.carbon;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.math.BigInteger;
 
@@ -19,6 +18,7 @@ import java.math.BigInteger;
  */
 
 @Data
+@TableName("carbon_emission_resource")
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarbonEmissionResource extends BaseEntity
@@ -57,17 +57,7 @@ public class CarbonEmissionResource extends BaseEntity
     @Excel(name = "排放时间", width = 30, dateFormat = "yyyy-MM-dd")
     private String emissionTime;
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("emissionId", getEmissionId())
-            .append("enterpriseId", getEnterpriseId())
-            .append("enterpriseAddress", getEnterpriseAddress())
-            .append("emissions", getEmissions())
-            .append("description", getDescription())
-            .append("emissionWay", getEmissionWay())
-            .append("isApprove", getIsApprove())
-            .append("emissionTime", getEmissionTime())
-            .toString();
-    }
+    /** 资源分类 */
+    @Excel(name = "资源分类")
+    private String resourceType;
 }

@@ -7,10 +7,7 @@ import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.carbon.CarbonQualification;
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.domain.user.UserKey;
-import com.ruoyi.carbon.domain.vo.BuyVo;
-import com.ruoyi.carbon.domain.vo.EnterpriseVo;
-import com.ruoyi.carbon.domain.vo.ForgetPassVo;
-import com.ruoyi.carbon.domain.vo.SellVo;
+import com.ruoyi.carbon.domain.vo.*;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
 import com.ruoyi.carbon.model.bo.*;
@@ -28,7 +25,6 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
-import org.aspectj.weaver.loadtime.Aj;
 import org.fisco.bcos.sdk.transaction.model.dto.CallResponse;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,6 +219,10 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         {
             return AjaxResult.error("当前用户未认证");
         }
+        if (StringUtils.isEmpty(sellVo.getImage()))
+        {
+            return AjaxResult.error("请上传商品封面");
+        }
         // 调用链上数据
         CarbonAssetServiceSellEmissionLimitInputBO emissionLimitInputBO = new CarbonAssetServiceSellEmissionLimitInputBO();
         emissionLimitInputBO.set_amount(sellVo.getAmount());
@@ -232,11 +232,10 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         // get(1)
         // [ 0, 0, "0x0000000000000000000000000000000000000000", 0, 0, 0, 0 ]"
         // 切换用户私钥
-        UserKey userKey = rawContractLoaderFactory.GetUserPrivateKey(sellVo.getUserAddress());
         try {
             // 业务上链
             TransactionResponse transactionResponse = rawContractLoaderFactory
-                    .GetTransactionResponse(userKey.getPrivateKey(), "sellEmissionLimit", params);
+                    .GetTransactionResponse(carbonEnterprise.getPriavateKey(), "sellEmissionLimit", params);
             if (transactionResponse.getReturnMessage().equals("Success")){
                 JSONArray result = JSON.parseArray(transactionResponse.getValues()).getJSONArray(1);
                 CarbonEnterpriseAsset enterpriseAsset = new CarbonEnterpriseAsset();
@@ -247,8 +246,9 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
                 enterpriseAsset.setAssetAmount(result.getBigInteger(4));
                 enterpriseAsset.setTime(BlockTimestampUtil.convert(result.getLongValue(5)));
                 enterpriseAsset.setStatus(result.getIntValue(6));
-
-
+                enterpriseAsset.setTitle(sellVo.getTitle());
+                enterpriseAsset.setDescription(sellVo.getDescription());
+                enterpriseAsset.setImage(sellVo.getImage());
                 // 企业需要更新自己的碳额度
                 Integer qualificationId = carbonEnterprise.getQualificationId();
                 int code = this.insertOrder(enterpriseAsset,qualificationId,sellVo.getQuality());
@@ -294,6 +294,11 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         CarbonEnterprise seller = carbonEnterpriseMapper.selectCarbonEnterpriseByAddress(sellerAddress);
         CarbonQualification qualification = qualificationService.selectCarbonQualificationByQualificationId(Long.valueOf(buyer.getQualificationId()));
         CarbonEnterpriseAsset enterpriseAsset = enterpriseAssetService.selectCarbonEnterpriseAssetByAssetId(Long.valueOf(String.valueOf(assetId)));
+
+        if (enterpriseAsset.getAssetQuantity() == BigInteger.valueOf(0L))
+        {
+            return AjaxResult.error("当前商品已售空");
+        }
 
         BigInteger oldBalance = buyer.getEnterpriseBalance();
         buyer.setEnterpriseBalance(oldBalance.subtract(enterpriseAsset.getAssetAmount().multiply(buyVo.getQuality())));
@@ -364,7 +369,8 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         CarbonAssetServiceUpdateBalanceInputBO inputBO = new CarbonAssetServiceUpdateBalanceInputBO();
         inputBO.set_amount(carbonEnterprise.getEnterpriseBalance());
         List<Object> params = inputBO.toArgs();
-        try {
+        try
+        {
             TransactionResponse transactionResponse = rawContractLoaderFactory
                     .GetTransactionResponse(userKey.getPrivateKey(), "updateBalance", params);
             if (transactionResponse.getReturnMessage().equals("Success")){
@@ -442,7 +448,7 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
 
     @Override
     public AjaxResult updateAvatar(MultipartFile file) {
-        if (file != null)
+        if (file == null)
         {
             return AjaxResult.error("文件格式错误");
         }
@@ -480,6 +486,51 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         return AjaxResult.error("重置密码失败");
 
 
+    }
+
+    @Override
+    public AjaxResult updateAvatarByName(String enterprise, String avatar) {
+        if (StringUtils.isEmpty(enterprise) || StringUtils.isEmpty(avatar))
+        {
+            return AjaxResult.error("企业和头像不能为空");
+        }
+        SysUser sysUser = userService.selectUserByNickName(enterprise);
+        if (Objects.isNull(sysUser))
+        {
+            return AjaxResult.error("该企业不存在");
+        }
+        sysUser.setAvatar(avatar);
+        int status = userService.updateUserProfile(sysUser);
+        if (status > 0)
+        {
+            return AjaxResult.success("更新头像成功");
+        }
+        return AjaxResult.error("更新失败");
+    }
+
+    @Override
+    public AjaxResult uploadProductImage(MultipartFile file) {
+        if (file == null)
+        {
+            return AjaxResult.error("文件不能为空");
+        }
+        String imageUrl = tcosUtil.uploadFile(file);
+        if (StringUtils.isEmpty(imageUrl))
+        {
+            return AjaxResult.error("上传失败");
+        }
+        AjaxResult ajax = AjaxResult.success();
+        return ajax.put("imageUrl", imageUrl);
+    }
+
+    @Override
+    public AjaxResult selectRankingByCredit(Integer page, Integer pageSize) {
+        List<RankingCreditVo> rankingCreditVos = carbonEnterpriseMapper.selectRankingByCredit(page,pageSize);
+        if (rankingCreditVos == null)
+        {
+            return AjaxResult.success("当前没有企业注册");
+        }
+        return AjaxResult.success().put("data",rankingCreditVos);
     }
 
 

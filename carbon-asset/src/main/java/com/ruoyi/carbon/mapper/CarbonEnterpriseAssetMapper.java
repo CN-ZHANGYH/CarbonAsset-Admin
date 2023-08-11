@@ -1,5 +1,6 @@
 package com.ruoyi.carbon.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.AssetVo;
 import org.apache.ibatis.annotations.Select;
@@ -8,15 +9,15 @@ import java.util.List;
 
 /**
  * 企业出售资产Mapper接口
- * 
+ *
  * @author 张宇豪
  * @date 2023-07-08
  */
-public interface CarbonEnterpriseAssetMapper 
+public interface CarbonEnterpriseAssetMapper extends BaseMapper<CarbonEnterpriseAsset>
 {
     /**
      * 查询企业出售资产
-     * 
+     *
      * @param assetId 企业出售资产主键
      * @return 企业出售资产
      */
@@ -24,7 +25,7 @@ public interface CarbonEnterpriseAssetMapper
 
     /**
      * 查询企业出售资产列表
-     * 
+     *
      * @param carbonEnterpriseAsset 企业出售资产
      * @return 企业出售资产集合
      */
@@ -32,7 +33,7 @@ public interface CarbonEnterpriseAssetMapper
 
     /**
      * 新增企业出售资产
-     * 
+     *
      * @param carbonEnterpriseAsset 企业出售资产
      * @return 结果
      */
@@ -40,7 +41,7 @@ public interface CarbonEnterpriseAssetMapper
 
     /**
      * 修改企业出售资产
-     * 
+     *
      * @param carbonEnterpriseAsset 企业出售资产
      * @return 结果
      */
@@ -48,7 +49,7 @@ public interface CarbonEnterpriseAssetMapper
 
     /**
      * 删除企业出售资产
-     * 
+     *
      * @param assetId 企业出售资产主键
      * @return 结果
      */
@@ -56,7 +57,7 @@ public interface CarbonEnterpriseAssetMapper
 
     /**
      * 批量删除企业出售资产
-     * 
+     *
      * @param assetIds 需要删除的数据主键集合
      * @return 结果
      */
@@ -88,5 +89,8 @@ public interface CarbonEnterpriseAssetMapper
             "GROUP BY date_table.date\n" +
             "ORDER BY date_table.date ASC;\n")
     public List<AssetVo> selectEnterpriseAssetByListOfWeek();
+
+
+    public List<CarbonEnterpriseAsset> queryEnterpriseNewSellerAssetLimitFive(String address);
 
 }

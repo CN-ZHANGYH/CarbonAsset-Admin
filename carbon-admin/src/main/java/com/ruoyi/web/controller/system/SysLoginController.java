@@ -14,6 +14,7 @@ import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -48,9 +49,10 @@ public class SysLoginController
     {
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
-        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
+        ArrayList<String> result = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
-        ajax.put(Constants.TOKEN, token);
+        ajax.put(Constants.TOKEN, result.get(0));
+        ajax.put("userKey",result.get(1));
         return ajax;
     }
 
@@ -66,6 +68,11 @@ public class SysLoginController
         return userService.getEnterpriseInfo(username);
     }
 
+
+    @GetMapping("/getTokenIsTimeout")
+    public AjaxResult getTokenIsTimeout(@RequestParam("userKey") String userKey){
+        return userService.checkTokenIsTimeOut(userKey);
+    }
     /**
      * 获取用户信息
      *

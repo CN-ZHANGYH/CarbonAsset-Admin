@@ -115,7 +115,7 @@ public class EmissionMethodServiceImpl implements IEmissionMethodService
             public Object apply(EmissionMethod emissionMethod) {
                 HashMap<String, Object> map = new HashMap<>();
                 map.put("label", emissionMethod.getName());
-                map.put("key", emissionMethod.getName());
+                map.put("value", emissionMethod.getName());
                 return map;
             }
         }).collect(Collectors.toList());

@@ -1,12 +1,10 @@
 package com.ruoyi.carbon.domain.carbon;
 
+import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
 import org.springframework.data.annotation.Transient;
 
 import java.math.BigInteger;
@@ -77,20 +75,4 @@ public class CarbonEnterprise extends BaseEntity
     private Integer qualificationId;
 
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("enterpriseId", getEnterpriseId())
-            .append("enterpriseAddress", getEnterpriseAddress())
-            .append("priavateKey", getPriavateKey())
-            .append("enterpriseName", getEnterpriseName())
-            .append("enterpriseBalance", getEnterpriseBalance())
-            .append("enterpriseTotalEmission", getEnterpriseTotalEmission())
-            .append("enterpriseOverEmission", getEnterpriseOverEmission())
-            .append("enterpriseCarbonCredits", getEnterpriseCarbonCredits())
-            .append("enterpriseVerified", getEnterpriseVerified())
-            .append("userType", getUserType())
-            .append("qualificationId", getQualificationId())
-            .toString();
-    }
 }

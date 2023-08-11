@@ -3,6 +3,7 @@ package com.ruoyi.carbon.service.enterprise.impl;
 
 import com.ruoyi.carbon.domain.carbon.*;
 import com.ruoyi.carbon.domain.vo.EnterpriseVo;
+import com.ruoyi.carbon.mapper.CarbonEmissionResourceMapper;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
 import com.ruoyi.carbon.mapper.CarbonQualificationMapper;
 import com.ruoyi.carbon.service.enterprise.EnterpriseQueryService;
@@ -23,6 +24,9 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
 
     @Autowired
     private CarbonEnterpriseMapper carbonEnterpriseMapper;
+
+    @Autowired
+    private CarbonEmissionResourceMapper carbonEmissionResourceMapper;
 
     @Autowired
     private CarbonQualificationMapper qualificationMapper;
@@ -66,16 +70,16 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
     /**
      * 企业通过自己的资质ID进行查询
      *
-     * @param address 资质ID
+     * @param enterprise 资质ID
      * @return 返回结果
      */
     @Override
-    public AjaxResult queryQualificationInfo(String address) {
-        if (StringUtils.isEmpty(address))
+    public AjaxResult queryQualificationInfo(String enterprise) {
+        if (StringUtils.isEmpty(enterprise))
         {
             return AjaxResult.error("当前的用户地址为空");
         }
-        EnterpriseVo enterpriseVo = carbonEnterpriseMapper.selectUserWithEnterpriseEnterpriseName(address);
+        EnterpriseVo enterpriseVo = carbonEnterpriseMapper.selectUserWithEnterpriseEnterpriseName(enterprise);
         if (Objects.isNull(enterpriseVo))
         {
             return AjaxResult.error("该企业不存在");
@@ -84,7 +88,7 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
                 .selectCarbonQualificationByQualificationId(Long.valueOf(enterpriseVo.getQualification_id()));
         if (Objects.isNull(qualification))
         {
-            return AjaxResult.error("当前的企业资质不存在");
+            return AjaxResult.error("当前企业未认证");
         }
         return AjaxResult.success("qualification",qualification);
     }
@@ -99,8 +103,8 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         }
         ArrayList<CarbonTransaction> txList = transactionService.selectTransactionListByAddress(enterprise.getEnterpriseAddress());
         if (txList.size() > 0){
-            AjaxResult ajax = AjaxResult.success("txList", txList);
-            ajax.put("total",txList.size());
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("data",txList);
             return ajax;
         }
         return AjaxResult.error("该企业还未交易");
@@ -115,8 +119,8 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         }
         ArrayList<CarbonEmissionResource> erList = emissionResourceService.selectEmissionResourceByAddress(enterprise.getEnterpriseAddress());
         if (erList.size() > 0){
-            AjaxResult ajax = AjaxResult.success("erList", erList);
-            ajax.put("total",erList.size());
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("data",erList);
             return ajax;
         }
         return AjaxResult.error("该企业还未排放");
@@ -138,8 +142,11 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         {
             return AjaxResult.error("当前企业还没出售资产");
         }
-        AjaxResult ajax = AjaxResult.success("查询成功", enterpriseAssets);
-        ajax.put("total",enterpriseAssets.size());
+        AjaxResult ajax = AjaxResult.success("查询成功");
+        ajax.put("data",enterpriseAssets);
         return ajax;
     }
+
+
+
 }

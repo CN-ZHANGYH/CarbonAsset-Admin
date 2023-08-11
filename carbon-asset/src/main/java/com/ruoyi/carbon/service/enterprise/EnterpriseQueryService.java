@@ -6,7 +6,7 @@ public interface EnterpriseQueryService {
 
     public AjaxResult queryEnterpriseInfo(String address);
 
-    public AjaxResult queryQualificationInfo(String address);
+    public AjaxResult queryQualificationInfo(String enterprise);
 
 
     /**
@@ -20,4 +20,5 @@ public interface EnterpriseQueryService {
     public AjaxResult queryEnterpriseErList(String enterpriseName);
 
     public AjaxResult queryEnterpriseAList(String enterprise);
+
 }

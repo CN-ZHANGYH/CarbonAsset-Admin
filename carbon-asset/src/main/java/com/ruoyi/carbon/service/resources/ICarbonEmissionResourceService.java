@@ -1,7 +1,9 @@
 package com.ruoyi.carbon.service.resources;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.vo.EmissionVo;
+import com.ruoyi.carbon.domain.vo.RankingEmissionVo;
 import com.ruoyi.carbon.domain.vo.ResourceVo;
 import com.ruoyi.carbon.domain.vo.VerifyVo;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -15,7 +17,7 @@ import java.util.List;
  * @author 张宇豪
  * @date 2023-07-08
  */
-public interface ICarbonEmissionResourceService
+public interface ICarbonEmissionResourceService extends IService<CarbonEmissionResource>
 {
     /**
      * 查询企业排放资源
@@ -92,8 +94,15 @@ public interface ICarbonEmissionResourceService
 
     public ArrayList<CarbonEmissionResource> selectEmissionResourceByAddress(String enterpriseAddress);
 
-    public List<CarbonEmissionResource> selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource);
+    public List<CarbonEmissionResource> selectIsNotVerifyList();
 
     public AjaxResult selectEmissionAndTxAndApplyAndQuaList();
 
+    public List<CarbonEmissionResource> selectEnterpriseIsNotApplyEmissionResource(String enterprise);
+
+    public List<CarbonEmissionResource> selectEnterpriseIsApplyEmissioResource(String enterprise);
+
+    public List<CarbonEmissionResource> selectCarbonEmissionResourceListIsNotVerify(CarbonEmissionResource carbonEmissionResource);
+
+    List<RankingEmissionVo> selectRankingByEmissionResource(Integer pageNum, Integer pageSize);
 }

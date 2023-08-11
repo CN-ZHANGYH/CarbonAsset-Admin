@@ -17,4 +17,11 @@ public class SellVo {
     public BigInteger amount;
 
     public BigInteger quality;
+
+    public String title;
+
+    public String description;
+
+    public String image;
+
 }

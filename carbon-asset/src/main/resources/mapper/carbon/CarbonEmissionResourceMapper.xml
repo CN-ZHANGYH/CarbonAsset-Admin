@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.carbon.mapper.CarbonEmissionResourceMapper">
-    
+
     <resultMap type="CarbonEmissionResource" id="CarbonEmissionResourceResult">
         <result property="emissionId"    column="emission_id"    />
         <result property="enterpriseId"    column="enterprise_id"    />
@@ -13,15 +13,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="emissionWay"    column="emission_way"    />
         <result property="isApprove"    column="is_approve"    />
         <result property="emissionTime"    column="emission_time"    />
+        <result property="resourceType"    column="resource_type"    />
     </resultMap>
 
     <sql id="selectCarbonEmissionResourceVo">
-        select emission_id, enterprise_id, enterprise_address, emissions, description, emission_way, is_approve, emission_time from carbon_emission_resource
+        select emission_id, enterprise_id, enterprise_address, emissions, description, emission_way, is_approve, emission_time, resource_type from carbon_emission_resource
     </sql>
 
     <select id="selectCarbonEmissionResourceList" parameterType="CarbonEmissionResource" resultMap="CarbonEmissionResourceResult">
         <include refid="selectCarbonEmissionResourceVo"/>
-        <where>  
+        <where>
             <if test="enterpriseId != null "> and enterprise_id = #{enterpriseId}</if>
             <if test="enterpriseAddress != null  and enterpriseAddress != ''"> and enterprise_address = #{enterpriseAddress}</if>
             <if test="emissions != null "> and emissions = #{emissions}</if>
@@ -29,19 +30,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="emissionWay != null  and emissionWay != ''"> and emission_way = #{emissionWay}</if>
             <if test="isApprove != null "> and is_approve = #{isApprove}</if>
             <if test="emissionTime != null "> and emission_time = #{emissionTime}</if>
+            <if test="resourceType != null  and resourceType != ''"> and resource_type = #{resourceType}</if>
         </where>
     </select>
-    
+
+
     <select id="selectCarbonEmissionResourceByEmissionId" parameterType="Long" resultMap="CarbonEmissionResourceResult">
         <include refid="selectCarbonEmissionResourceVo"/>
         where emission_id = #{emissionId}
     </select>
-    <select id="selectEmissionResourceByAddress" resultMap="CarbonEmissionResourceResult">
+
+    <select id="selectEmissionResourceByEnterpriseId"
+            parameterType="integer"
+            resultMap="CarbonEmissionResourceResult">
         <include refid="selectCarbonEmissionResourceVo"/>
-        <where>
-            <if test="enterpriseAddress != null  and enterpriseAddress != ''"> and enterprise_address = #{enterpriseAddress}</if>
-        </where>
+        where enterprise_id = #{enterpriseId}
     </select>
+
+    <select id="selectEmissionResourceList" resultMap="CarbonEmissionResourceResult">
+        <include refid="selectCarbonEmissionResourceVo"/>
+    </select>
+
 
     <insert id="insertCarbonEmissionResource" parameterType="CarbonEmissionResource">
         insert into carbon_emission_resource
@@ -54,7 +63,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="emissionWay != null">emission_way,</if>
             <if test="isApprove != null">is_approve,</if>
             <if test="emissionTime != null">emission_time,</if>
-         </trim>
+            <if test="resourceType != null and resourceType != ''">resource_type,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="emissionId != null">#{emissionId},</if>
             <if test="enterpriseId != null">#{enterpriseId},</if>
@@ -64,7 +74,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="emissionWay != null">#{emissionWay},</if>
             <if test="isApprove != null">#{isApprove},</if>
             <if test="emissionTime != null">#{emissionTime},</if>
-         </trim>
+            <if test="resourceType != null and resourceType != ''">#{resourceType},</if>
+        </trim>
     </insert>
 
     <update id="updateCarbonEmissionResource" parameterType="CarbonEmissionResource">
@@ -77,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="emissionWay != null">emission_way = #{emissionWay},</if>
             <if test="isApprove != null">is_approve = #{isApprove},</if>
             <if test="emissionTime != null">emission_time = #{emissionTime},</if>
+            <if test="resourceType != null and resourceType != ''">resource_type = #{resourceType},</if>
         </trim>
         where emission_id = #{emissionId}
     </update>
@@ -86,7 +98,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteCarbonEmissionResourceByEmissionIds" parameterType="String">
-        delete from carbon_emission_resource where emission_id in 
+        delete from carbon_emission_resource where emission_id in
         <foreach item="emissionId" collection="array" open="(" separator="," close=")">
             #{emissionId}
         </foreach>

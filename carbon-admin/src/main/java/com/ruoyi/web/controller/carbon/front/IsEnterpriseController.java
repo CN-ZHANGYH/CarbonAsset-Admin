@@ -96,4 +96,20 @@ public class IsEnterpriseController extends BaseController {
         return enterpriseService.forgetUserPassword(forgetPassVo);
     }
 
+    @ApiOperation("更新用户的头像")
+    @PostMapping("/updateAvatar")
+    @Log(title = "更新企业的的头像",businessType = BusinessType.UPDATE)
+    public AjaxResult updateAvatarByName(@RequestParam("enterprise") String enterprise,@RequestParam("avatar") String avatar){
+        return enterpriseService.updateAvatarByName(enterprise,avatar);
+    }
+
+
+    @ApiOperation("上传商品的图片")
+    @PostMapping("/uploadProductImage")
+    @Log(title = "上传商品的图片",businessType = BusinessType.UPDATE)
+    public AjaxResult uploadProductImage(@RequestParam("file") MultipartFile file){
+        return enterpriseService.uploadProductImage(file);
+    }
+
+
 }

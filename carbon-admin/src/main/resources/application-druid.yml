@@ -15,7 +15,7 @@ spring:
             master:
                 url: jdbc:mysql://43.139.217.186:3306/carbon?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: root
-                password: 123456
+                password: zhangyuhao0417
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
@@ -72,10 +72,10 @@ system:
     peers: 43.139.217.186:20200
     groupId: 1
     certPath: conf,config,src/main/resources/conf,src/main/resources/config
-    hexPrivateKey: 424069012e4b74302b364d90975cfff4d8fa3834afbf1e5fa465a12ac46e887c
+    hexPrivateKey: 6d691f6b9f081ba5a6ad8b4e377ad15cc254a047f64ba7363ae91370ca33643c
     contract:
         carbonUserServiceAddress:
         carbonDataStorageAddress:
-        carbonAssetServiceAddress: "0x3a5460096405aab3aea0cdb2f7aa63bc34bd0891"
-        souvenirCardAddress: "0xd36217008fc83dfc4d0cb3778ed1e8b9678839d3"
+        carbonAssetServiceAddress: "0xb530081a3c435003f53ca874f19c6a9fc55a203d"
+        souvenirCardAddress: "0x6072d57ebc5678e8f9edf1d50e22de8befec194e"
 

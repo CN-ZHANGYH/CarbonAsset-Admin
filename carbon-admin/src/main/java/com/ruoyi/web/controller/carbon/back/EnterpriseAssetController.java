@@ -31,7 +31,6 @@ public class EnterpriseAssetController extends BaseController
     /**
      * 查询企业出售资产列表
      */
-    @PreAuthorize("@ss.hasPermi('carbon:asset:list')")
     @GetMapping("/list")
     public TableDataInfo list(CarbonEnterpriseAsset carbonEnterpriseAsset)
     {
