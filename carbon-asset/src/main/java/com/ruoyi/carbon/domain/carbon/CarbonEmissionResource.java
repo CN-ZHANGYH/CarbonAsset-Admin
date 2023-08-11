@@ -1,5 +1,6 @@
 package com.ruoyi.carbon.domain.carbon;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
@@ -17,6 +18,7 @@ import java.math.BigInteger;
  */
 
 @Data
+@TableName("carbon_emission_resource")
 @NoArgsConstructor
 @AllArgsConstructor
 public class CarbonEmissionResource extends BaseEntity

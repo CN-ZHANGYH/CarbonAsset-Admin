@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 企业排放资源Controller
+ * 企业排放资源接口
  *
  * @author 张宇豪
  * @date 2023-07-08
@@ -97,11 +97,13 @@ public class EmissionResourceController extends BaseController
         return toAjax(carbonEmissionResourceService.deleteCarbonEmissionResourceByEmissionIds(emissionIds));
     }
 
-    @Log(title = "查询资源申请未审批的企业",businessType = BusinessType.OTHER)
     @GetMapping("/isNotVerifyList")
     public TableDataInfo selectIsNotVerifyList(CarbonEmissionResource carbonEmissionResource){
+        List<CarbonEmissionResource> list = carbonEmissionResourceService.selectCarbonEmissionResourceList(carbonEmissionResource);
+
+        // 需要对结果进行分页操作
         startPage();
-        List<CarbonEmissionResource> list = carbonEmissionResourceService.list(null);
-        return getDataTable(list);
+        List<CarbonEmissionResource> resources = list.stream().filter(emissionResource -> emissionResource.getIsApprove() == 0).collect(Collectors.toList());
+        return getDataTable(resources);
     }
 }

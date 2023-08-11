@@ -2,6 +2,7 @@ package com.ruoyi.carbon.service.resources.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
@@ -389,6 +390,10 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
 
     @Override
     public List<CarbonEmissionResource> selectCarbonEmissionResourceListIsNotVerify(CarbonEmissionResource carbonEmissionResource) {
-        return list();
+        LambdaQueryWrapper<CarbonEmissionResource> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(CarbonEmissionResource::getEnterpriseAddress,"0x46b942c6c55f4f32cf3a6edaa2b78a9acbb0edf5");
+        List<CarbonEmissionResource> emissionResources = carbonEmissionResourceMapper.selectList(queryWrapper);
+        System.out.println(emissionResources);
+        return emissionResources;
     }
 }

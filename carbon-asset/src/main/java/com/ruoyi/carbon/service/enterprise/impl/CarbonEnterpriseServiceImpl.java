@@ -28,7 +28,6 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
-import org.aspectj.weaver.loadtime.Aj;
 import org.fisco.bcos.sdk.transaction.model.dto.CallResponse;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -295,6 +297,11 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         CarbonEnterprise seller = carbonEnterpriseMapper.selectCarbonEnterpriseByAddress(sellerAddress);
         CarbonQualification qualification = qualificationService.selectCarbonQualificationByQualificationId(Long.valueOf(buyer.getQualificationId()));
         CarbonEnterpriseAsset enterpriseAsset = enterpriseAssetService.selectCarbonEnterpriseAssetByAssetId(Long.valueOf(String.valueOf(assetId)));
+
+        if (enterpriseAsset.getAssetQuantity() == BigInteger.valueOf(0L))
+        {
+            return AjaxResult.error("当前商品已售空");
+        }
 
         BigInteger oldBalance = buyer.getEnterpriseBalance();
         buyer.setEnterpriseBalance(oldBalance.subtract(enterpriseAsset.getAssetAmount().multiply(buyVo.getQuality())));
