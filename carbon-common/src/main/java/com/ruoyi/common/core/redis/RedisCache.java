@@ -262,4 +262,29 @@ public class RedisCache
     {
         return redisTemplate.keys(pattern);
     }
+
+
+    /**
+     * 往BigMap中插入数据
+     *
+     * @param key Redis键
+     * @param hashKey Hash键
+     * @param value Hash值
+     */
+    public <T> void setBigMapValue(final String key, final Integer hashKey, final Boolean value) {
+        redisTemplate.opsForValue().setBit(key, hashKey, value);
+    }
+
+
+    /**
+     * 往BigMap中查询数据
+     *
+     * @param key Redis键
+     * @param hashKey Hash键
+     * @return Hash值
+     */
+    public <T> Boolean getBigMapValue(final String key, final Integer hashKey) {
+        return redisTemplate.opsForValue().getBit(key, hashKey);
+    }
+
 }

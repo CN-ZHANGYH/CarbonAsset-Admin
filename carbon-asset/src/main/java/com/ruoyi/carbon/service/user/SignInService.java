@@ -4,5 +4,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 
 public interface SignInService {
 
-    public AjaxResult userSignInToCredit(String address) throws Exception;
+    AjaxResult userSignInToCredit(String address) throws Exception;
+
+    AjaxResult signCountByAddress(String address);
 }
