@@ -69,4 +69,5 @@ public interface ICarbonTransactionService
 
     public AjaxResult selectTransactionNewTxList();
 
+    public AjaxResult selectTransactionTxList(String enterprise);
 }

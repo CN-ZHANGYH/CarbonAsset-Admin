@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -20,6 +21,7 @@ public class IsDataController extends BaseController {
 
     @Autowired
     private ICarbonTransactionService transactionService;
+
 
     @Autowired
     private ICarbonEmissionResourceService emissionResourceService;
@@ -48,5 +50,10 @@ public class IsDataController extends BaseController {
     @GetMapping("/newTxList")
     public AjaxResult getNewTxList(){
         return transactionService.selectTransactionNewTxList();
+    }
+
+    @GetMapping("/ownerTxList")
+    public AjaxResult getEnterpriseTxList(@RequestParam("enterprise") String enterprise){
+        return transactionService.selectTransactionTxList(enterprise);
     }
 }

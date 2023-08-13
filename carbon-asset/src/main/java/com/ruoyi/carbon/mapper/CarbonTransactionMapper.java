@@ -2,6 +2,7 @@ package com.ruoyi.carbon.mapper;
 
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.domain.vo.TransactionVo;
+import com.ruoyi.carbon.domain.vo.TxDataVo;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -91,4 +92,20 @@ public interface CarbonTransactionMapper
     public List<TransactionVo> selectTransactionOfWeek();
 
     public List<CarbonTransaction> selectTransactionListOfNew();
+
+    @Select("SELECT\n" +
+            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 0 THEN transaction_quantity ELSE 0 END) AS monday,\n" +
+            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 1 THEN transaction_quantity ELSE 0 END) AS tuesday,\n" +
+            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 2 THEN transaction_quantity ELSE 0 END) AS wednesday,\n" +
+            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 3 THEN transaction_quantity ELSE 0 END) AS thursday,\n" +
+            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 4 THEN transaction_quantity ELSE 0 END) AS friday,\n" +
+            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 5 THEN transaction_quantity ELSE 0 END) AS saturday,\n" +
+            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 6 THEN transaction_quantity ELSE 0 END) AS sunday\n" +
+            "FROM\n" +
+            "    carbon_transaction\n" +
+            "WHERE\n" +
+            "                buyer_id = #{buyerId}\n" +
+            "GROUP BY\n" +
+            "    buyer_id;")
+    public List<TxDataVo> selectTransactionTxList(@Param("buyerId") String buyerId);
 }

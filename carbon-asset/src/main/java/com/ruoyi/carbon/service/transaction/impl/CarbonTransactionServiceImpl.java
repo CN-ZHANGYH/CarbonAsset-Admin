@@ -2,6 +2,7 @@ package com.ruoyi.carbon.service.transaction.impl;
 
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.domain.vo.TransactionVo;
+import com.ruoyi.carbon.domain.vo.TxDataVo;
 import com.ruoyi.carbon.mapper.CarbonTransactionMapper;
 import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 交易碳额度记录Service业务层处理
@@ -114,5 +116,15 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
             return AjaxResult.error("当前还没有交易");
         }
         return AjaxResult.success(carbonTransactions);
+    }
+
+    @Override
+    public AjaxResult selectTransactionTxList(String enterprise) {
+        List<TxDataVo> txDataVos = carbonTransactionMapper.selectTransactionTxList(enterprise);
+        if (Objects.isNull(txDataVos))
+        {
+            return AjaxResult.success();
+        }
+        return AjaxResult.success().put("data",txDataVos);
     }
 }
