@@ -52,8 +52,8 @@ public class IsDataController extends BaseController {
         return transactionService.selectTransactionNewTxList();
     }
 
-    @GetMapping("/ownerTxList")
-    public AjaxResult getEnterpriseTxList(@RequestParam("enterprise") String enterprise){
-        return transactionService.selectTransactionTxList(enterprise);
+    @GetMapping("/ownerTxAndSeList")
+    public AjaxResult getEnterpriseTxAndSellerList(@RequestParam("enterprise") String enterprise){
+        return transactionService.selectTransactionTxAndSellerList(enterprise);
     }
 }

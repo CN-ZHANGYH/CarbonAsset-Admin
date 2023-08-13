@@ -1,6 +1,7 @@
 package com.ruoyi.carbon.service.user.impl;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
+import com.ruoyi.carbon.domain.carbon.NoticeInfo;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceSignInInputBO;
@@ -69,6 +70,17 @@ public class SignInServiceImpl implements SignInService {
         // 设置缓存
         poolExecutor.execute(() -> setRedisCache(dayOfMonth, key));
 
+        // 添加通告操作
+        Integer enterpriseId = carbonEnterprise.getEnterpriseId();
+        String noticeKey = RedisContacts.NOTICE_USER_KEY + enterpriseId;
+        NoticeInfo noticeInfo = new NoticeInfo();
+        noticeInfo.setEnterpriseId(enterpriseId);
+        noticeInfo.setNoticeTime(now.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
+        noticeInfo.setMsg("签到成功");
+        noticeInfo.setDescription(carbonEnterprise.getEnterpriseName() + "完成了签到");
+        noticeInfo.setTitle("签到");
+        redisTemplate.opsForList().leftPush(noticeKey,noticeInfo);
+
         // 更新数据库
         BigInteger oldCredit = carbonEnterprise.getEnterpriseCarbonCredits();
         carbonEnterprise.setEnterpriseCarbonCredits(oldCredit.add(new BigInteger(String.valueOf(50))));
@@ -136,6 +148,17 @@ public class SignInServiceImpl implements SignInService {
         ajax.put("count",count);
         return ajax;
 
+    }
+
+    @Override
+    public AjaxResult getNoticeInfo(Integer id) {
+        String key = RedisContacts.NOTICE_USER_KEY + id;
+        List<NoticeInfo> noticeInfos = redisTemplate.opsForList().range(key, 0, -1);
+        if (noticeInfos.isEmpty())
+        {
+            return AjaxResult.success();
+        }
+        return AjaxResult.success().put("nsData",noticeInfos);
     }
 
     public void updateBlockChainSignData(CarbonEnterprise carbonEnterprise, CarbonAssetServiceSignInInputBO signAddress) throws Exception {

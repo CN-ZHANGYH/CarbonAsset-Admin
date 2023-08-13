@@ -3,6 +3,7 @@ package com.ruoyi.carbon.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.AssetVo;
+import com.ruoyi.carbon.domain.vo.TxDataVo;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -93,4 +94,17 @@ public interface CarbonEnterpriseAssetMapper extends BaseMapper<CarbonEnterprise
 
     public List<CarbonEnterpriseAsset> queryEnterpriseNewSellerAssetLimitFive(String address);
 
+    @Select("SELECT\n" +
+            "    COALESCE(SUM(CASE WHEN DAYOFWEEK(`time`) = 2 THEN asset_quantity ELSE 0 END), 0) AS monday,\n" +
+            "    COALESCE(SUM(CASE WHEN DAYOFWEEK(`time`) = 3 THEN asset_quantity ELSE 0 END), 0) AS tuesday,\n" +
+            "    COALESCE(SUM(CASE WHEN DAYOFWEEK(`time`) = 4 THEN asset_quantity ELSE 0 END), 0) AS wednesday,\n" +
+            "    COALESCE(SUM(CASE WHEN DAYOFWEEK(`time`) = 5 THEN asset_quantity ELSE 0 END), 0) AS thursday,\n" +
+            "    COALESCE(SUM(CASE WHEN DAYOFWEEK(`time`) = 6 THEN asset_quantity ELSE 0 END), 0) AS friday,\n" +
+            "    COALESCE(SUM(CASE WHEN DAYOFWEEK(`time`) = 7 THEN asset_quantity ELSE 0 END), 0) AS saturday,\n" +
+            "    COALESCE(SUM(CASE WHEN DAYOFWEEK(`time`) = 1 THEN asset_quantity ELSE 0 END), 0) AS sunday\n" +
+            "FROM\n" +
+            "    carbon_enterprise_asset\n" +
+            "WHERE\n" +
+            "        enterprise_id = 1;")
+    public List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId);
 }

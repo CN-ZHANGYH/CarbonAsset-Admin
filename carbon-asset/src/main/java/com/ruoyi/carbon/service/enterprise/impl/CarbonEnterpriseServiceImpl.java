@@ -25,10 +25,12 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
+import org.aspectj.weaver.loadtime.Aj;
 import org.fisco.bcos.sdk.transaction.model.dto.CallResponse;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,6 +42,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 
 /**
@@ -84,7 +87,8 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
     /**
      * 手动创建线程
      */
-    private static ExecutorService pool = Executors.newCachedThreadPool();
+    @Autowired
+    private static ThreadPoolTaskExecutor poolTaskExecutor;
 
     /**
      * 查询企业信息
@@ -229,9 +233,6 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         emissionLimitInputBO.set_emissionLimitCount(sellVo.getQuality());
         List<Object> params = emissionLimitInputBO.toArgs();
 
-        // get(1)
-        // [ 0, 0, "0x0000000000000000000000000000000000000000", 0, 0, 0, 0 ]"
-        // 切换用户私钥
         try {
             // 业务上链
             TransactionResponse transactionResponse = rawContractLoaderFactory
@@ -531,6 +532,21 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
             return AjaxResult.success("当前没有企业注册");
         }
         return AjaxResult.success().put("data",rankingCreditVos);
+    }
+
+    @Override
+    public AjaxResult selectEnterpriseRanking(String enterprise) {
+        if (enterprise.isEmpty()) return AjaxResult.error("企业不能为空");
+        List<String> enterpriseRanking = carbonEnterpriseMapper.selectEnterpriseRanking();
+        int ranking = 0;
+        for (int i = 0; i < enterpriseRanking.size(); i++) {
+            if (enterpriseRanking.get(i).equals(enterprise))
+            {
+                ranking = i;
+                return AjaxResult.success().put("cRanking",ranking + 1);
+            }
+        }
+        return AjaxResult.error("没有当前企业");
     }
 
 

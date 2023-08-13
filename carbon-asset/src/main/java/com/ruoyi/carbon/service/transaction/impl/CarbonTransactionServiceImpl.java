@@ -1,9 +1,12 @@
 package com.ruoyi.carbon.service.transaction.impl;
 
+import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.domain.vo.TransactionVo;
 import com.ruoyi.carbon.domain.vo.TxDataVo;
 import com.ruoyi.carbon.mapper.CarbonTransactionMapper;
+import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
+import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
 import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,13 @@ import java.util.Objects;
 @Service
 public class CarbonTransactionServiceImpl implements ICarbonTransactionService
 {
+
+    @Autowired
+    private ICarbonEnterpriseService enterpriseService;
+
+    @Autowired
+    private ICarbonEnterpriseAssetService enterpriseAssetService;
+
     @Autowired
     private CarbonTransactionMapper carbonTransactionMapper;
 
@@ -119,12 +129,43 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
     }
 
     @Override
-    public AjaxResult selectTransactionTxList(String enterprise) {
-        List<TxDataVo> txDataVos = carbonTransactionMapper.selectTransactionTxList(enterprise);
-        if (Objects.isNull(txDataVos))
+    public AjaxResult selectTransactionTxAndSellerList(String enterprise) {
+
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(carbonEnterprise))
+        {
+            return AjaxResult.error("当前企业不存在");
+        }
+        List<TxDataVo> txDataVos = carbonTransactionMapper.selectTransactionTxList(carbonEnterprise.getEnterpriseId());
+        List<TxDataVo> sellDataVos = enterpriseAssetService.selectEnterpriseAssetSellList(carbonEnterprise.getEnterpriseId());
+        if (txDataVos.isEmpty() || sellDataVos.isEmpty())
         {
             return AjaxResult.success();
         }
-        return AjaxResult.success().put("data",txDataVos);
+        ArrayList<Integer> txData = new ArrayList<>();
+        ArrayList<Integer> sellerData = new ArrayList<>();
+        txDataVos.stream().forEach(txDataVo -> {
+            txData.add(txDataVo.getMonday());
+            txData.add(txDataVo.getTuesday());
+            txData.add(txDataVo.getWednesday());
+            txData.add(txDataVo.getThursday());
+            txData.add(txDataVo.getFriday());
+            txData.add(txDataVo.getSaturday());
+            txData.add(txDataVo.getSunday());
+        });
+
+        sellDataVos.stream().forEach(sData -> {
+            sellerData.add(sData.getMonday());
+            sellerData.add(sData.getTuesday());
+            sellerData.add(sData.getWednesday());
+            sellerData.add(sData.getThursday());
+            sellerData.add(sData.getFriday());
+            sellerData.add(sData.getSaturday());
+            sellerData.add(sData.getSunday());
+        });
+        AjaxResult success = AjaxResult.success();
+        success.put("tData",txData);
+        success.put("sData",sellerData);
+        return success;
     }
 }

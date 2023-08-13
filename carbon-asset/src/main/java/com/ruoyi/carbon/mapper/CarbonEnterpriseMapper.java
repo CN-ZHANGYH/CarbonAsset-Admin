@@ -82,4 +82,8 @@ public interface CarbonEnterpriseMapper
             "    su.avatar\n" +
             "FROM carbon_enterprise e JOIN sys_user su ON e.enterprise_name = su.nick_name order by e.enterprise_carbon_credits desc limit #{page},#{pageSize}")
     public List<RankingCreditVo> selectRankingByCredit(@Param("page") Integer page, @Param("pageSize") Integer pageSize);
+
+
+    @Select("select e.enterprise_name FROM carbon_enterprise e JOIN sys_user su ON e.enterprise_name = su.nick_name order by e.enterprise_carbon_credits desc")
+    public List<String> selectEnterpriseRanking();
 }

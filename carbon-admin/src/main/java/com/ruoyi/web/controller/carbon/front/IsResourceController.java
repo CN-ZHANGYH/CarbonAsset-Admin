@@ -61,4 +61,10 @@ public class IsResourceController extends BaseController {
         ajax.put("total",rankingEmissionVos.size());
         return ajax;
     }
+
+    @ApiOperation("查询企业当前碳排放的排名")
+    @GetMapping("/getResourceRanking")
+    public AjaxResult getResourceRanking(@RequestParam("enterprise") String enterprise){
+        return emissionResourceService.selectResourceRanking(enterprise);
+    }
 }

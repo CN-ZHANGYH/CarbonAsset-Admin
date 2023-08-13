@@ -105,4 +105,6 @@ public interface ICarbonEmissionResourceService extends IService<CarbonEmissionR
     public List<CarbonEmissionResource> selectCarbonEmissionResourceListIsNotVerify(CarbonEmissionResource carbonEmissionResource);
 
     List<RankingEmissionVo> selectRankingByEmissionResource(Integer pageNum, Integer pageSize);
+
+    AjaxResult selectResourceRanking(String enterprise);
 }

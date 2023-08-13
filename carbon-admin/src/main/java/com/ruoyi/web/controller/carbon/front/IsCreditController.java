@@ -35,4 +35,10 @@ public class IsCreditController {
         return carbonEnterpriseService.selectRankingByCredit(page,pageSize);
     }
 
+    @ApiOperation("查询企业当前的排名")
+    @GetMapping("/getERanking")
+    public AjaxResult getEnterpriseRanking(@RequestParam("enterprise") String enterprise){
+        return carbonEnterpriseService.selectEnterpriseRanking(enterprise);
+    }
+
 }

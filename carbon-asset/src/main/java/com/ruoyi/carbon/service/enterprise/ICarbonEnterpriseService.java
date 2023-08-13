@@ -127,4 +127,6 @@ public interface ICarbonEnterpriseService
     public AjaxResult uploadProductImage(MultipartFile file);
 
     public AjaxResult selectRankingByCredit(Integer page, Integer pageSize);
+
+    public AjaxResult selectEnterpriseRanking(String enterprise);
 }

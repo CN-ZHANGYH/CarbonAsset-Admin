@@ -23,6 +23,7 @@ import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
+import org.aspectj.weaver.loadtime.Aj;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -368,7 +369,6 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
             return null;
         }
         List<CarbonEmissionResource> carbonEmissionResources = carbonEmissionResourceMapper.selectEmissionResourceByEnterpriseId(carbonEnterprise.getEnterpriseId());
-        System.out.println(carbonEmissionResources.size());
         return carbonEmissionResources.stream()
                 .filter(carbonEmissionResource -> carbonEmissionResource.getIsApprove() != 1)
                 .collect(Collectors.toList());
@@ -382,7 +382,6 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
             return null;
         }
         List<CarbonEmissionResource> carbonEmissionResources = carbonEmissionResourceMapper.selectEmissionResourceByEnterpriseId(carbonEnterprise.getEnterpriseId());
-        System.out.println(carbonEmissionResources.size());
         return carbonEmissionResources.stream()
                 .filter(carbonEmissionResource -> carbonEmissionResource.getIsApprove() == 1)
                 .collect(Collectors.toList());
@@ -400,5 +399,24 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
     @Override
     public List<RankingEmissionVo> selectRankingByEmissionResource(Integer pageNum, Integer pageSize) {
         return carbonEmissionResourceMapper.selectRankingByEmissionResource(pageNum,pageSize);
+    }
+
+    @Override
+    public AjaxResult selectResourceRanking(String enterprise) {
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(enterprise))
+        {
+            return AjaxResult.error("当前企业不存在");
+        }
+        List<Integer> resources =  carbonEmissionResourceMapper.selectResourceRanking();
+        int resourceRanking = 0;
+        for (int i = 0; i < resources.size(); i++) {
+            if (carbonEnterprise.getEnterpriseId() == resources.get(i))
+            {
+                resourceRanking = i + 1;
+                return AjaxResult.success().put("rRanking",resourceRanking);
+            }
+        }
+        return AjaxResult.error();
     }
 }

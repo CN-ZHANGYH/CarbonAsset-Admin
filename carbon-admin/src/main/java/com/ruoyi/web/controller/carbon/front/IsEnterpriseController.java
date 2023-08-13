@@ -64,7 +64,6 @@ public class IsEnterpriseController extends BaseController {
         return enterpriseService.selectEnterpriseInfoByBlockChain(address);
     }
 
-
     @ApiOperation("更新总的排放量")
     @PostMapping("/updateTotalEmission")
     @Log(title = "企业更新总排放量",businessType = BusinessType.UPDATE)

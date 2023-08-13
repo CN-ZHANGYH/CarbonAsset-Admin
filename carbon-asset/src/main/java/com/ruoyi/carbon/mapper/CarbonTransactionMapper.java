@@ -6,6 +6,7 @@ import com.ruoyi.carbon.domain.vo.TxDataVo;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,5 +108,5 @@ public interface CarbonTransactionMapper
             "                buyer_id = #{buyerId}\n" +
             "GROUP BY\n" +
             "    buyer_id;")
-    public List<TxDataVo> selectTransactionTxList(@Param("buyerId") String buyerId);
+    public List<TxDataVo> selectTransactionTxList(@Param("buyerId") Integer buyerId);
 }

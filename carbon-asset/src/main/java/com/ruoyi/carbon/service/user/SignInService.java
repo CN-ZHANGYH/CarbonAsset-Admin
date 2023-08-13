@@ -7,4 +7,6 @@ public interface SignInService {
     AjaxResult userSignInToCredit(String address) throws Exception;
 
     AjaxResult signCountByAddress(String address);
+
+    AjaxResult getNoticeInfo(Integer id);
 }

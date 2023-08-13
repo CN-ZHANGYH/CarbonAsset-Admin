@@ -117,7 +117,9 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         {
             return AjaxResult.error("该企业不存在");
         }
-        ArrayList<CarbonEmissionResource> erList = emissionResourceService.selectEmissionResourceByAddress(enterprise.getEnterpriseAddress());
+        CarbonEmissionResource carbonEmissionResource = new CarbonEmissionResource();
+        carbonEmissionResource.setEnterpriseId(Long.valueOf(enterprise.getEnterpriseId()));
+        List<CarbonEmissionResource> erList = emissionResourceService.selectCarbonEmissionResourceList(carbonEmissionResource);
         if (erList.size() > 0){
             AjaxResult ajax = AjaxResult.success();
             ajax.put("data",erList);

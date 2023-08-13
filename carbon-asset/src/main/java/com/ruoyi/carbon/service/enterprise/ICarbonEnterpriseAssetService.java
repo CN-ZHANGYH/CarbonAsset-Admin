@@ -2,6 +2,7 @@ package com.ruoyi.carbon.service.enterprise;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.AssetVo;
+import com.ruoyi.carbon.domain.vo.TxDataVo;
 import com.ruoyi.common.core.domain.AjaxResult;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -71,4 +72,6 @@ public interface ICarbonEnterpriseAssetService
 
 
     AjaxResult queryEnterpriseNewSellerAssetLimitFive(String address);
+
+    List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId);
 }

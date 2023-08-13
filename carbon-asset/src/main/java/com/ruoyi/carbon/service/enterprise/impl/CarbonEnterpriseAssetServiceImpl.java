@@ -2,6 +2,7 @@ package com.ruoyi.carbon.service.enterprise.impl;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.AssetVo;
+import com.ruoyi.carbon.domain.vo.TxDataVo;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseAssetMapper;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -116,6 +117,10 @@ public class CarbonEnterpriseAssetServiceImpl implements ICarbonEnterpriseAssetS
         return ajax.put("data", enterpriseAssets);
     }
 
+    @Override
+    public List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId) {
+        return carbonEnterpriseAssetMapper.selectEnterpriseAssetSellList(enterpriseId);
+    }
 
 
 }

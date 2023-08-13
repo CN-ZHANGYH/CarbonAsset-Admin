@@ -116,4 +116,14 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
             "    JOIN sys_user user ON ce.enterprise_name = user.nick_name limit #{page},#{pageSize}")
     public List<RankingEmissionVo> selectRankingByEmissionResource(@Param("page") Integer page, @Param("pageSize") Integer pageSize);
 
+    @Select("SELECT\n" +
+            "    enterprise_id\n" +
+            "FROM\n" +
+            "    carbon_emission_resource\n" +
+            "GROUP BY\n" +
+            "    enterprise_id\n" +
+            "ORDER BY\n" +
+            "    SUM(emissions) DESC;")
+    public List<Integer> selectResourceRanking();
+
 }
