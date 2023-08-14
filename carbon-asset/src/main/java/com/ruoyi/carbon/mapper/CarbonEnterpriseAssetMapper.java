@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.AssetVo;
 import com.ruoyi.carbon.domain.vo.TxDataVo;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -107,4 +108,14 @@ public interface CarbonEnterpriseAssetMapper extends BaseMapper<CarbonEnterprise
             "WHERE\n" +
             "        enterprise_id = 1;")
     public List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId);
+
+    @Select("SELECT\n" +
+            "    ROUND(COUNT(CASE WHEN asset_quantity = 0 THEN 1 ELSE NULL END) / COUNT(*) * 100, 1) AS zero_quantity_percentage\n" +
+            "FROM\n" +
+            "    carbon_enterprise_asset\n" +
+            "WHERE\n" +
+            "                enterprise_id = #{enterpriseId}\n" +
+            "GROUP BY\n" +
+            "    enterprise_id;")
+    public float selectSellerListIsOverProgress(@Param("enterpriseId") Integer enterpriseId);
 }

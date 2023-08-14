@@ -43,6 +43,7 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
     private ICarbonEmissionResourceService emissionResourceService;
 
 
+
     /**
      * 查询企业用户的链上实时的信息
      *
@@ -63,8 +64,6 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         AjaxResult ajax = AjaxResult.success();
         ajax.put("enterprise",enterprise);
         return ajax;
-
-
     }
 
     /**
@@ -93,6 +92,11 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         return AjaxResult.success("qualification",qualification);
     }
 
+    /**
+     * 查询企业的交易历史记录
+     * @param enterpriseName 企业名称
+     * @return 返回结果
+     */
     @Override
     public AjaxResult queryEnterpriseTxList(String enterpriseName) {
         // 通过企业的名称查询企业的交易历史
@@ -149,6 +153,50 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         return ajax;
     }
 
+    @Override
+    public AjaxResult selectEnterpriseWorkProgress(String enterprise) {
+        if (StringUtils.isEmpty(enterprise))
+        {
+            return AjaxResult.error("企业不能为空");
+        }
+        CarbonEnterprise carbonEnterprise = carbonEnterpriseMapper.selectCarbonEnterpriseByName(enterprise);
+        if (Objects.isNull(carbonEnterprise))
+        {
+            return AjaxResult.error("当前的企业不存在");
+        }
+        // 查询当前的所有碳排放审批进度
+        double applyEmissionResourceProgress  = carbonEmissionResourceMapper
+                .selectEnterpriseIsApplyEmissionResourceProgress(carbonEnterprise.getEnterpriseId());
+
+        // 查询当前的所有出售的碳额度售空进度
+        double sellerAssetProgress = enterpriseAssetService
+                .selectSellerListIsOverProgress(carbonEnterprise.getEnterpriseId());
+
+        // 查询所有的已完成碳排放的进度
+        double overEmissionResourceProgress = carbonEmissionResourceMapper
+                .selectOverEmissionResourceProgress(carbonEnterprise.getEnterpriseId());
+
+        ArrayList<Double> results = new ArrayList<>();
+        results.add(applyEmissionResourceProgress);
+        results.add(sellerAssetProgress);
+        results.add(overEmissionResourceProgress);
+        return AjaxResult.success().put("data",results);
+    }
+
+    @Override
+    public AjaxResult selectTotalTxAndEmission() {
+        // 查询近一年的每一个月的所有碳排放数据
+        List<Integer> emData = carbonEmissionResourceMapper.selectEmissionResourceMonthOfYear();
+        // 查询近一年的每一个月的总交易量
+        List<Integer> txData = transactionService.selectTxMonthOfYear();
+        // 查看近一年的每一个月的企业认证总数
+        List<Integer> quaData = qualificationMapper.selectEnterpriseVerifyMonthOfYear();
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("emData",emData);
+        ajax.put("txData",txData);
+        ajax.put("quData",quaData);
+        return ajax;
+    }
 
 
 }

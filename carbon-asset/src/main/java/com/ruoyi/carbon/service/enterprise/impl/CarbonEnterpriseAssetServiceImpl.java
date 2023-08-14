@@ -122,5 +122,10 @@ public class CarbonEnterpriseAssetServiceImpl implements ICarbonEnterpriseAssetS
         return carbonEnterpriseAssetMapper.selectEnterpriseAssetSellList(enterpriseId);
     }
 
+    @Override
+    public double selectSellerListIsOverProgress(Integer enterpriseId) {
+        return carbonEnterpriseAssetMapper.selectSellerListIsOverProgress(enterpriseId);
+    }
+
 
 }

@@ -87,4 +87,27 @@ public interface CarbonQualificationMapper
             "GROUP BY date_table.date\n" +
             "ORDER BY date_table.date ASC;\n")
     public List<QualificationVo> selectQualificationByVerifyListOfWeek();
+
+    @Select("SELECT\n" +
+            "    IFNULL(COUNT(cq.qualification_id), 0) AS total_qualified_companies\n" +
+            "FROM (\n" +
+            "         SELECT 1 AS month\n" +
+            "         UNION SELECT 2\n" +
+            "         UNION SELECT 3\n" +
+            "         UNION SELECT 4\n" +
+            "         UNION SELECT 5\n" +
+            "         UNION SELECT 6\n" +
+            "         UNION SELECT 7\n" +
+            "         UNION SELECT 8\n" +
+            "         UNION SELECT 9\n" +
+            "         UNION SELECT 10\n" +
+            "         UNION SELECT 11\n" +
+            "         UNION SELECT 12\n" +
+            "     ) AS months\n" +
+            "         LEFT JOIN carbon_qualification cq ON MONTH(cq.qualification_audit_time) = months.month\n" +
+            "    AND (cq.qualification_audit_time IS NULL OR (cq.qualification_audit_time IS NOT NULL))\n" +
+            "GROUP BY months.month\n" +
+            "ORDER BY months.month;\n")
+    public List<Integer> selectEnterpriseVerifyMonthOfYear();
+
 }

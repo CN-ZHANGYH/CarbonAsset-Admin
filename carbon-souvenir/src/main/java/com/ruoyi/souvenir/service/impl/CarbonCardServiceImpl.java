@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -53,6 +54,7 @@ public class CarbonCardServiceImpl implements ICarbonCardService
 
     @Autowired
     private ICarbonEnterpriseService enterpriseService;
+
 
 
     /**
@@ -247,5 +249,6 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         }
         return AjaxResult.error("查询失败");
     }
+
 
 }

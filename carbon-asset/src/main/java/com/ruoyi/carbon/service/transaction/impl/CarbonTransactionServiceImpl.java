@@ -168,4 +168,9 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
         success.put("sData",sellerData);
         return success;
     }
+
+    @Override
+    public List<Integer> selectTxMonthOfYear() {
+        return carbonTransactionMapper.selectTransactionMonthOfYear();
+    }
 }

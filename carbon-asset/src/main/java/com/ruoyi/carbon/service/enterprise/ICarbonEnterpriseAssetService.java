@@ -4,8 +4,6 @@ import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.AssetVo;
 import com.ruoyi.carbon.domain.vo.TxDataVo;
 import com.ruoyi.common.core.domain.AjaxResult;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -71,7 +69,9 @@ public interface ICarbonEnterpriseAssetService
     public List<AssetVo> selectEnterpriseAssetByListOfWeek();
 
 
-    AjaxResult queryEnterpriseNewSellerAssetLimitFive(String address);
+    public AjaxResult queryEnterpriseNewSellerAssetLimitFive(String address);
 
-    List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId);
+    public List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId);
+
+    public double selectSellerListIsOverProgress(Integer enterpriseId);
 }

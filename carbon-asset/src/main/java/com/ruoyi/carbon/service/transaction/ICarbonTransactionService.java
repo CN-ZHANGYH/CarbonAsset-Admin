@@ -70,4 +70,7 @@ public interface ICarbonTransactionService
     public AjaxResult selectTransactionNewTxList();
 
     public AjaxResult selectTransactionTxAndSellerList(String enterprise);
+
+    public List<Integer> selectTxMonthOfYear();
+
 }

@@ -6,7 +6,6 @@ import com.ruoyi.carbon.domain.vo.TxDataVo;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Select;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,4 +108,27 @@ public interface CarbonTransactionMapper
             "GROUP BY\n" +
             "    buyer_id;")
     public List<TxDataVo> selectTransactionTxList(@Param("buyerId") Integer buyerId);
+
+    @Select("SELECT\n" +
+            "    IFNULL(SUM(ct.transaction_quantity), 0) AS total_transactions\n" +
+            "FROM (\n" +
+            "         SELECT 1 AS month\n" +
+            "         UNION SELECT 2\n" +
+            "         UNION SELECT 3\n" +
+            "         UNION SELECT 4\n" +
+            "         UNION SELECT 5\n" +
+            "         UNION SELECT 6\n" +
+            "         UNION SELECT 7\n" +
+            "         UNION SELECT 8\n" +
+            "         UNION SELECT 9\n" +
+            "         UNION SELECT 10\n" +
+            "         UNION SELECT 11\n" +
+            "         UNION SELECT 12\n" +
+            "     ) AS months\n" +
+            "         LEFT JOIN carbon_transaction ct ON MONTH(ct.transaction_time) = months.month\n" +
+            "    AND (ct.transaction_time IS NULL OR (ct.transaction_time IS NOT NULL))\n" +
+            "GROUP BY months.month\n" +
+            "ORDER BY months.month;\n")
+    public List<Integer> selectTransactionMonthOfYear();
+
 }

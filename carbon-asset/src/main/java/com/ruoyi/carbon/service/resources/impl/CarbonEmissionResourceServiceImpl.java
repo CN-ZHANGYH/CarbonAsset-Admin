@@ -23,7 +23,6 @@ import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.utils.StringUtils;
-import org.aspectj.weaver.loadtime.Aj;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -240,6 +239,19 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
                     .GetTransactionResponse(enterprise.getPriavateKey(), "enterpriseEmission", params);
             if (transactionResponse.getReturnMessage().equals("Success"))
             {
+                Integer code = JSON.parseArray(transactionResponse.getValues()).getInteger(0);
+                if (code == 60005)
+                {
+                    return AjaxResult.error("当前企业还未认证");
+                }
+                if (code == 60006)
+                {
+                    return AjaxResult.error("当前审批未通过");
+                }
+                if (code == 70003)
+                {
+                    return AjaxResult.error("请更新总排放量");
+                }
                 Boolean flag = (Boolean) JSON.parseArray(transactionResponse.getValues()).get(1);
                 if (flag)
                 {
@@ -384,6 +396,7 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
         List<CarbonEmissionResource> carbonEmissionResources = carbonEmissionResourceMapper.selectEmissionResourceByEnterpriseId(carbonEnterprise.getEnterpriseId());
         return carbonEmissionResources.stream()
                 .filter(carbonEmissionResource -> carbonEmissionResource.getIsApprove() == 1)
+                .filter(carbonEmissionResource -> carbonEmissionResource.getEmissionTime() == null)
                 .collect(Collectors.toList());
     }
 

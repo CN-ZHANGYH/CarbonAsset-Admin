@@ -126,4 +126,46 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
             "    SUM(emissions) DESC;")
     public List<Integer> selectResourceRanking();
 
+    @Select("SELECT\n" +
+            "    ROUND(COUNT(CASE WHEN is_approve = 1 THEN 1 ELSE NULL END) / COUNT(*) * 100, 1) AS approve_percentage\n" +
+            "FROM\n" +
+            "    carbon_emission_resource\n" +
+            "WHERE\n" +
+            "                enterprise_id = #{enterpriseId}\n" +
+            "GROUP BY\n" +
+            "    enterprise_id")
+    double selectEnterpriseIsApplyEmissionResourceProgress(@Param("enterpriseId") Integer enterpriseId);
+
+    @Select("SELECT\n" +
+            "    ROUND(COUNT(CASE WHEN emission_time IS NOT NULL THEN 1 ELSE NULL END) / COUNT(*) * 100, 1) AS non_zero_emissions_percentage\n" +
+            "FROM\n" +
+            "    carbon_emission_resource\n" +
+            "WHERE\n" +
+            "                enterprise_id = #{enterpriseId}\n" +
+            "GROUP BY\n" +
+            "    enterprise_id;")
+    double selectOverEmissionResourceProgress(@Param("enterpriseId") Integer enterpriseId);
+
+    @Select("SELECT\n" +
+            "    IFNULL(SUM(emissions), 0) AS total_emissions\n" +
+            "FROM (\n" +
+            "         SELECT 2023 AS year, 1 AS month\n" +
+            "         UNION SELECT 2023, 2\n" +
+            "         UNION SELECT 2023, 3\n" +
+            "         UNION SELECT 2023, 4\n" +
+            "         UNION SELECT 2023, 5\n" +
+            "         UNION SELECT 2023, 6\n" +
+            "         UNION SELECT 2023, 7\n" +
+            "         UNION SELECT 2023, 8\n" +
+            "         UNION SELECT 2023, 9\n" +
+            "         UNION SELECT 2023, 10\n" +
+            "         UNION SELECT 2023, 11\n" +
+            "         UNION SELECT 2023, 12\n" +
+            "     ) AS months\n" +
+            "         LEFT JOIN carbon_emission_resource ON YEAR(emission_time) = months.year AND MONTH(emission_time) = months.month\n" +
+            "WHERE emission_time IS NULL OR (emission_time IS NOT NULL AND MONTH(emission_time) = months.month)\n" +
+            "GROUP BY months.year, months.month\n" +
+            "ORDER BY months.year, months.month;")
+    List<Integer> selectEmissionResourceMonthOfYear();
+
 }

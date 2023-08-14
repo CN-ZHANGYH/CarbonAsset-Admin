@@ -21,4 +21,8 @@ public interface EnterpriseQueryService {
 
     public AjaxResult queryEnterpriseAList(String enterprise);
 
+    public AjaxResult selectEnterpriseWorkProgress(String enterprise);
+
+    public AjaxResult selectTotalTxAndEmission();
+
 }
