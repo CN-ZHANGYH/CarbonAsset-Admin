@@ -131,4 +131,6 @@ public interface CarbonTransactionMapper
             "ORDER BY months.month;\n")
     public List<Integer> selectTransactionMonthOfYear();
 
+    List<CarbonTransaction> selectTransactionListOfNewLimitFive();
+
 }

@@ -50,6 +50,11 @@
         order by transaction_time limit 10
     </select>
 
+    <select id="selectTransactionListOfNewLimitFive" resultMap="CarbonTransactionResult">
+        <include refid="selectCarbonTransactionVo"/>
+        order by transaction_time limit 5
+    </select>
+
     <insert id="insertCarbonTransaction" parameterType="CarbonTransaction">
         insert into carbon_transaction
         <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -73,4 +73,6 @@ public interface ICarbonTransactionService
 
     public List<Integer> selectTxMonthOfYear();
 
+    public AjaxResult selectTransactionNewTxListLimitFive();
+
 }

@@ -60,6 +60,11 @@ public class IsDataController extends BaseController {
         return transactionService.selectTransactionNewTxList();
     }
 
+    @GetMapping("/newTxListLimitFive")
+    public AjaxResult getNewTxListLimitFive(){
+        return transactionService.selectTransactionNewTxListLimitFive();
+    }
+
     /**
      * 查询当前企业的交易和出售的统计
      * @param enterprise 企业名称

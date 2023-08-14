@@ -173,4 +173,14 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
     public List<Integer> selectTxMonthOfYear() {
         return carbonTransactionMapper.selectTransactionMonthOfYear();
     }
+
+    @Override
+    public AjaxResult selectTransactionNewTxListLimitFive() {
+        List<CarbonTransaction> carbonTransactions = carbonTransactionMapper.selectTransactionListOfNewLimitFive();
+        if (carbonTransactions.size() < 0)
+        {
+            return AjaxResult.error("当前还没有交易");
+        }
+        return AjaxResult.success(carbonTransactions);
+    }
 }
