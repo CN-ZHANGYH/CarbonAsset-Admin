@@ -33,7 +33,6 @@ CardController extends BaseController
     /**
      * 查询纪念卡数据列表
      */
-    @PreAuthorize("@ss.hasPermi('souvenir:card:list')")
     @GetMapping("/list")
     public TableDataInfo list(CarbonCard carbonCard)
     {
