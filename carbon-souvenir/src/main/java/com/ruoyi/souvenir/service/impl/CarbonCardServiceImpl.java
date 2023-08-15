@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -184,7 +183,11 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         {
             return AjaxResult.error("该纪念卡不存在");
         }
-
+        // 判断当前的企业积分是否足够
+        if (enterprise.getEnterpriseCarbonCredits().compareTo(carbonCard.getCredit()) < 0)
+        {
+            return AjaxResult.error("当前没有足够的积分");
+        }
         SouvenirCardUserBindCardInputBO cardInputBO = new SouvenirCardUserBindCardInputBO();
         cardInputBO.set_cardName(cardName);
         cardInputBO.set_enterpriseName(enterpriseName);

@@ -72,8 +72,18 @@ public interface ICarbonCardService
     public AjaxResult uploadCardImg(MultipartFile file);
 
 
+    /**
+     * 积分兑换纪念卡
+     * @param creditVo 入参参数
+     * @return 返回结果
+     */
     public AjaxResult creditedExchange(CreditVo creditVo);
 
+    /**
+     * 查询企业所有的纪念卡
+     * @param enterprise 企业的名称
+     * @return 返回结果
+     */
     public AjaxResult selectCarbonCardListByEnterprise(String enterprise);
 
 

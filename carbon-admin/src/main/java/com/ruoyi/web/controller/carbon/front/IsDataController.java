@@ -76,12 +76,21 @@ public class IsDataController extends BaseController {
     }
 
 
+    /**
+     * 查询企业个人的工作进度
+     * @param enterprise 企业名称
+     * @return 返回结果
+     */
     @GetMapping("/ownerWorkProgress")
     public AjaxResult getEnterpriseWorkProgress(@RequestParam("enterprise") String enterprise){
         return enterpriseQueryService.selectEnterpriseWorkProgress(enterprise);
     }
 
 
+    /**
+     * 统计交易和碳排放的数据
+     * @return 返回结果
+     */
     @GetMapping("/getTotalTxAndEmission")
     public AjaxResult selectTotalTxAndEmission(){
         return enterpriseQueryService.selectTotalTxAndEmission();
