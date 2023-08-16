@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.OptionalDouble;
 
 @Service
 public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
@@ -164,23 +165,32 @@ public class EnterpriseQueryServiceImpl implements EnterpriseQueryService {
         {
             return AjaxResult.error("当前的企业不存在");
         }
-        // 查询当前的所有碳排放审批进度
-        double applyEmissionResourceProgress  = carbonEmissionResourceMapper
-                .selectEnterpriseIsApplyEmissionResourceProgress(carbonEnterprise.getEnterpriseId());
+        OptionalDouble applyEmissionResourceProgress = carbonEmissionResourceMapper.selectEnterpriseIsApplyEmissionResourceProgress(carbonEnterprise.getEnterpriseId());
+        if (applyEmissionResourceProgress != null) {
+            // 查询当前的所有碳排放审批进度
+            OptionalDouble sellerAssetProgress = enterpriseAssetService.selectSellerListIsOverProgress(carbonEnterprise.getEnterpriseId());
+            if (sellerAssetProgress != null) {
+                // 查询当前的所有出售的碳额度售空进度
+                OptionalDouble overEmissionResourceProgress = carbonEmissionResourceMapper.selectOverEmissionResourceProgress(carbonEnterprise.getEnterpriseId());
+                if (overEmissionResourceProgress != null) {
+                    double applyEmissionResourceValue = applyEmissionResourceProgress.orElse(0.0);
+                    double sellerAssetValue = sellerAssetProgress.orElse(0.0);
+                    double overEmissionResourceValue = overEmissionResourceProgress.orElse(0.0);
+                    ArrayList<Double> results = new ArrayList<>();
+                    results.add(applyEmissionResourceValue);
+                    results.add(sellerAssetValue);
+                    results.add(overEmissionResourceValue);
+                    return AjaxResult.success().put("data", results);
+                } else {
+                    return AjaxResult.error("当前还没有进度");
+                }
+            } else {
+                return AjaxResult.error("当前还没有进度");
+            }
+        } else {
+            return AjaxResult.error("当前还没有进度");
+        }
 
-        // 查询当前的所有出售的碳额度售空进度
-        double sellerAssetProgress = enterpriseAssetService
-                .selectSellerListIsOverProgress(carbonEnterprise.getEnterpriseId());
-
-        // 查询所有的已完成碳排放的进度
-        double overEmissionResourceProgress = carbonEmissionResourceMapper
-                .selectOverEmissionResourceProgress(carbonEnterprise.getEnterpriseId());
-
-        ArrayList<Double> results = new ArrayList<>();
-        results.add(applyEmissionResourceProgress);
-        results.add(sellerAssetProgress);
-        results.add(overEmissionResourceProgress);
-        return AjaxResult.success().put("data",results);
     }
 
     @Override

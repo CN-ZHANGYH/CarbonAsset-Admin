@@ -28,9 +28,11 @@ import com.ruoyi.carbon.model.bo.CarbonAssetServiceSelectTransactionInfoInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceSelectUserAddressInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceSellEmissionLimitInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceSignInInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSubEnterpriseCreditInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceTransactionIDListInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceTransactionsMapInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceUpdateBalanceInputBO;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceUpdateEmissionAssetInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceUpdateEnterpriseEmissionInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceUpdateEnterpriseInputBO;
 import com.ruoyi.carbon.model.bo.CarbonAssetServiceUploadEnterpriseEmissionInputBO;
@@ -80,8 +82,16 @@ public class CarbonAssetServiceService {
     return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "verifyEnterpriseEmission", input.toArgs());
   }
 
+  public TransactionResponse updateEmissionAsset(CarbonAssetServiceUpdateEmissionAssetInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "updateEmissionAsset", input.toArgs());
+  }
+
   public TransactionResponse registerRegulator(CarbonAssetServiceRegisterRegulatorInputBO input) throws Exception {
     return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "registerRegulator", input.toArgs());
+  }
+
+  public TransactionResponse enterpriseEmission(CarbonAssetServiceEnterpriseEmissionInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "enterpriseEmission", input.toArgs());
   }
 
   public TransactionResponse buyEmissionLimit(CarbonAssetServiceBuyEmissionLimitInputBO input) throws Exception {
@@ -106,10 +116,6 @@ public class CarbonAssetServiceService {
 
   public CallResponse EnterpriseID() throws Exception {
     return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "EnterpriseID", Arrays.asList());
-  }
-
-  public TransactionResponse enterpriseEmission(CarbonAssetServiceEnterpriseEmissionInputBO input) throws Exception {
-    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "enterpriseEmission", input.toArgs());
   }
 
   public CallResponse QualificationIDList(CarbonAssetServiceQualificationIDListInputBO input) throws Exception {
@@ -218,6 +224,10 @@ public class CarbonAssetServiceService {
 
   public CallResponse EnterpriseAssetIDList(CarbonAssetServiceEnterpriseAssetIDListInputBO input) throws Exception {
     return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "EnterpriseAssetIDList", input.toArgs());
+  }
+
+  public TransactionResponse subEnterpriseCredit(CarbonAssetServiceSubEnterpriseCreditInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "subEnterpriseCredit", input.toArgs());
   }
 
   public CallResponse selectEmissionResourceInfo(CarbonAssetServiceSelectEmissionResourceInfoInputBO input) throws Exception {

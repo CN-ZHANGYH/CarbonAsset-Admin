@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.OptionalDouble;
 
 /**
  * 企业出售资产Service业务层处理
@@ -108,7 +109,6 @@ public class CarbonEnterpriseAssetServiceImpl implements ICarbonEnterpriseAssetS
     @Override
     public AjaxResult queryEnterpriseNewSellerAssetLimitFive(String address) {
         List<CarbonEnterpriseAsset> enterpriseAssets = carbonEnterpriseAssetMapper.queryEnterpriseNewSellerAssetLimitFive(address);
-        System.out.println(enterpriseAssets);
         if (enterpriseAssets.size() <= 0)
         {
             return AjaxResult.error("最新暂无出售记录");
@@ -123,7 +123,7 @@ public class CarbonEnterpriseAssetServiceImpl implements ICarbonEnterpriseAssetS
     }
 
     @Override
-    public double selectSellerListIsOverProgress(Integer enterpriseId) {
+    public OptionalDouble selectSellerListIsOverProgress(Integer enterpriseId) {
         return carbonEnterpriseAssetMapper.selectSellerListIsOverProgress(enterpriseId);
     }
 

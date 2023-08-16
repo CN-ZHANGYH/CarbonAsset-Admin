@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.OptionalDouble;
 
 
 public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionResource>
@@ -134,7 +135,7 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
             "                enterprise_id = #{enterpriseId}\n" +
             "GROUP BY\n" +
             "    enterprise_id")
-    double selectEnterpriseIsApplyEmissionResourceProgress(@Param("enterpriseId") Integer enterpriseId);
+    OptionalDouble selectEnterpriseIsApplyEmissionResourceProgress(@Param("enterpriseId") Integer enterpriseId);
 
     @Select("SELECT\n" +
             "    ROUND(COUNT(CASE WHEN emission_time IS NOT NULL THEN 1 ELSE NULL END) / COUNT(*) * 100, 1) AS non_zero_emissions_percentage\n" +
@@ -144,7 +145,7 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
             "                enterprise_id = #{enterpriseId}\n" +
             "GROUP BY\n" +
             "    enterprise_id;")
-    double selectOverEmissionResourceProgress(@Param("enterpriseId") Integer enterpriseId);
+    OptionalDouble selectOverEmissionResourceProgress(@Param("enterpriseId") Integer enterpriseId);
 
     @Select("SELECT\n" +
             "    IFNULL(SUM(emissions), 0) AS total_emissions\n" +

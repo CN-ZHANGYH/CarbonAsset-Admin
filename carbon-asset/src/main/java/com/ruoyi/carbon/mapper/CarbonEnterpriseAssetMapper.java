@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.OptionalDouble;
 
 /**
  * 企业出售资产Mapper接口
@@ -117,5 +118,5 @@ public interface CarbonEnterpriseAssetMapper extends BaseMapper<CarbonEnterprise
             "                enterprise_id = #{enterpriseId}\n" +
             "GROUP BY\n" +
             "    enterprise_id;")
-    public double selectSellerListIsOverProgress(@Param("enterpriseId") Integer enterpriseId);
+    public OptionalDouble selectSellerListIsOverProgress(@Param("enterpriseId") Integer enterpriseId);
 }

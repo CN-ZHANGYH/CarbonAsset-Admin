@@ -6,6 +6,7 @@ import com.ruoyi.carbon.domain.vo.TxDataVo;
 import com.ruoyi.common.core.domain.AjaxResult;
 
 import java.util.List;
+import java.util.OptionalDouble;
 
 /**
  * 企业出售资产Service接口
@@ -73,5 +74,5 @@ public interface ICarbonEnterpriseAssetService
 
     public List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId);
 
-    public double selectSellerListIsOverProgress(Integer enterpriseId);
+    public OptionalDouble selectSellerListIsOverProgress(Integer enterpriseId);
 }

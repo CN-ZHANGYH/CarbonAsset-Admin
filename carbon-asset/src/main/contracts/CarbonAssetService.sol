@@ -65,6 +65,29 @@ contract CarbonAssetService is CarbonUserService {
         return (res_code = 200,_enterpriseAsset);
     }
     
+    
+    /**
+     * @dev 企业碳额度进行补货操作
+     * @param _emissionId 订单ID
+     * @param _emissionLimitCount 补货的数量
+     * @param _amount 修改的单价
+     */
+    function updateEmissionAsset(uint256 _emissionId,uint256 _emissionLimitCount,uint256 _amount) public returns(int){
+        
+        int res_code = 0;
+        Enterprise memory _enterprise = EnterprisesMap[msg.sender];
+        Qualification storage _qualification = QualificationsMap[_enterprise.qualificationId];
+        EnterpriseAsset storage _enterpriseAsset = EnterpriseAssetsMap[_emissionId];
+        if (_qualification.qualificationEmissionLimit < _emissionLimitCount){
+            // 本身的碳额度不能小于补货的
+            return (res_code = 70001);
+        }
+        _enterpriseAsset.assetQuantity  +=_emissionLimitCount;
+        _enterpriseAsset.assetAmount = _amount;
+        _qualification.qualificationEmissionLimit -= _emissionLimitCount;
+        return (res_code = 200);
+        
+    }
     /**
      *  @dev 企业购买碳排放额度
      *  @param _enterpriseSeller 购买碳排放额度的地址
@@ -179,27 +202,27 @@ contract CarbonAssetService is CarbonUserService {
      *  @param _emmissionid 排放的资源ID
      *  @param _emissionEmission 企业的实际碳排放量
      */
-    function enterpriseEmission(address _enterpriseAddr,uint256 _emmissionid,uint256 _emissionEmission) public returns(int,bool){
+    function enterpriseEmission(address _enterpriseAddr,uint256 _emmissionid,uint256 _emissionEmission) public returns(int,bool,uint256){
         // TODO: 更新用户的排放记录
         int res_code = 0;
         Enterprise storage _enterprise = EnterprisesMap[_enterpriseAddr];
         EmissionResource storage _emissionResource = EmissionResourcesMap[_emmissionid];
         Qualification storage _qualification = QualificationsMap[_enterprise.qualificationId];
         if (!_enterprise.enterpriseVerified){
-            return (res_code = 60005,false);
+            return (res_code = 60005,false,0);
         }
         // 判断申请是否通过
         if (!_emissionResource.isApprove){
-            return (res_code = 60006,false);
+            return (res_code = 60006,false,0);
         }
         // 判断是否更新了总排放量
         if (_enterprise.enterpriseTotalEmission == 0){
-            return (res_code = 70003,false);
+            return (res_code = 70003,false,0);
         }
         _enterprise.enterpriseOverEmission += _emissionEmission;
         _emissionResource.emissionTime = block.timestamp;
         emit EnterpriseEmission(msg.sender,_emissionEmission);
-        return (res_code = 200,true);
+        return (res_code = 200,true,_emissionResource.emissionTime);
         
     }
     
@@ -275,6 +298,15 @@ contract CarbonAssetService is CarbonUserService {
         Enterprise storage _enterprise = EnterprisesMap[_enterpriseAddr];
         _enterprise.enterpriseCarbonCredits -= _credits;
         QualificationsMap[_enterprise.qualificationId].qualificationEmissionLimit += _credits;
+    }
+    
+    /**
+     * @dev 企业的积分扣取
+     * 
+     */
+    function subEnterpriseCredit(uint256 _credit) public {
+        Enterprise storage _enterprise = EnterprisesMap[msg.sender];
+        _enterprise.enterpriseCarbonCredits -= _credit;
     }
     
     function selectTransactionInfo(uint256 _transactionId) public view returns(Transaction memory){

@@ -76,6 +76,6 @@ system:
     contract:
         carbonUserServiceAddress:
         carbonDataStorageAddress:
-        carbonAssetServiceAddress: "0xb530081a3c435003f53ca874f19c6a9fc55a203d"
-        souvenirCardAddress: "0x6072d57ebc5678e8f9edf1d50e22de8befec194e"
+        carbonAssetServiceAddress: "0xafc9c02c32fe7bb65b98137037723658a319237a"
+        souvenirCardAddress: "0x2a223c1a51fc269a5a06798665fe702259772793"
 
