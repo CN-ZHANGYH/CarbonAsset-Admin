@@ -126,4 +126,6 @@ public interface SysUserMapper
     public SysUser checkEmailUnique(String email);
 
     public SysUser selectUserByNickName(String userName);
+
+    public SysUser selectUserByCompany(@Param("company") String company);
 }

@@ -46,6 +46,8 @@ public class SysRegisterService
         SysUser sysUser = new SysUser();
         sysUser.setUserName(username);
 
+        SysUser company = userService.selectUserByCompany(registerBody.getCompany());
+
         // 校验验证码
         String code = redisCache.getCacheObject("CODE");
         if (!registerBody.getCode().equals(code))
@@ -60,6 +62,10 @@ public class SysRegisterService
         else if (StringUtils.isEmpty(password))
         {
             msg = "用户密码不能为空";
+        }
+        else if (!Objects.isNull(company))
+        {
+            msg = "该企业已经存在";
         }
         else if (username.length() < UserConstants.USERNAME_MIN_LENGTH
                 || username.length() > UserConstants.USERNAME_MAX_LENGTH)

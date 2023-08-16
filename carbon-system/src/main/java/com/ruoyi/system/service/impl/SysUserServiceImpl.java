@@ -580,4 +580,9 @@ public class SysUserServiceImpl implements ISysUserService
         }
         return AjaxResult.success("true");
     }
+
+    @Override
+    public SysUser selectUserByCompany(String company) {
+        return userMapper.selectUserByCompany(company);
+    }
 }

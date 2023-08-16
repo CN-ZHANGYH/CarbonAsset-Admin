@@ -223,4 +223,11 @@ public interface ISysUserService
      * @return 返回结果
      */
     public AjaxResult checkTokenIsTimeOut(String userKey);
+
+    /**
+     * 查询当前的企业是否已经存在
+     * @param company 企业名称
+     * @return 返回结果
+     */
+    public SysUser selectUserByCompany(String company);
 }
