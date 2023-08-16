@@ -309,9 +309,6 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         BigInteger sellerBalance = seller.getEnterpriseBalance();
         buyer.setEnterpriseBalance(sellerBalance.add(enterpriseAsset.getAssetAmount().multiply(buyVo.getQuality())));
 
-        System.out.println(enterpriseAsset);
-        System.out.println(buyer);
-        System.out.println(seller);
         BigInteger oldQuantity = enterpriseAsset.getAssetQuantity();
         enterpriseAsset.setAssetQuantity(oldQuantity.subtract(buyVo.getQuality()));
 
@@ -330,6 +327,15 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
                     .GetTransactionResponse(privateKey, "buyEmissionLimit", params);
 
             if (transactionResponse.getReturnMessage().equals("Success")){
+                int status = JSON.parseArray(transactionResponse.getValues()).getIntValue(0);
+                if (status == 70002)
+                {
+                    return AjaxResult.error("余额不足");
+                }
+                if (status == 70004)
+                {
+                    return AjaxResult.error("资产不存在");
+                }
                 JSONArray result = JSON.parseArray(transactionResponse.getValues()).getJSONArray(1);
                 CarbonTransaction carbonTransaction = new CarbonTransaction();
                 carbonTransaction.setTransactionId(result.getLongValue(0));
