@@ -2,10 +2,8 @@ package com.ruoyi.souvenir.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
-import com.ruoyi.carbon.model.bo.CarbonAssetServiceSubEnterpriseCreditInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardQueryEnterpriseCardListInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardRegisterCardInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardUserBindCardInputBO;
+import com.ruoyi.carbon.factory.RawContractLoaderFactory;
+import com.ruoyi.carbon.model.bo.*;
 import com.ruoyi.carbon.service.carbon.CarbonAssetServiceService;
 import com.ruoyi.carbon.service.carbon.SouvenirCardService;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
@@ -62,6 +60,9 @@ public class CarbonCardServiceImpl implements ICarbonCardService
 
     @Autowired
     private CarbonAssetServiceService carbonAssetService;
+
+    @Autowired
+    private RawContractLoaderFactory rawContractLoaderFactory;
 
 
     /**
@@ -191,6 +192,22 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         {
             return AjaxResult.error("该纪念卡不存在");
         }
+        // 判断当前的企业是否已经兑换了该纪念卡
+        SouvenirCardQueryEnterpriseIsHasCardInputBO isHasCardInputBO = new SouvenirCardQueryEnterpriseIsHasCardInputBO();
+        isHasCardInputBO.set_cardName(cardName);
+        isHasCardInputBO.set_enterpriseName(enterpriseName);
+        try {
+            TransactionResponse transactionResponseByCard = souvenirCardService.QueryEnterpriseIsHasCard(isHasCardInputBO);
+            if (transactionResponseByCard.getReturnMessage().equals("Success"))
+            {
+                if ((Boolean) JSON.parseArray(transactionResponseByCard.getValues()).get(0) == true) {
+                    return AjaxResult.error("已兑换该纪念卡");
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         // 判断当前的企业积分是否足够
         if (enterprise.getEnterpriseCarbonCredits().compareTo(carbonCard.getCredit()) < 0)
         {
@@ -203,13 +220,15 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         {
             TransactionResponse transactionResponse = souvenirCardService.UserBindCard(cardInputBO);
             if (transactionResponse.getReturnMessage().equals("Success")) {
+
                 // 积分扣取
                 taskExecutor.execute(() -> {
                     CarbonAssetServiceSubEnterpriseCreditInputBO creditInputBO = new CarbonAssetServiceSubEnterpriseCreditInputBO();
                     creditInputBO.set_credit(creditVo.getCredit());
                     try
                     {
-                        carbonAssetService.subEnterpriseCredit(creditInputBO);
+                        rawContractLoaderFactory
+                                .GetTransactionResponse(enterprise.getPriavateKey(),"subEnterpriseCredit",creditInputBO.toArgs());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
