@@ -1,10 +1,7 @@
 package com.ruoyi.carbon.service.enterprise;
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
-import com.ruoyi.carbon.domain.vo.BuyVo;
-import com.ruoyi.carbon.domain.vo.EnterpriseVo;
-import com.ruoyi.carbon.domain.vo.ForgetPassVo;
-import com.ruoyi.carbon.domain.vo.SellVo;
+import com.ruoyi.carbon.domain.vo.*;
 import com.ruoyi.common.core.domain.AjaxResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,7 +80,7 @@ public interface ICarbonEnterpriseService
 
     public List<CarbonEnterprise> selectEnterpriseListByAddress(String buyAddress,String sellerAddress);
 
-    public int updateCarbonEnterpriseBalance(CarbonEnterprise carbonEnterprise);
+    public AjaxResult updateCarbonEnterpriseBalance(EnterpriseBalanceVo carbonEnterprise);
 
     public AjaxResult selectEnterpriseInfoByBlockChain(String address);
 

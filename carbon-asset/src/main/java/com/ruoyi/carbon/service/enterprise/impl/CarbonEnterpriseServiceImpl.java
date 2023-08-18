@@ -3,7 +3,6 @@ package com.ruoyi.carbon.service.enterprise.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.ruoyi.carbon.domain.carbon.*;
-import com.ruoyi.carbon.domain.user.UserKey;
 import com.ruoyi.carbon.domain.vo.*;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseMapper;
@@ -392,24 +391,29 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
     }
 
     @Override
-    public int updateCarbonEnterpriseBalance(CarbonEnterprise carbonEnterprise) {
+    public AjaxResult updateCarbonEnterpriseBalance(EnterpriseBalanceVo enterpriseBalanceVo) {
+        CarbonEnterprise enterprise = carbonEnterpriseMapper.selectCarbonEnterpriseByName(enterpriseBalanceVo.getEnterpriseName());
+        if (Objects.isNull(enterprise)){
+            return AjaxResult.error("当前用户不存在");
+        }
         // 链上更新用户的账户
-        UserKey userKey = rawContractLoaderFactory.GetUserPrivateKey(carbonEnterprise.getEnterpriseAddress());
         CarbonAssetServiceUpdateBalanceInputBO inputBO = new CarbonAssetServiceUpdateBalanceInputBO();
-        inputBO.set_amount(carbonEnterprise.getEnterpriseBalance());
+        inputBO.set_amount(BigInteger.valueOf(enterpriseBalanceVo.getEnterpriseBalance()));
         List<Object> params = inputBO.toArgs();
         try
         {
             TransactionResponse transactionResponse = rawContractLoaderFactory
-                    .GetTransactionResponse(userKey.getPrivateKey(), "updateBalance", params);
+                    .GetTransactionResponse(enterprise.getPriavateKey(), "updateBalance", params);
             if (transactionResponse.getReturnMessage().equals("Success")){
-                return carbonEnterpriseMapper.updateCarbonEnterprise(carbonEnterprise);
+                BigInteger oldBalance = enterprise.getEnterpriseBalance();
+                enterprise.setEnterpriseBalance(oldBalance.add(BigInteger.valueOf(enterpriseBalanceVo.getEnterpriseBalance())));
+                int code = carbonEnterpriseMapper.updateCarbonEnterprise(enterprise);
+                if (code > 0) return AjaxResult.success("充值成功");
             }
-
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return 0;
+        return AjaxResult.error("充值失败");
     }
 
     @Override

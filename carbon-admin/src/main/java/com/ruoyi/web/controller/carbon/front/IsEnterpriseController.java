@@ -2,10 +2,7 @@ package com.ruoyi.web.controller.carbon.front;
 
 
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
-import com.ruoyi.carbon.domain.vo.BuyVo;
-import com.ruoyi.carbon.domain.vo.EnterpriseVo;
-import com.ruoyi.carbon.domain.vo.ForgetPassVo;
-import com.ruoyi.carbon.domain.vo.SellVo;
+import com.ruoyi.carbon.domain.vo.*;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
@@ -47,14 +44,10 @@ public class IsEnterpriseController extends BaseController {
     }
 
     @ApiOperation("企业更新余额")
-    @PutMapping("/updateBalance")
+    @PostMapping("/updateBalance")
     @Log(title = "企业更新余额",businessType = BusinessType.UPDATE)
-    public AjaxResult updateBalance(@RequestBody CarbonEnterprise carbonEnterprise){
-        int code = enterpriseService.updateCarbonEnterpriseBalance(carbonEnterprise);
-        if (code > 0){
-            return AjaxResult.success("充值成功");
-        }
-        return AjaxResult.error("充值失败");
+    public AjaxResult updateBalance(@RequestBody EnterpriseBalanceVo enterpriseBalanceVo){
+        return enterpriseService.updateCarbonEnterpriseBalance(enterpriseBalanceVo);
     }
 
     @ApiOperation("查看企业的信息")
