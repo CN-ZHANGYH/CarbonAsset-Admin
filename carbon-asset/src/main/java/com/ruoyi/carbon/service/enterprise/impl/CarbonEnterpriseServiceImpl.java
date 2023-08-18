@@ -2,10 +2,7 @@ package com.ruoyi.carbon.service.enterprise.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
-import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
-import com.ruoyi.carbon.domain.carbon.CarbonQualification;
-import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
+import com.ruoyi.carbon.domain.carbon.*;
 import com.ruoyi.carbon.domain.user.UserKey;
 import com.ruoyi.carbon.domain.vo.*;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
@@ -22,6 +19,7 @@ import com.ruoyi.carbon.utils.TCOSUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.enums.RedisContacts;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
@@ -35,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -251,6 +251,18 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
                 Integer qualificationId = carbonEnterprise.getQualificationId();
                 int code = this.insertOrder(enterpriseAsset,qualificationId,sellVo.getQuality());
                 if (code > 0){
+                    // 添加通告操作
+                    LocalDateTime now = LocalDateTime.now();
+                    String noticeKey = RedisContacts.NOTICE_USER_KEY + carbonEnterprise.getEnterpriseId();
+                    NoticeInfo noticeInfo = new NoticeInfo();
+                    noticeInfo.setEnterpriseId(carbonEnterprise.getEnterpriseId());
+                    noticeInfo.setNoticeTime(now.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
+                    noticeInfo.setMsg("出售成功");
+                    noticeInfo.setDescription(carbonEnterprise.getEnterpriseName() + "出售了碳额度");
+                    noticeInfo.setTitle("出售中");
+                    redisCache.setListValue(noticeKey,noticeInfo);
+                    redisCache.expire(noticeKey,1, TimeUnit.DAYS);
+
                     AjaxResult ajax = AjaxResult.success("出售成功");
                     ajax.put("assetOrder",enterpriseAsset);
                     return ajax;
@@ -259,6 +271,7 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
         return AjaxResult.error("出售失败");
     }
 
@@ -314,14 +327,14 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         qualificationService.updateCarbonQualification(qualification);
         enterpriseAssetService.updateCarbonEnterpriseAsset(enterpriseAsset);
 
-        return txTransactionByAsset(carbonEnterprise.getPriavateKey(), params);
+        return txTransactionByAsset(carbonEnterprise, params);
     }
 
     @Async
-    public AjaxResult txTransactionByAsset(String privateKey, List<Object> params) {
+    public AjaxResult txTransactionByAsset(CarbonEnterprise carbonEnterprise, List<Object> params) {
         try {
             TransactionResponse transactionResponse = rawContractLoaderFactory
-                    .GetTransactionResponse(privateKey, "buyEmissionLimit", params);
+                    .GetTransactionResponse(carbonEnterprise.getPriavateKey(), "buyEmissionLimit", params);
 
             if (transactionResponse.getReturnMessage().equals("Success")){
                 int status = JSON.parseArray(transactionResponse.getValues()).getIntValue(0);
@@ -346,6 +359,18 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
                 carbonTransaction.setTxHash(transactionResponse.getTransactionReceipt().getTransactionHash());
                 int code = carbonTransactionService.insertCarbonTransaction(carbonTransaction);
                 if (code > 0){
+                    // 添加通告操作
+                    LocalDateTime now = LocalDateTime.now();
+                    String noticeKey = RedisContacts.NOTICE_USER_KEY + carbonEnterprise.getEnterpriseId();
+                    NoticeInfo noticeInfo = new NoticeInfo();
+                    noticeInfo.setEnterpriseId(carbonEnterprise.getEnterpriseId());
+                    noticeInfo.setNoticeTime(now.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
+                    noticeInfo.setMsg("购买成功");
+                    noticeInfo.setDescription(carbonEnterprise.getEnterpriseName() + "购买了碳额度");
+                    noticeInfo.setTitle("交易成功");
+                    redisCache.setListValue(noticeKey,noticeInfo);
+                    redisCache.expire(noticeKey,1, TimeUnit.DAYS);
+
                     AjaxResult ajax = AjaxResult.success("购买成功");
                     ajax.put("transaction",carbonTransaction);
                     return ajax;

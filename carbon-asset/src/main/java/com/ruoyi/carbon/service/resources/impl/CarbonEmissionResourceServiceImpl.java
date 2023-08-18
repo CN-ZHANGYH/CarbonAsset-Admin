@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.carbon.domain.carbon.CarbonEmissionResource;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.carbon.CarbonQualification;
+import com.ruoyi.carbon.domain.carbon.NoticeInfo;
 import com.ruoyi.carbon.domain.vo.*;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.mapper.CarbonEmissionResourceMapper;
@@ -23,6 +24,7 @@ import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.enums.RedisContacts;
 import com.ruoyi.common.utils.StringUtils;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -269,6 +273,20 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
                     BigInteger oldEmissionLimit = qualification.getQualificationEmissionLimit();
                     qualification.setQualificationEmissionLimit(oldEmissionLimit.subtract(emissionVo.getEmissionLimit()));
                     qualificationService.updateCarbonQualification(qualification);
+
+
+                    // 添加通告操作
+                    LocalDateTime now = LocalDateTime.now();
+                    String noticeKey = RedisContacts.NOTICE_USER_KEY + enterprise.getEnterpriseId();
+                    NoticeInfo noticeInfo = new NoticeInfo();
+                    noticeInfo.setEnterpriseId(enterprise.getEnterpriseId());
+                    noticeInfo.setNoticeTime(now.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
+                    noticeInfo.setMsg("排放成功");
+                    noticeInfo.setDescription(enterprise.getEnterpriseName() + "进行了碳排放");
+                    noticeInfo.setTitle("排放完成");
+                    redisCache.setListValue(noticeKey,noticeInfo);
+                    redisCache.expire(noticeKey,1, TimeUnit.DAYS);
+
                     return AjaxResult.success("排放成功");
                 }
             }

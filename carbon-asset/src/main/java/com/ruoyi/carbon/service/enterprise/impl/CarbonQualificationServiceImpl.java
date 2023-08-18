@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONArray;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.carbon.CarbonQualification;
+import com.ruoyi.carbon.domain.carbon.NoticeInfo;
 import com.ruoyi.carbon.domain.user.UserKey;
 import com.ruoyi.carbon.domain.vo.QualificationVo;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
@@ -17,6 +18,8 @@ import com.ruoyi.carbon.service.enterprise.ICarbonQualificationService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
 import com.ruoyi.carbon.utils.TCOSUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.enums.RedisContacts;
 import com.ruoyi.common.utils.StringUtils;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +28,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 企业资质信息Service业务层处理
@@ -54,6 +60,9 @@ public class CarbonQualificationServiceImpl implements ICarbonQualificationServi
 
     @Autowired
     private TCOSUtil tcosUtil;
+
+    @Autowired
+    private RedisCache redisCache;
 
     private final String emptyAddress = "0x0000000000000000000000000000000000000000";
 
@@ -118,6 +127,18 @@ public class CarbonQualificationServiceImpl implements ICarbonQualificationServi
             if (transactionResponse.getReceiptMessages().equals("Success")) {
                 int resultStatus = Objects.requireNonNull(JSON.parseArray(transactionResponse.getValues())).getIntValue(0);
                 if (resultStatus == 200){
+                    // 添加通告操作
+                    LocalDateTime now = LocalDateTime.now();
+                    String noticeKey = RedisContacts.NOTICE_USER_KEY + carbonEnterprise.getEnterpriseId();
+                    NoticeInfo noticeInfo = new NoticeInfo();
+                    noticeInfo.setEnterpriseId(carbonEnterprise.getEnterpriseId());
+                    noticeInfo.setNoticeTime(now.format(DateTimeFormatter.ofPattern("yyyy年MM月dd日 HH:mm:ss")));
+                    noticeInfo.setMsg("申请企业认证");
+                    noticeInfo.setDescription(carbonEnterprise.getEnterpriseName() + "上传了认证");
+                    noticeInfo.setTitle("认证中");
+                    redisCache.setListValue(noticeKey,noticeInfo);
+                    redisCache.expire(noticeKey,1, TimeUnit.DAYS);
+
                     JSONArray resultObject = Objects.requireNonNull(JSON.parseArray(transactionResponse.getValues())).getJSONArray(2);
                     carbonQualification.setQualificationAddress(carbonQualification.getQualificationAddress());
                     carbonQualification.setQualificationId(resultObject.getIntValue(0));

@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class SignInServiceImpl implements SignInService {
@@ -79,7 +80,8 @@ public class SignInServiceImpl implements SignInService {
         noticeInfo.setMsg("签到成功");
         noticeInfo.setDescription(carbonEnterprise.getEnterpriseName() + "完成了签到");
         noticeInfo.setTitle("签到");
-        redisTemplate.opsForList().leftPush(noticeKey,noticeInfo);
+        redisCache.setListValue(noticeKey,noticeInfo);
+        redisCache.expire(noticeKey,1, TimeUnit.DAYS);
 
         // 更新数据库
         BigInteger oldCredit = carbonEnterprise.getEnterpriseCarbonCredits();
@@ -169,5 +171,7 @@ public class SignInServiceImpl implements SignInService {
     public void setRedisCache(int dayOfMonth, String key) {
         // 设置redis
         redisCache.setBigMapValue(key, dayOfMonth - 1, true);
+        redisCache.expire(key,-1);
+
     }
 }

@@ -287,4 +287,25 @@ public class RedisCache
         return redisTemplate.opsForValue().getBit(key, hashKey);
     }
 
+
+    /**
+     * 设置集合
+     *
+     * @param key   Redis键
+     * @param value Redis值
+     * @param <T>   泛型
+     * @return Long
+     */
+    public <T> Long setListValue(final String key, final Object value){
+        return redisTemplate.opsForList().leftPush(key,value);
+    }
+
+    /**
+     * 返回集合
+     * @param key Redis键
+     * @return List 返回集合
+     */
+    public <T> List getListValue(final String key){
+        return redisTemplate.opsForList().range(key, 0, -1);
+    }
 }
