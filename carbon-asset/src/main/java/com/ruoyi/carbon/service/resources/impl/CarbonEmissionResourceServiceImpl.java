@@ -22,6 +22,7 @@ import com.ruoyi.carbon.service.resources.ICarbonEmissionResourceService;
 import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.carbon.utils.BlockTimestampUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.StringUtils;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -68,6 +70,9 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
 
     @Autowired
     private ICarbonEnterpriseAssetService enterpriseAssetService;
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 查询企业排放资源
@@ -411,7 +416,15 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
 
     @Override
     public List<RankingEmissionVo> selectRankingByEmissionResource(Integer pageNum, Integer pageSize) {
-        return carbonEmissionResourceMapper.selectRankingByEmissionResource(pageNum,pageSize);
+        List<RankingEmissionVo> rankingEmissionVos = redisCache.getCacheObject("ERanking");
+        if (rankingEmissionVos == null)
+        {
+            List<RankingEmissionVo> rankingEmissionVoList = carbonEmissionResourceMapper.selectRankingByEmissionResource(pageNum, pageSize);
+            redisCache.setCacheObject("ERanking",rankingEmissionVoList);
+            redisCache.expire("ERanking",7,TimeUnit.DAYS);
+            return rankingEmissionVoList;
+        }
+        return rankingEmissionVos;
     }
 
     @Override

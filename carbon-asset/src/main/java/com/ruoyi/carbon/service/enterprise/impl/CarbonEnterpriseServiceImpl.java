@@ -25,7 +25,6 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
-import org.aspectj.weaver.loadtime.Aj;
 import org.fisco.bcos.sdk.transaction.model.dto.CallResponse;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.function.Consumer;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -532,12 +529,19 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
 
     @Override
     public AjaxResult selectRankingByCredit(Integer page, Integer pageSize) {
-        List<RankingCreditVo> rankingCreditVos = carbonEnterpriseMapper.selectRankingByCredit(page,pageSize);
-        if (rankingCreditVos == null)
+        List<RankingCreditVo> rankingCreditVoList = redisCache.getCacheObject("CRanking");
+        if (rankingCreditVoList == null)
         {
-            return AjaxResult.success("当前没有企业注册");
+            List<RankingCreditVo> rankingCreditVos = carbonEnterpriseMapper.selectRankingByCredit(page,pageSize);
+            if (rankingCreditVos == null)
+            {
+                return AjaxResult.success("当前没有企业注册");
+            }
+            redisCache.setCacheObject("CRanking",rankingCreditVos);
+            redisCache.expire("CRanking",7, TimeUnit.DAYS);
+            return AjaxResult.success().put("data",rankingCreditVos);
         }
-        return AjaxResult.success().put("data",rankingCreditVos);
+        return AjaxResult.success().put("data",rankingCreditVoList);
     }
 
     @Override

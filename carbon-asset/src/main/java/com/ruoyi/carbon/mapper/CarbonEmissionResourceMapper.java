@@ -105,6 +105,7 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
     @Select("SELECT\n" +
             "    (@row_number:=@row_number + 1) as enterprise_id,\n" +
             "    sub_query.enterprise_name,\n" +
+            "    sub_query.enterprise_address,\n" +
             "    sub_query.enterprise_carbon_credits,\n" +
             "    sub_query.enterprise_verified,\n" +
             "    sub_query.enterprise_over_emission,\n" +
@@ -116,6 +117,7 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
             "        SELECT\n" +
             "            ce.enterprise_id,\n" +
             "            ce.enterprise_name,\n" +
+            "            ce.enterprise_address,\n" +
             "            ce.enterprise_carbon_credits,\n" +
             "            ce.enterprise_verified,\n" +
             "            ce.enterprise_over_emission,\n" +
