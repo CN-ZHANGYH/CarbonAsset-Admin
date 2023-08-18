@@ -2,9 +2,11 @@ package com.ruoyi.souvenir.service.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
+import com.ruoyi.carbon.model.bo.CarbonAssetServiceSubEnterpriseCreditInputBO;
 import com.ruoyi.carbon.model.bo.SouvenirCardQueryEnterpriseCardListInputBO;
 import com.ruoyi.carbon.model.bo.SouvenirCardRegisterCardInputBO;
 import com.ruoyi.carbon.model.bo.SouvenirCardUserBindCardInputBO;
+import com.ruoyi.carbon.service.carbon.CarbonAssetServiceService;
 import com.ruoyi.carbon.service.carbon.SouvenirCardService;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
 import com.ruoyi.carbon.utils.TCOSUtil;
@@ -17,6 +19,7 @@ import com.ruoyi.souvenir.service.card.ICarbonCardService;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +57,11 @@ public class CarbonCardServiceImpl implements ICarbonCardService
     @Autowired
     private ICarbonEnterpriseService enterpriseService;
 
+    @Autowired
+    private ThreadPoolTaskExecutor taskExecutor;
+
+    @Autowired
+    private CarbonAssetServiceService carbonAssetService;
 
 
     /**
@@ -195,7 +203,17 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         {
             TransactionResponse transactionResponse = souvenirCardService.UserBindCard(cardInputBO);
             if (transactionResponse.getReturnMessage().equals("Success")) {
-                // TODO: 积分扣取
+                // 积分扣取
+                taskExecutor.execute(() -> {
+                    CarbonAssetServiceSubEnterpriseCreditInputBO creditInputBO = new CarbonAssetServiceSubEnterpriseCreditInputBO();
+                    creditInputBO.set_credit(creditVo.getCredit());
+                    try
+                    {
+                        carbonAssetService.subEnterpriseCredit(creditInputBO);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
                 return AjaxResult.success("兑换成功");
             }
         } catch (Exception e) {

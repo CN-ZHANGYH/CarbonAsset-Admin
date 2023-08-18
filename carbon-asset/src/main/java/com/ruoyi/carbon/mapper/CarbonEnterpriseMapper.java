@@ -75,12 +75,31 @@ public interface CarbonEnterpriseMapper
 
 
     @Select("SELECT\n" +
-            "    e.enterprise_name,\n" +
-            "    e.enterprise_address,\n" +
-            "    e.enterprise_verified,\n" +
-            "    e.enterprise_carbon_credits,\n" +
-            "    su.avatar\n" +
-            "FROM carbon_enterprise e JOIN sys_user su ON e.enterprise_name = su.nick_name order by e.enterprise_carbon_credits desc limit #{page},#{pageSize}")
+            "    (@row_number:=@row_number + 1) as enterprise_id,\n" +
+            "    sub_query.enterprise_name,\n" +
+            "    sub_query.enterprise_address,\n" +
+            "    sub_query.enterprise_verified,\n" +
+            "    sub_query.enterprise_carbon_credits,\n" +
+            "    sub_query.avatar\n" +
+            "FROM\n" +
+            "    (\n" +
+            "        SELECT\n" +
+            "            e.enterprise_name,\n" +
+            "            e.enterprise_address,\n" +
+            "            e.enterprise_verified,\n" +
+            "            e.enterprise_carbon_credits,\n" +
+            "            su.avatar\n" +
+            "        FROM\n" +
+            "            carbon_enterprise e\n" +
+            "                JOIN\n" +
+            "            sys_user su ON e.enterprise_name = su.nick_name\n" +
+            "        ORDER BY\n" +
+            "            e.enterprise_carbon_credits DESC\n" +
+            "        LIMIT\n" +
+            "            #{page}, #{pageSize}\n" +
+            "    ) as sub_query\n" +
+            "        CROSS JOIN\n" +
+            "    (SELECT @row_number := 0) r;\n")
     public List<RankingCreditVo> selectRankingByCredit(@Param("page") Integer page, @Param("pageSize") Integer pageSize);
 
 

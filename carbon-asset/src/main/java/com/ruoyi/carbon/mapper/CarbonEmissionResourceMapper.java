@@ -102,19 +102,44 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
      * @return 返回结果
      */
 
-    @Select("SELECT ce.enterprise_address,\n" +
-            "       ce.enterprise_name,\n" +
-            "       ce.enterprise_carbon_credits,\n" +
-            "       ce.enterprise_verified,\n" +
-            "       ce.enterprise_over_emission,\n" +
-            "       ce.enterprise_total_emission,\n" +
-            "       user.avatar,\n" +
-            "       cer.total_emissions\n" +
-            "FROM carbon_enterprise ce JOIN\n" +
-            "     (SELECT enterprise_id, SUM(emissions) AS total_emissions\n" +
-            "      FROM carbon_emission_resource\n" +
-            "      GROUP BY enterprise_id) cer ON ce.enterprise_id = cer.enterprise_id\n" +
-            "    JOIN sys_user user ON ce.enterprise_name = user.nick_name limit #{page},#{pageSize}")
+    @Select("SELECT\n" +
+            "    (@row_number:=@row_number + 1) as enterprise_id,\n" +
+            "    sub_query.enterprise_name,\n" +
+            "    sub_query.enterprise_carbon_credits,\n" +
+            "    sub_query.enterprise_verified,\n" +
+            "    sub_query.enterprise_over_emission,\n" +
+            "    sub_query.enterprise_total_emission,\n" +
+            "    sub_query.avatar,\n" +
+            "    sub_query.total_emissions\n" +
+            "FROM\n" +
+            "    (\n" +
+            "        SELECT\n" +
+            "            ce.enterprise_id,\n" +
+            "            ce.enterprise_name,\n" +
+            "            ce.enterprise_carbon_credits,\n" +
+            "            ce.enterprise_verified,\n" +
+            "            ce.enterprise_over_emission,\n" +
+            "            ce.enterprise_total_emission,\n" +
+            "            user.avatar,\n" +
+            "            cer.total_emissions\n" +
+            "        FROM carbon_enterprise ce\n" +
+            "                 JOIN\n" +
+            "             (\n" +
+            "                 SELECT\n" +
+            "                     enterprise_id,\n" +
+            "                     SUM(emissions) AS total_emissions\n" +
+            "                 FROM carbon_emission_resource\n" +
+            "                 GROUP BY enterprise_id\n" +
+            "             ) cer ON ce.enterprise_id = cer.enterprise_id\n" +
+            "                 JOIN\n" +
+            "             sys_user user ON ce.enterprise_name = user.nick_name\n" +
+            "        ORDER BY\n" +
+            "            cer.total_emissions DESC\n" +
+            "        LIMIT\n" +
+            "            #{page}, #{pageSize}\n" +
+            "    ) as sub_query\n" +
+            "        CROSS JOIN\n" +
+            "    (SELECT @row_number := 0) r;\n")
     public List<RankingEmissionVo> selectRankingByEmissionResource(@Param("page") Integer page, @Param("pageSize") Integer pageSize);
 
     @Select("SELECT\n" +

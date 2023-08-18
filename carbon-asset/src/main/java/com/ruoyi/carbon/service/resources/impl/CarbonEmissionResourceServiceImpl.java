@@ -253,10 +253,10 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
                     return AjaxResult.error("请更新总排放量");
                 }
                 Boolean flag = (Boolean) JSON.parseArray(transactionResponse.getValues()).get(1);
+                long emissionTime = JSON.parseArray(transactionResponse.getValues()).getLongValue(2);
                 if (flag)
                 {
-                    // TODO: 合约需要返回时间
-                    emissionResource.setEmissionTime(BlockTimestampUtil.convert(System.currentTimeMillis()));
+                    emissionResource.setEmissionTime(BlockTimestampUtil.convert(emissionTime));
                     this.carbonEmissionResourceMapper.updateCarbonEmissionResource(emissionResource);
                     UpdateEnterpriseInfo(emissionVo, enterprise);
 
