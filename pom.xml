@@ -29,7 +29,7 @@
         <poi.version>4.1.2</poi.version>
         <velocity.version>2.3</velocity.version>
         <jwt.version>0.9.1</jwt.version>
-        <docker.image.prefix>sztl</docker.image.prefix>
+        <docker.image.prefix>SZTL</docker.image.prefix>
     </properties>
 
     <!-- 依赖声明 -->
@@ -197,30 +197,7 @@
                     <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
-            <!--添加docker的plugin配置-->
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>1.0.0</version>
 
-
-                <configuration>
-                    <!--Docker的远程地址-->
-                    <dockerHost>http://localhost:2375</dockerHost>
-                    <!--镜像名称-->
-                    <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                    <!--Dockerfile文件路径-->
-                    <dockerDirectory>${project.basedir}/src/main/docker</dockerDirectory>
-                    <!--构建镜像的配置-->
-                    <resources>
-                        <resource>
-                            <targetPath>/</targetPath>
-                            <directory>${project.build.directory}</directory>
-                            <include>${project.build.finalName}.jar</include>
-                        </resource>
-                    </resources>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
