@@ -46,39 +46,39 @@ public class SouvenirCardService {
     this.txProcessor = TransactionProcessorFactory.createAssembleTransactionProcessor(this.client, this.client.getCryptoSuite().getCryptoKeyPair());
   }
 
-  public TransactionResponse QueryEnterpriseIsHasCard(SouvenirCardQueryEnterpriseIsHasCardInputBO input) throws Exception {
-    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "QueryEnterpriseIsHasCard", input.toArgs());
-  }
-
-  public TransactionResponse QueryCardInfo(SouvenirCardQueryCardInfoInputBO input) throws Exception {
-    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "QueryCardInfo", input.toArgs());
-  }
-
-  public CallResponse CardInfoMap(SouvenirCardCardInfoMapInputBO input) throws Exception {
-    return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "CardInfoMap", input.toArgs());
-  }
-
-  public TransactionResponse RegisterCard(SouvenirCardRegisterCardInputBO input) throws Exception {
-    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "RegisterCard", input.toArgs());
+  public TransactionResponse UserBindCard(SouvenirCardUserBindCardInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "UserBindCard", input.toArgs());
   }
 
   public CallResponse UserOfCardListMap(SouvenirCardUserOfCardListMapInputBO input) throws Exception {
     return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "UserOfCardListMap", input.toArgs());
   }
 
-  public CallResponse CardInfoList(SouvenirCardCardInfoListInputBO input) throws Exception {
-    return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "CardInfoList", input.toArgs());
-  }
-
   public TransactionResponse IsCardExist(SouvenirCardIsCardExistInputBO input) throws Exception {
     return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "IsCardExist", input.toArgs());
   }
 
-  public TransactionResponse UserBindCard(SouvenirCardUserBindCardInputBO input) throws Exception {
-    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "UserBindCard", input.toArgs());
+  public TransactionResponse RegisterCard(SouvenirCardRegisterCardInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "RegisterCard", input.toArgs());
+  }
+
+  public TransactionResponse QueryEnterpriseIsHasCard(SouvenirCardQueryEnterpriseIsHasCardInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "QueryEnterpriseIsHasCard", input.toArgs());
+  }
+
+  public CallResponse CardInfoMap(SouvenirCardCardInfoMapInputBO input) throws Exception {
+    return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "CardInfoMap", input.toArgs());
+  }
+
+  public CallResponse CardInfoList(SouvenirCardCardInfoListInputBO input) throws Exception {
+    return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "CardInfoList", input.toArgs());
   }
 
   public TransactionResponse QueryEnterpriseCardList(SouvenirCardQueryEnterpriseCardListInputBO input) throws Exception {
     return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "QueryEnterpriseCardList", input.toArgs());
+  }
+
+  public TransactionResponse QueryCardInfo(SouvenirCardQueryCardInfoInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "QueryCardInfo", input.toArgs());
   }
 }

@@ -7,4 +7,7 @@ public class RedisContacts {
 
     public static final String NOTICE_USER_KEY = "notice-user:";
 
+
+    public static final String COLLECT_KEY = "collect-user:";
+
 }

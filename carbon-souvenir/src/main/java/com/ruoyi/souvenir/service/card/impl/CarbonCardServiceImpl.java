@@ -1,6 +1,7 @@
-package com.ruoyi.souvenir.service.impl;
+package com.ruoyi.souvenir.service.card.impl;
 
 import com.alibaba.fastjson2.JSON;
+import com.ruoyi.carbon.domain.carbon.CarbonCollect;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.model.bo.*;
@@ -9,11 +10,14 @@ import com.ruoyi.carbon.service.carbon.SouvenirCardService;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
 import com.ruoyi.carbon.utils.TCOSUtil;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.enums.RedisContacts;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.souvenir.domain.CarbonCard;
 import com.ruoyi.souvenir.domain.vo.CreditVo;
 import com.ruoyi.souvenir.mapper.CarbonCardMapper;
 import com.ruoyi.souvenir.service.card.ICarbonCardService;
+import com.ruoyi.souvenir.service.card.ICarbonCollectService;
 import lombok.extern.slf4j.Slf4j;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,6 +48,9 @@ public class CarbonCardServiceImpl implements ICarbonCardService
     @Autowired
     private TCOSUtil tcosUtil;
 
+    @Autowired
+    private RedisCache redisCache;
+
 
     @Autowired
     private CarbonCardMapper carbonCardMapper;
@@ -60,6 +68,9 @@ public class CarbonCardServiceImpl implements ICarbonCardService
 
     @Autowired
     private CarbonAssetServiceService carbonAssetService;
+
+    @Autowired
+    private ICarbonCollectService carbonCollectService;
 
     @Autowired
     private RawContractLoaderFactory rawContractLoaderFactory;
@@ -194,13 +205,13 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         }
         // 判断当前的企业是否已经兑换了该纪念卡
         SouvenirCardQueryEnterpriseIsHasCardInputBO isHasCardInputBO = new SouvenirCardQueryEnterpriseIsHasCardInputBO();
-        isHasCardInputBO.set_cardName(cardName);
+        isHasCardInputBO.set_cardId(BigInteger.valueOf(carbonCard.getId()));
         isHasCardInputBO.set_enterpriseName(enterpriseName);
         try {
             TransactionResponse transactionResponseByCard = souvenirCardService.QueryEnterpriseIsHasCard(isHasCardInputBO);
             if (transactionResponseByCard.getReturnMessage().equals("Success"))
             {
-                if ((Boolean) JSON.parseArray(transactionResponseByCard.getValues()).get(0) == true) {
+                if ((Boolean) JSON.parseArray(transactionResponseByCard.getValues()).get(0)) {
                     return AjaxResult.error("已兑换该纪念卡");
                 }
             }
@@ -214,7 +225,7 @@ public class CarbonCardServiceImpl implements ICarbonCardService
             return AjaxResult.error("当前没有足够的积分");
         }
         SouvenirCardUserBindCardInputBO cardInputBO = new SouvenirCardUserBindCardInputBO();
-        cardInputBO.set_cardName(cardName);
+        cardInputBO.set_cardId(BigInteger.valueOf(carbonCard.getId()));
         cardInputBO.set_enterpriseName(enterpriseName);
         try
         {
@@ -233,6 +244,10 @@ public class CarbonCardServiceImpl implements ICarbonCardService
                         throw new RuntimeException(e);
                     }
                 });
+                // 更新企业的积分
+                BigInteger oldCredit = enterprise.getEnterpriseCarbonCredits();
+                enterprise.setEnterpriseCarbonCredits(oldCredit.subtract(creditVo.getCredit()));
+                enterpriseService.updateCarbonEnterprise(enterprise);
                 return AjaxResult.success("兑换成功");
             }
         } catch (Exception e) {
@@ -290,5 +305,70 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         return AjaxResult.error("查询失败");
     }
 
+    /**
+     * 企业收藏纪念卡
+     *
+     * @param enterprise_id 企业的ID
+     * @param card_id       纪念卡ID
+     * @param isCollect     是否收藏
+     * @return
+     */
+    @Override
+    public AjaxResult enterpriseCollectCard(Integer enterprise_id, Integer card_id, Boolean isCollect) {
+        if (enterprise_id == 0 || card_id == 0)
+        {
+            return AjaxResult.error("企业和纪念卡不能为空");
+        }
+        // 收藏
+        String key = RedisContacts.COLLECT_KEY + enterprise_id;
+        if (isCollect){
+            CarbonCollect carbonCollect = new CarbonCollect();
+            carbonCollect.setCardId(Long.valueOf(card_id));
+            carbonCollect.setEnterpriseId(Long.valueOf(enterprise_id));
+            int code = carbonCollectService.insertCarbonCollect(carbonCollect);
+            if (code > 0)
+            {
+                // 添加到缓存中
+                redisCache.setSetValue(key, card_id.toString());
+                return AjaxResult.success("收藏成功");
+            }
+        }else {
+            // 取消收藏
+            CarbonCollect carbonCollect = carbonCollectService
+                    .selectCarbonCollectByEnterpriseIdAndCardId(Long.valueOf(enterprise_id), Long.valueOf(card_id));
+            if (!Objects.isNull(carbonCollect))
+            {
+                int code = carbonCollectService.deleteCarbonCollectById(Long.valueOf(carbonCollect.getId()));
+                if (code > 0)
+                {
+                    redisCache.deleteSetValue(key,card_id.toString());
+                    return AjaxResult.error("取消收藏成功");
+                }
+            }
+        }
+        return AjaxResult.error("收藏失败");
+    }
 
+    @Override
+    public AjaxResult selectEnterpriseHasCardList(String enterprise) {
+        if (enterprise.isEmpty())
+        {
+            return AjaxResult.error("企业名称不能为空");
+        }
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(carbonEnterprise))
+        {
+            return AjaxResult.error("该企业不存在");
+        }
+        String key = RedisContacts.COLLECT_KEY + carbonEnterprise.getEnterpriseId();
+        Set enterpriseCollectCards = redisCache.getSetValue(key);
+        if (enterpriseCollectCards.size() == 0)
+        {
+            return AjaxResult.success("还未收藏");
+        }
+        // 所有的ID 需要去查询所有对应的纪念卡
+        List<CarbonCard> cardList = carbonCardMapper.selectEnterpriseHasCollectList(enterpriseCollectCards);
+        System.out.println(cardList);
+        return AjaxResult.success().put("data",cardList);
+    }
 }

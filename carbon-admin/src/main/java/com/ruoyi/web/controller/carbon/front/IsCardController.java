@@ -5,11 +5,10 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.souvenir.service.card.ICarbonCardService;
+import io.swagger.annotations.ApiOperation;
+import org.fisco.bcos.sdk.abi.datatypes.Int;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/card")
@@ -22,5 +21,21 @@ public class IsCardController {
     @GetMapping("/enterprise")
     public AjaxResult getCardListByEnterpriseName(@RequestParam("name") String name){
         return carbonCardService.selectCarbonCardListByEnterprise(name);
+    }
+
+
+    @ApiOperation("收藏纪念卡")
+    @GetMapping("/collect")
+    public AjaxResult enterpriseCollectCard(@RequestParam("enterprise_id") Integer enterprise_id,
+                                            @RequestParam("card_id") Integer card_id,
+                                            @RequestParam("isCollect") Boolean isCollect){
+        return carbonCardService.enterpriseCollectCard(enterprise_id,card_id,isCollect);
+    }
+
+
+    @ApiOperation("查看已收藏的纪念卡")
+    @PostMapping("/hasCardList")
+    public AjaxResult enterpriseHasCardList(@RequestParam("enterprise") String enterprise){
+        return carbonCardService.selectEnterpriseHasCardList(enterprise);
     }
 }

@@ -1,4 +1,4 @@
-package com.ruoyi.souvenir.service.impl;
+package com.ruoyi.souvenir.service.card.impl;
 
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.souvenir.domain.CarbonCardCategory;

@@ -1,8 +1,10 @@
 package com.ruoyi.souvenir.mapper;
 
 import com.ruoyi.souvenir.domain.CarbonCard;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 纪念卡数据Mapper接口
@@ -70,4 +72,5 @@ public interface CarbonCardMapper
 
     public CarbonCard selectCardByName(String name);
 
+    public List<CarbonCard> selectEnterpriseHasCollectList(@Param("enterpriseCollectCards") Set enterpriseCollectCards);
 }

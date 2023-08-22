@@ -85,4 +85,11 @@
             <if test="name != null  and name != ''"> and name = #{name}</if>
         </where>
     </select>
+    <select id="selectEnterpriseHasCollectList" resultMap="CarbonCardResult">
+        <include refid="selectCarbonCardVo"/>
+        WHERE id IN
+        <foreach item="id" collection="enterpriseCollectCards" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

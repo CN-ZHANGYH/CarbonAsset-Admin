@@ -2,6 +2,7 @@ package com.ruoyi.carbon.model.bo;
 
 import java.lang.Object;
 import java.lang.String;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,12 +15,12 @@ import lombok.NoArgsConstructor;
 public class SouvenirCardQueryEnterpriseIsHasCardInputBO {
   private String _enterpriseName;
 
-  private String _cardName;
+  private BigInteger _cardId;
 
   public List<Object> toArgs() {
     List args = new ArrayList();
     args.add(_enterpriseName);
-    args.add(_cardName);
+    args.add(_cardId);
     return args;
   }
 }

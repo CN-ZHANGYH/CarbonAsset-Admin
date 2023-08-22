@@ -308,4 +308,39 @@ public class RedisCache
     public <T> List getListValue(final String key){
         return redisTemplate.opsForList().range(key, 0, -1);
     }
+
+
+    /**
+     * 设置集合
+     *
+     * @param key   Redis键
+     * @param value Redis值
+     * @param <T>   泛型
+     * @return Long
+     */
+    public <T> Long setSetValue(final String key, final Object value){
+        return redisTemplate.opsForSet().add(key,value);
+    }
+
+
+    /**
+     * 返回集合
+     * @param key Redis键
+     * @return List 返回集合
+     */
+    public <T> Set getSetValue(final String key){
+        return redisTemplate.opsForSet().members(key);
+    }
+
+
+    /**
+     * 删除Set中的某条数据
+     *
+     * @param key Redis键
+     * @return 是否成功
+     */
+    public boolean deleteSetValue(final String key,final String value)
+    {
+        return redisTemplate.opsForSet().remove(key,value) > 0;
+    }
 }

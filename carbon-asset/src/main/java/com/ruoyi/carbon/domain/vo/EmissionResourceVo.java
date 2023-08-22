@@ -6,7 +6,5 @@ import lombok.Data;
 @Data
 public class EmissionResourceVo {
     private String week;
-
-
     private Integer value;
 }

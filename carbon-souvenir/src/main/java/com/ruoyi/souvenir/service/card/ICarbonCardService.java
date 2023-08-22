@@ -87,4 +87,20 @@ public interface ICarbonCardService
     public AjaxResult selectCarbonCardListByEnterprise(String enterprise);
 
 
+    /**
+     * 企业收藏纪念卡
+     *
+     * @param enterprise_id 企业的ID
+     * @param card_id       纪念卡ID
+     * @param isCollect     是否收藏
+     * @return 返回结果
+     */
+    public AjaxResult enterpriseCollectCard(Integer enterprise_id, Integer card_id, Boolean isCollect);
+
+    /**
+     * 查询企业已经收藏的卡片
+     * @param enterprise 企业名称
+     * @return 返回结果
+     */
+    public AjaxResult selectEnterpriseHasCardList(String enterprise);
 }

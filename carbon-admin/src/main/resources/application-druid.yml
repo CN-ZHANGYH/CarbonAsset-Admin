@@ -77,5 +77,5 @@ system:
         carbonUserServiceAddress:
         carbonDataStorageAddress:
         carbonAssetServiceAddress: "0xafc9c02c32fe7bb65b98137037723658a319237a"
-        souvenirCardAddress: "0x2a223c1a51fc269a5a06798665fe702259772793"
+        souvenirCardAddress: "0x26ed891a22a2201d33c087fbd32042b6f506dbe7"
 

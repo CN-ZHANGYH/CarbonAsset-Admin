@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.souvenir.mapper.CarbonCollectMapper">
+
+    <resultMap type="CarbonCollect" id="CarbonCollectResult">
+        <result property="id"    column="id"    />
+        <result property="enterpriseId"    column="enterprise_id"    />
+        <result property="cardId"    column="card_id"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectCarbonCollectVo">
+        select id, enterprise_id, card_id, create_time from carbon_collect
+    </sql>
+
+    <select id="selectCarbonCollectList" parameterType="CarbonCollect" resultMap="CarbonCollectResult">
+        <include refid="selectCarbonCollectVo"/>
+        <where>
+            <if test="enterpriseId != null "> and enterprise_id = #{enterpriseId}</if>
+            <if test="cardId != null "> and card_id = #{cardId}</if>
+        </where>
+    </select>
+
+    <select id="selectCarbonCollectById" parameterType="Long" resultMap="CarbonCollectResult">
+        <include refid="selectCarbonCollectVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertCarbonCollect" parameterType="CarbonCollect">
+        insert into carbon_collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="enterpriseId != null">enterprise_id,</if>
+            <if test="cardId != null">card_id,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="enterpriseId != null">#{enterpriseId},</if>
+            <if test="cardId != null">#{cardId},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCarbonCollect" parameterType="CarbonCollect">
+        update carbon_collect
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="enterpriseId != null">enterprise_id = #{enterpriseId},</if>
+            <if test="cardId != null">card_id = #{cardId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCarbonCollectById" parameterType="Long">
+        delete from carbon_collect where id = #{id}
+    </delete>
+
+    <delete id="deleteCarbonCollectByIds" parameterType="String">
+        delete from carbon_collect where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

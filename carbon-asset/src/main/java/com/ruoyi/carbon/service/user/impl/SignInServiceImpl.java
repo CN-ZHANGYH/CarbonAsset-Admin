@@ -171,7 +171,5 @@ public class SignInServiceImpl implements SignInService {
     public void setRedisCache(int dayOfMonth, String key) {
         // 设置redis
         redisCache.setBigMapValue(key, dayOfMonth - 1, true);
-        redisCache.expire(key,-1);
-
     }
 }

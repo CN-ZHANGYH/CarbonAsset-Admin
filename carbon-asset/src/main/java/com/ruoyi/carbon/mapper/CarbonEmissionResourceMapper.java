@@ -87,7 +87,7 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
             "WHERE\n" +
             "        date_table.date >= CURDATE() - INTERVAL 6 DAY\n" +
             "GROUP BY date_table.date\n" +
-            "ORDER BY date_table.date ASC;")
+            "ORDER BY date_table.date ASC")
     public List<EmissionResourceVo> selectEmissionResourceOfWeek();
 
 

@@ -1,7 +1,7 @@
 package com.ruoyi.carbon.model.bo;
 
 import java.lang.Object;
-import java.lang.String;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SouvenirCardCardInfoMapInputBO {
-  private String arg0;
+  private BigInteger arg0;
 
   public List<Object> toArgs() {
     List args = new ArrayList();
