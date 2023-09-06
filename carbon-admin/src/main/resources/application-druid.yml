@@ -13,7 +13,7 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://localhost:3306/carbon?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://localhost:3306/DBNAME?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: DBUSERNAME
                 password: DBPASSWORD
             # 从库数据源
@@ -69,7 +69,7 @@ spring:
 knife4j:
     enable: true
 system:
-    peers: chainaddress
+    peers: CHAIN_HOST
     groupId: 1
     certPath: conf,config,src/main/resources/conf,src/main/resources/config
     hexPrivateKey: PK_HASH
