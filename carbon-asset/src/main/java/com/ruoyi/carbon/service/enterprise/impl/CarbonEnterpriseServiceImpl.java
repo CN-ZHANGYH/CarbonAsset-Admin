@@ -598,7 +598,6 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         try {
             CallResponse callResponse = carbonAssetServiceService.selectEnterpriseInfo(infoInputBO);
             if (callResponse.getReturnMessage().equals("Success")){
-                System.out.println(callResponse.getReturnObject());
                 ArrayList result = (ArrayList) callResponse.getReturnObject().get(0);
                 carbonEnterprise.setEnterpriseBalance((BigInteger) result.get(3));
                 carbonEnterprise.setEnterpriseTotalEmission((BigInteger) result.get(4));
@@ -608,7 +607,6 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
                 if (code < 0){
                     return AjaxResult.error("同步更新数据失败");
                 }
-
                 AjaxResult ajax = AjaxResult.success();
                 ajax.put("enterprise",carbonEnterprise);
                 return ajax;

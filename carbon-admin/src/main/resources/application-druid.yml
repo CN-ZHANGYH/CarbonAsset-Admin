@@ -13,9 +13,9 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://43.139.217.186:3306/carbon?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-                username: root
-                password: zhangyuhao0417
+                url: jdbc:mysql://localhost:3306/carbon?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: DBUSERNAME
+                password: DBPASSWORD
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
@@ -69,13 +69,13 @@ spring:
 knife4j:
     enable: true
 system:
-    peers: 43.139.217.186:20200
+    peers: chainaddress
     groupId: 1
     certPath: conf,config,src/main/resources/conf,src/main/resources/config
-    hexPrivateKey: 6d691f6b9f081ba5a6ad8b4e377ad15cc254a047f64ba7363ae91370ca33643c
+    hexPrivateKey: PK_HASH
     contract:
         carbonUserServiceAddress:
         carbonDataStorageAddress:
-        carbonAssetServiceAddress: "0xafc9c02c32fe7bb65b98137037723658a319237a"
-        souvenirCardAddress: "0x26ed891a22a2201d33c087fbd32042b6f506dbe7"
+        carbonAssetServiceAddress: CARBONSERVICEADDRESS
+        souvenirCardAddress: SOUVENIRADDRESS
 
