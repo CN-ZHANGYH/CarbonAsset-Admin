@@ -94,19 +94,17 @@ public interface CarbonTransactionMapper
     public List<CarbonTransaction> selectTransactionListOfNew();
 
     @Select("SELECT\n" +
-            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 0 THEN transaction_quantity ELSE 0 END) AS monday,\n" +
-            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 1 THEN transaction_quantity ELSE 0 END) AS tuesday,\n" +
-            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 2 THEN transaction_quantity ELSE 0 END) AS wednesday,\n" +
-            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 3 THEN transaction_quantity ELSE 0 END) AS thursday,\n" +
-            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 4 THEN transaction_quantity ELSE 0 END) AS friday,\n" +
-            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 5 THEN transaction_quantity ELSE 0 END) AS saturday,\n" +
-            "    SUM(CASE WHEN WEEKDAY(transaction_time) = 6 THEN transaction_quantity ELSE 0 END) AS sunday\n" +
+            "  IFNULL(SUM(CASE WHEN WEEKDAY(transaction_time) = 0 THEN transaction_quantity ELSE 0 END), 0) AS monday,\n" +
+            "  IFNULL(SUM(CASE WHEN WEEKDAY(transaction_time) = 1 THEN transaction_quantity ELSE 0 END), 0) AS tuesday,\n" +
+            "  IFNULL(SUM(CASE WHEN WEEKDAY(transaction_time) = 2 THEN transaction_quantity ELSE 0 END), 0) AS wednesday,\n" +
+            "  IFNULL(SUM(CASE WHEN WEEKDAY(transaction_time) = 3 THEN transaction_quantity ELSE 0 END), 0) AS thursday,\n" +
+            "  IFNULL(SUM(CASE WHEN WEEKDAY(transaction_time) = 4 THEN transaction_quantity ELSE 0 END), 0) AS friday,\n" +
+            "  IFNULL(SUM(CASE WHEN WEEKDAY(transaction_time) = 5 THEN transaction_quantity ELSE 0 END), 0) AS saturday,\n" +
+            "  IFNULL(SUM(CASE WHEN WEEKDAY(transaction_time) = 6 THEN transaction_quantity ELSE 0 END), 0) AS sunday\n" +
             "FROM\n" +
-            "    carbon_transaction\n" +
+            "carbon_transaction\n" +
             "WHERE\n" +
-            "                buyer_id = #{buyerId}\n" +
-            "GROUP BY\n" +
-            "    buyer_id;")
+            "buyer_id = #{buyerId}")
     public List<TxDataVo> selectTransactionTxList(@Param("buyerId") Integer buyerId);
 
     @Select("SELECT\n" +

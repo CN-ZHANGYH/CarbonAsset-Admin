@@ -107,7 +107,7 @@ public interface CarbonEnterpriseAssetMapper extends BaseMapper<CarbonEnterprise
             "FROM\n" +
             "    carbon_enterprise_asset\n" +
             "WHERE\n" +
-            "        enterprise_id = 1;")
+            "        enterprise_id = #{enterpriseId};")
     public List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId);
 
     @Select("SELECT\n" +

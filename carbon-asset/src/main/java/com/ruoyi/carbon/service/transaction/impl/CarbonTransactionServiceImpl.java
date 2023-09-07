@@ -138,12 +138,23 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
         }
         List<TxDataVo> txDataVos = carbonTransactionMapper.selectTransactionTxList(carbonEnterprise.getEnterpriseId());
         List<TxDataVo> sellDataVos = enterpriseAssetService.selectEnterpriseAssetSellList(carbonEnterprise.getEnterpriseId());
-        if (txDataVos.isEmpty() || sellDataVos.isEmpty())
-        {
-            return AjaxResult.success();
-        }
         ArrayList<Integer> txData = new ArrayList<>();
         ArrayList<Integer> sellerData = new ArrayList<>();
+        System.out.println(txDataVos);
+        System.out.println(sellDataVos);
+        if (txDataVos.size() == 0 || sellDataVos.size() == 0)
+        {
+            return AjaxResult.error("查询失败");
+        }
+        getTxOrSellerDataList(txDataVos,txData);
+        getTxOrSellerDataList(sellDataVos,sellerData);
+        AjaxResult success = AjaxResult.success();
+        success.put("tData",txData);
+        success.put("sData",sellerData);
+        return success;
+    }
+
+    private static void getTxOrSellerDataList(List<TxDataVo> txDataVos, ArrayList<Integer> txData) {
         txDataVos.stream().forEach(txDataVo -> {
             txData.add(txDataVo.getMonday());
             txData.add(txDataVo.getTuesday());
@@ -153,20 +164,6 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
             txData.add(txDataVo.getSaturday());
             txData.add(txDataVo.getSunday());
         });
-
-        sellDataVos.stream().forEach(sData -> {
-            sellerData.add(sData.getMonday());
-            sellerData.add(sData.getTuesday());
-            sellerData.add(sData.getWednesday());
-            sellerData.add(sData.getThursday());
-            sellerData.add(sData.getFriday());
-            sellerData.add(sData.getSaturday());
-            sellerData.add(sData.getSunday());
-        });
-        AjaxResult success = AjaxResult.success();
-        success.put("tData",txData);
-        success.put("sData",sellerData);
-        return success;
     }
 
     @Override
