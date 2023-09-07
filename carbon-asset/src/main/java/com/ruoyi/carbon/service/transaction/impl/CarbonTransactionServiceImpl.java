@@ -140,8 +140,6 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
         List<TxDataVo> sellDataVos = enterpriseAssetService.selectEnterpriseAssetSellList(carbonEnterprise.getEnterpriseId());
         ArrayList<Integer> txData = new ArrayList<>();
         ArrayList<Integer> sellerData = new ArrayList<>();
-        System.out.println(txDataVos);
-        System.out.println(sellDataVos);
         if (txDataVos.size() == 0 || sellDataVos.size() == 0)
         {
             return AjaxResult.error("查询失败");
