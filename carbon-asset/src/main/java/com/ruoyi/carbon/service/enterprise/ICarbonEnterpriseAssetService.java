@@ -75,4 +75,7 @@ public interface ICarbonEnterpriseAssetService
     public List<TxDataVo> selectEnterpriseAssetSellList(Integer enterpriseId);
 
     public OptionalDouble selectSellerListIsOverProgress(Integer enterpriseId);
+
+    List<CarbonEnterpriseAsset> searchEnterpriseSellerRecord(String enterprise, Integer quality);
+
 }

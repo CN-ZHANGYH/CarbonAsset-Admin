@@ -463,4 +463,18 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
         }
         return AjaxResult.error();
     }
+
+    @Override
+    public List<CarbonEmissionResource> searchEnterpriseResourceEmissionRecord(String enterprise, String method) {
+        if (StringUtils.isEmpty(enterprise) || StringUtils.isEmpty(method))
+        {
+            return null;
+        }
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(carbonEnterprise))
+        {
+            return null;
+        }
+        return carbonEmissionResourceMapper.searchEnterpriseResourceEmissionRecord(carbonEnterprise.getEnterpriseAddress(),method);
+    }
 }

@@ -75,4 +75,5 @@ public interface ICarbonTransactionService
 
     public AjaxResult selectTransactionNewTxListLimitFive();
 
+    List<CarbonTransaction> searchEnterpriseTxRecord(Long buyerId, Long quality);
 }

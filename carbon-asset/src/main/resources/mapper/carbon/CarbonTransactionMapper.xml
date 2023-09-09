@@ -42,7 +42,7 @@
     <select id="selectTransactionListByAddress" parameterType="String" resultMap="CarbonTransactionResult">
         <include refid="selectCarbonTransactionVo"/>
         <where>
-            <if test="buyAddress != null  and buyAddress != ''">buy_address = #{address}</if>
+            <if test="buyAddress != null  and buyAddress != ''">buy_address = #{buyAddress}</if>
         </where>
     </select>
     <select id="selectTransactionListOfNew" resultMap="CarbonTransactionResult">
@@ -53,6 +53,10 @@
     <select id="selectTransactionListOfNewLimitFive" resultMap="CarbonTransactionResult">
         <include refid="selectCarbonTransactionVo"/>
         order by transaction_time limit 5
+    </select>
+    <select id="searchEnterpriseTxRecord" resultMap="CarbonTransactionResult">
+        <include refid="selectCarbonTransactionVo"/>
+        where buyer_id = #{buyerId} and  transaction_quantity = #{quality}
     </select>
 
     <insert id="insertCarbonTransaction" parameterType="CarbonTransaction">

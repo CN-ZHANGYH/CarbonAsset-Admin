@@ -107,4 +107,7 @@ public interface ICarbonEmissionResourceService extends IService<CarbonEmissionR
     List<RankingEmissionVo> selectRankingByEmissionResource(Integer pageNum, Integer pageSize);
 
     AjaxResult selectResourceRanking(String enterprise);
+
+    List<CarbonEmissionResource> searchEnterpriseResourceEmissionRecord(String enterprise, String method);
+
 }

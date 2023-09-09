@@ -11,7 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * 交易碳额度记录对象 carbon_transaction
- * 
+ *
  * @author 张宇豪
  * @date 2023-07-08
  */
@@ -56,18 +56,4 @@ public class CarbonTransaction extends BaseEntity
     /** 购买碳额度的数量 */
     @Excel(name = "购买碳额度的数量")
     private Long transactionQuantity;
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("transactionId", getTransactionId())
-            .append("buyerId", getBuyerId())
-            .append("sellerId", getSellerId())
-            .append("transactionOrderName", getTransactionOrderName())
-            .append("buyAddress", getBuyAddress())
-            .append("sellerAddress", getSellerAddress())
-            .append("transactionTime", getTransactionTime())
-            .append("transactionQuantity", getTransactionQuantity())
-            .toString();
-    }
 }

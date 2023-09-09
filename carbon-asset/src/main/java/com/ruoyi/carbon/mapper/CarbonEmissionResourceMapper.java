@@ -196,4 +196,6 @@ public interface CarbonEmissionResourceMapper extends BaseMapper<CarbonEmissionR
             "ORDER BY months.year, months.month;")
     List<Integer> selectEmissionResourceMonthOfYear();
 
+
+    List<CarbonEmissionResource> searchEnterpriseResourceEmissionRecord(@Param("enterpriseAddress") String enterpriseAddress, @Param("method") String method);
 }

@@ -50,6 +50,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectEmissionResourceList" resultMap="CarbonEmissionResourceResult">
         <include refid="selectCarbonEmissionResourceVo"/>
     </select>
+    <select id="searchEnterpriseResourceEmissionRecord"
+            resultMap="CarbonEmissionResourceResult">
+        <include refid="selectCarbonEmissionResourceVo"/>
+        where enterprise_address = #{enterpriseAddress} and emission_way =#{method}
+    </select>
 
 
     <insert id="insertCarbonEmissionResource" parameterType="CarbonEmissionResource">

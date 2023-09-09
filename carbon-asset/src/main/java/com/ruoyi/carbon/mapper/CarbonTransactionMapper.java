@@ -3,8 +3,10 @@ package com.ruoyi.carbon.mapper;
 import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.domain.vo.TransactionVo;
 import com.ruoyi.carbon.domain.vo.TxDataVo;
-import io.lettuce.core.dynamic.annotation.Param;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultType;
 import org.apache.ibatis.annotations.Select;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +67,7 @@ public interface CarbonTransactionMapper
      */
     public int deleteCarbonTransactionByTransactionIds(Long[] transactionIds);
 
-    public ArrayList<CarbonTransaction> selectTransactionListByAddress(@Param("address") String address);
+    public ArrayList<CarbonTransaction> selectTransactionListByAddress(@Param("buyAddress") String buyAddress);
 
     @Select("SELECT\n" +
             "    CASE WHEN WEEKDAY(date_table.date) = 0 THEN '周一'\n" +
@@ -130,5 +132,9 @@ public interface CarbonTransactionMapper
     public List<Integer> selectTransactionMonthOfYear();
 
     List<CarbonTransaction> selectTransactionListOfNewLimitFive();
+
+
+
+    List<CarbonTransaction> searchEnterpriseTxRecord(@Param("buyerId") Long buyerId, @Param("quality") Long quality);
 
 }

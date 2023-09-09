@@ -67,4 +67,7 @@ public class IsResourceController extends BaseController {
     public AjaxResult getResourceRanking(@RequestParam("enterprise") String enterprise){
         return emissionResourceService.selectResourceRanking(enterprise);
     }
+
+
+
 }

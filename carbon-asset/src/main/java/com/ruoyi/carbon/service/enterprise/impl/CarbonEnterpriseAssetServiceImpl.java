@@ -1,15 +1,20 @@
 package com.ruoyi.carbon.service.enterprise.impl;
 
+import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterpriseAsset;
 import com.ruoyi.carbon.domain.vo.AssetVo;
 import com.ruoyi.carbon.domain.vo.TxDataVo;
 import com.ruoyi.carbon.mapper.CarbonEnterpriseAssetMapper;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
+import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseService;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.utils.StringUtils;
+import com.sun.corba.se.spi.ior.ObjectKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.OptionalDouble;
 
 /**
@@ -21,6 +26,10 @@ import java.util.OptionalDouble;
 @Service
 public class CarbonEnterpriseAssetServiceImpl implements ICarbonEnterpriseAssetService
 {
+
+    @Autowired
+    private ICarbonEnterpriseService enterpriseService;
+
     @Autowired
     private CarbonEnterpriseAssetMapper carbonEnterpriseAssetMapper;
 
@@ -125,6 +134,20 @@ public class CarbonEnterpriseAssetServiceImpl implements ICarbonEnterpriseAssetS
     @Override
     public OptionalDouble selectSellerListIsOverProgress(Integer enterpriseId) {
         return carbonEnterpriseAssetMapper.selectSellerListIsOverProgress(enterpriseId);
+    }
+
+    @Override
+    public List<CarbonEnterpriseAsset> searchEnterpriseSellerRecord(String enterprise, Integer quality) {
+        if (StringUtils.isEmpty(enterprise) || quality == null)
+        {
+            return null;
+        }
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        if (Objects.isNull(carbonEnterprise))
+        {
+            return null;
+        }
+        return carbonEnterpriseAssetMapper.searchEnterpriseSellerRecord(carbonEnterprise.getEnterpriseAddress(),quality);
     }
 
 

@@ -7,6 +7,7 @@ import com.ruoyi.carbon.domain.carbon.CarbonTransaction;
 import com.ruoyi.carbon.service.enterprise.EnterpriseQueryService;
 import com.ruoyi.carbon.service.enterprise.ICarbonEnterpriseAssetService;
 import com.ruoyi.carbon.service.resources.ICarbonEmissionResourceService;
+import com.ruoyi.carbon.service.transaction.ICarbonTransactionService;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -16,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import oshi.driver.unix.aix.Ls;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +39,9 @@ public class IsQueryController extends BaseController {
 
     @Autowired
     private ICarbonEmissionResourceService emissionResourceService;
+
+    @Autowired
+    private ICarbonTransactionService transactionService;
 
 
     @ApiOperation("查询企业的详细信息")
@@ -63,11 +68,7 @@ public class IsQueryController extends BaseController {
         List<CarbonTransaction> txList = (List<CarbonTransaction>) enterpriseQueryService.queryEnterpriseTxList(enterprise).get("data");
         if (Objects.isNull(txList))
         {
-            TableDataInfo nullDataInfo = new TableDataInfo();
-            nullDataInfo.setMsg("当前没有交易记录");
-            nullDataInfo.setCode(200);
-            nullDataInfo.setTotal(0);
-            return nullDataInfo;
+            return IsNullTableInfoMsg("当前没有交易记录");
         }
         return getDataTable(txList);
     }
@@ -80,11 +81,7 @@ public class IsQueryController extends BaseController {
         List<CarbonEmissionResource> emissionResources = (List<CarbonEmissionResource>) enterpriseQueryService.queryEnterpriseErList(enterprise).get("data");
         if (Objects.isNull(emissionResources))
         {
-            TableDataInfo nullDataInfo = new TableDataInfo();
-            nullDataInfo.setMsg("当前没有排放记录");
-            nullDataInfo.setCode(200);
-            nullDataInfo.setTotal(0);
-            return nullDataInfo;
+            return IsNullTableInfoMsg("当前没有排放记录");
         }
 
         return getDataTable(emissionResources);
@@ -99,11 +96,7 @@ public class IsQueryController extends BaseController {
         List<CarbonEnterpriseAsset> enterpriseAssets = (List<CarbonEnterpriseAsset>) enterpriseQueryService.queryEnterpriseAList(enterprise).get("data");
         if (Objects.isNull(enterpriseAssets))
         {
-            TableDataInfo nullDataInfo = new TableDataInfo();
-            nullDataInfo.setMsg("当前没有出售记录");
-            nullDataInfo.setCode(200);
-            nullDataInfo.setTotal(0);
-            return nullDataInfo;
+            return IsNullTableInfoMsg("当前没有出售记录");
         }
         return getDataTable(enterpriseAssets);
     }
@@ -123,11 +116,7 @@ public class IsQueryController extends BaseController {
         List<CarbonEmissionResource> carbonEmissionResources = emissionResourceService.selectEnterpriseIsNotApplyEmissionResource(enterprise);
         if (Objects.isNull(carbonEmissionResources))
         {
-            TableDataInfo nullDataInfo = new TableDataInfo();
-            nullDataInfo.setTotal(0);
-            nullDataInfo.setCode(200);
-            nullDataInfo.setMsg("当前还没有申请");
-            return nullDataInfo;
+            return IsNullTableInfoMsg("当前还没有申请");
         }
         return getDataTable(carbonEmissionResources);
     }
@@ -140,12 +129,63 @@ public class IsQueryController extends BaseController {
         List<CarbonEmissionResource> carbonEmissionResources = emissionResourceService.selectEnterpriseIsApplyEmissioResource(enterprise);
         if (Objects.isNull(carbonEmissionResources))
         {
-            TableDataInfo nullDataInfo = new TableDataInfo();
-            nullDataInfo.setTotal(0);
-            nullDataInfo.setCode(200);
-            nullDataInfo.setMsg("当前还没有申请");
-            return nullDataInfo;
+            return IsNullTableInfoMsg("当前还没有申请");
         }
         return getDataTable(carbonEmissionResources);
+    }
+
+
+    @ApiOperation("根据排放方式查询企业排放记录")
+    @PostMapping("/searchResEmiRecord")
+    public TableDataInfo searchEnterpriseResourceEmissionRecord(@RequestParam("enterprise") String enterprise,
+                                                                @RequestParam("method") String method) {
+        startPage();
+        List<CarbonEmissionResource> carbonEmissionResources = emissionResourceService.searchEnterpriseResourceEmissionRecord(enterprise,method);
+        if (Objects.isNull(carbonEmissionResources))
+        {
+            return IsNullTableInfoMsg("没有该记录");
+        }
+        return getDataTable(carbonEmissionResources);
+
+    }
+
+
+
+    @ApiOperation("根据出售数量查询企业的所有出售记录")
+    @PostMapping("/searchSellRecord")
+    public TableDataInfo searchEnterpriseSellerRecord(@RequestParam("enterprise") String enterprise,
+                                                      @RequestParam("quality") Integer quality){
+        startPage();
+        List<CarbonEnterpriseAsset> enterpriseAssets = enterpriseAssetService.searchEnterpriseSellerRecord(enterprise,quality);
+        if (Objects.isNull(enterpriseAssets))
+        {
+            return IsNullTableInfoMsg("没有该记录");
+        }
+        return getDataTable(enterpriseAssets);
+    }
+
+
+
+    @ApiOperation("根据交易数量查询企业所有的交易记录")
+    @PostMapping("/searchTxRecord")
+    public TableDataInfo searchEnterpriseTxRecord(@RequestParam("buyerId") Long buyerId,
+                                                  @RequestParam("quality") Long quality){
+        startPage();
+        List<CarbonTransaction> transactions = transactionService.searchEnterpriseTxRecord(buyerId,quality);
+        if (Objects.isNull(transactions))
+        {
+            return IsNullTableInfoMsg("没有该记录");
+        }
+        return getDataTable(transactions);
+    }
+
+
+
+    private static TableDataInfo IsNullTableInfoMsg(String msg) {
+        TableDataInfo nullDataInfo = new TableDataInfo();
+        nullDataInfo.setTotal(0);
+        nullDataInfo.setCode(200);
+        nullDataInfo.setMsg(msg);
+        return nullDataInfo;
     }
 }

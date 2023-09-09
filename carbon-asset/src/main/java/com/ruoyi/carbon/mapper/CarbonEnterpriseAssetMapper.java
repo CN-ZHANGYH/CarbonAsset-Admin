@@ -119,4 +119,8 @@ public interface CarbonEnterpriseAssetMapper extends BaseMapper<CarbonEnterprise
             "GROUP BY\n" +
             "    enterprise_id;")
     public OptionalDouble selectSellerListIsOverProgress(@Param("enterpriseId") Integer enterpriseId);
+
+
+    List<CarbonEnterpriseAsset> searchEnterpriseSellerRecord(@Param("enterpriseAddress") String enterpriseAddress,@Param("quality") Integer quality);
+
 }

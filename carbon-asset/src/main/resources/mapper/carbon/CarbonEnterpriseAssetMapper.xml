@@ -59,6 +59,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY `time` DESC LIMIT 5
     </select>
 
+
+    <select id="searchEnterpriseSellerRecord"
+            resultMap="CarbonEnterpriseAssetResult">
+        <include refid="selectCarbonEnterpriseAssetVo"/>
+        WHERE enterprise_address = #{enterpriseAddress} and asset_quantity = #{quality}
+    </select>
+
     <insert id="insertCarbonEnterpriseAsset" parameterType="CarbonEnterpriseAsset">
         insert into carbon_enterprise_asset
         <trim prefix="(" suffix=")" suffixOverrides=",">

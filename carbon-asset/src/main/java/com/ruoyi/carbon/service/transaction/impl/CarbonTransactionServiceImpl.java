@@ -178,4 +178,12 @@ public class CarbonTransactionServiceImpl implements ICarbonTransactionService
         }
         return AjaxResult.success(carbonTransactions);
     }
+
+    @Override
+    public List<CarbonTransaction> searchEnterpriseTxRecord(Long buyerId, Long quality) {
+        if (buyerId == 0 || quality == 0){
+            return null;
+        }
+        return carbonTransactionMapper.searchEnterpriseTxRecord(buyerId,quality);
+    }
 }
