@@ -86,6 +86,7 @@ public class SysRegisterService
             sysUser.setNickName(registerBody.getCompany());
             sysUser.setPassword(SecurityUtils.encryptPassword(password));
             sysUser.setEmail(email);
+            sysUser.setAvatar("https://blog-1304715799.cos.ap-nanjing.myqcloud.com/imgs/202309100101158.png");
             boolean regFlag = userService.registerUser(sysUser);
             if (!regFlag)
             {

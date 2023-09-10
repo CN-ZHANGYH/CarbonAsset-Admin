@@ -460,6 +460,8 @@ public class CarbonEmissionResourceServiceImpl extends ServiceImpl<CarbonEmissio
                 resourceRanking = i + 1;
                 return AjaxResult.success().put("rRanking",resourceRanking);
             }
+            return AjaxResult.success().put("rRanking",resourceRanking);
+
         }
         return AjaxResult.error();
     }
