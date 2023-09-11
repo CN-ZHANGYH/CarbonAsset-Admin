@@ -1,17 +1,6 @@
 package com.ruoyi.carbon.service.carbon;
 
-import com.ruoyi.carbon.model.bo.SouvenirCardCardInfoListInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardCardInfoMapInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardIsCardExistInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardQueryCardInfoInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardQueryEnterpriseCardListInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardQueryEnterpriseIsHasCardInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardRegisterCardInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardUserBindCardInputBO;
-import com.ruoyi.carbon.model.bo.SouvenirCardUserOfCardListMapInputBO;
-import java.lang.Exception;
-import java.lang.String;
-import javax.annotation.PostConstruct;
+import com.ruoyi.carbon.model.bo.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.fisco.bcos.sdk.client.Client;
@@ -22,6 +11,8 @@ import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
 
 @Service
 @NoArgsConstructor
@@ -50,6 +41,10 @@ public class SouvenirCardService {
     return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "UserBindCard", input.toArgs());
   }
 
+  public TransactionResponse UpdateCardInfo(SouvenirCardUpdateCardInfoInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "UpdateCardInfo", input.toArgs());
+  }
+
   public CallResponse UserOfCardListMap(SouvenirCardUserOfCardListMapInputBO input) throws Exception {
     return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "UserOfCardListMap", input.toArgs());
   }
@@ -72,6 +67,10 @@ public class SouvenirCardService {
 
   public CallResponse CardInfoList(SouvenirCardCardInfoListInputBO input) throws Exception {
     return this.txProcessor.sendCall(this.client.getCryptoSuite().getCryptoKeyPair().getAddress(), this.address, ABI, "CardInfoList", input.toArgs());
+  }
+
+  public TransactionResponse QueryEnterpriseCardNumber(SouvenirCardQueryEnterpriseCardNumberInputBO input) throws Exception {
+    return this.txProcessor.sendTransactionAndGetResponse(this.address, ABI, "QueryEnterpriseCardNumber", input.toArgs());
   }
 
   public TransactionResponse QueryEnterpriseCardList(SouvenirCardQueryEnterpriseCardListInputBO input) throws Exception {

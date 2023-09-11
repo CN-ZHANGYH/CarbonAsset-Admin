@@ -5,6 +5,7 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.souvenir.service.card.ICarbonCardService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.fisco.bcos.sdk.abi.datatypes.Int;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public class IsCardController {
 
     @Autowired
     private ICarbonCardService carbonCardService;
+
 
     @Log(title = "查询用户所有纪念卡",businessType = BusinessType.OTHER)
     @GetMapping("/enterprise")
@@ -32,10 +34,17 @@ public class IsCardController {
         return carbonCardService.enterpriseCollectCard(enterprise_id,card_id,isCollect);
     }
 
-
     @ApiOperation("查看已收藏的纪念卡")
     @PostMapping("/hasCardList")
     public AjaxResult enterpriseHasCardList(@RequestParam("enterprise") String enterprise){
         return carbonCardService.selectEnterpriseHasCardList(enterprise);
+    }
+
+
+    @ApiOperation("查询个人的商店信息")
+    @PostMapping("/info")
+    public AjaxResult getEnterpriseShopInfo(@RequestParam("enterprise") String enterprise)
+    {
+        return carbonCardService.getEnterpriseShopInfo(enterprise);
     }
 }

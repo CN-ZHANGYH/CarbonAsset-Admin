@@ -312,11 +312,14 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
 
         BigInteger oldBalance = buyer.getEnterpriseBalance();
         buyer.setEnterpriseBalance(oldBalance.subtract(enterpriseAsset.getAssetAmount().multiply(buyVo.getQuality())));
+
+
         BigInteger oldEmissionLimit = qualification.getQualificationEmissionLimit();
         qualification.setQualificationEmissionLimit(oldEmissionLimit.add(buyVo.getQuality()));
 
         BigInteger sellerBalance = seller.getEnterpriseBalance();
-        buyer.setEnterpriseBalance(sellerBalance.add(enterpriseAsset.getAssetAmount().multiply(buyVo.getQuality())));
+        seller.setEnterpriseBalance(sellerBalance.add(enterpriseAsset.getAssetAmount().multiply(buyVo.getQuality())));
+
 
         BigInteger oldQuantity = enterpriseAsset.getAssetQuantity();
         enterpriseAsset.setAssetQuantity(oldQuantity.subtract(buyVo.getQuality()));
@@ -582,7 +585,8 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
             if (enterpriseRanking.get(i).equals(enterprise))
             {
                 ranking = i;
-                return AjaxResult.success().put("cRanking",ranking + 1);
+                ranking++;
+                return AjaxResult.success().put("cRanking",ranking);
             }
         }
         return AjaxResult.error("没有当前企业");
@@ -617,7 +621,6 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         return AjaxResult.error("查询失败");
     }
 
-
     @Async("taskExecutor")
     public int insertOrder(CarbonEnterpriseAsset enterpriseAsset, Integer qualificationId, BigInteger quality){
         // 查询企业的资质进行更新操作
@@ -630,6 +633,4 @@ public class CarbonEnterpriseServiceImpl implements ICarbonEnterpriseService
         qualificationService.updateCarbonQualification(qualification);
         return enterpriseAssetService.insertCarbonEnterpriseAsset(enterpriseAsset);
     }
-
-
 }

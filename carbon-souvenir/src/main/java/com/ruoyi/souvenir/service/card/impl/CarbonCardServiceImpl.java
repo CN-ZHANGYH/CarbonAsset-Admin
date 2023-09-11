@@ -19,6 +19,7 @@ import com.ruoyi.souvenir.mapper.CarbonCardMapper;
 import com.ruoyi.souvenir.service.card.ICarbonCardService;
 import com.ruoyi.souvenir.service.card.ICarbonCollectService;
 import lombok.extern.slf4j.Slf4j;
+import org.fisco.bcos.sdk.transaction.model.dto.CallResponse;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -368,7 +369,11 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         }
         // 所有的ID 需要去查询所有对应的纪念卡
         List<CarbonCard> cardList = carbonCardMapper.selectEnterpriseHasCollectList(enterpriseCollectCards);
-        System.out.println(cardList);
         return AjaxResult.success().put("data",cardList);
+    }
+
+    @Override
+    public AjaxResult getEnterpriseShopInfo(String enterprise) {
+        return AjaxResult.success();
     }
 }

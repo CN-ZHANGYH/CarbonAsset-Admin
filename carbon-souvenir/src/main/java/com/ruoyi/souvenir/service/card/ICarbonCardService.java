@@ -103,4 +103,7 @@ public interface ICarbonCardService
      * @return 返回结果
      */
     public AjaxResult selectEnterpriseHasCardList(String enterprise);
+
+    public AjaxResult getEnterpriseShopInfo(String enterprise);
+
 }
