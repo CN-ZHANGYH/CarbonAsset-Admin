@@ -5,9 +5,7 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.souvenir.service.card.ICarbonCardService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.fisco.bcos.sdk.abi.datatypes.Int;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,9 +27,8 @@ public class IsCardController {
     @ApiOperation("收藏纪念卡")
     @GetMapping("/collect")
     public AjaxResult enterpriseCollectCard(@RequestParam("enterprise_id") Integer enterprise_id,
-                                            @RequestParam("card_id") Integer card_id,
-                                            @RequestParam("isCollect") Boolean isCollect){
-        return carbonCardService.enterpriseCollectCard(enterprise_id,card_id,isCollect);
+                                            @RequestParam("card_id") Integer card_id){
+        return carbonCardService.enterpriseCollectCard(enterprise_id,card_id);
     }
 
     @ApiOperation("查看已收藏的纪念卡")

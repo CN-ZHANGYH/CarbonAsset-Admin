@@ -1,7 +1,6 @@
 package com.ruoyi.souvenir.service.card.impl;
 
 import com.alibaba.fastjson2.JSON;
-import com.ruoyi.carbon.domain.carbon.CarbonCollect;
 import com.ruoyi.carbon.domain.carbon.CarbonEnterprise;
 import com.ruoyi.carbon.factory.RawContractLoaderFactory;
 import com.ruoyi.carbon.model.bo.*;
@@ -19,7 +18,7 @@ import com.ruoyi.souvenir.mapper.CarbonCardMapper;
 import com.ruoyi.souvenir.service.card.ICarbonCardService;
 import com.ruoyi.souvenir.service.card.ICarbonCollectService;
 import lombok.extern.slf4j.Slf4j;
-import org.fisco.bcos.sdk.transaction.model.dto.CallResponse;
+import org.apache.commons.lang3.BooleanUtils;
 import org.fisco.bcos.sdk.transaction.model.dto.TransactionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -112,6 +111,7 @@ public class CarbonCardServiceImpl implements ICarbonCardService
     public AjaxResult insertCarbonCard(CarbonCard carbonCard)
     {
         // 插入数据库时 同步上链
+        carbonCard.setLiked(0);
         int code = carbonCardMapper.insertCarbonCard(carbonCard);
         if (code > 0)
         {
@@ -122,7 +122,6 @@ public class CarbonCardServiceImpl implements ICarbonCardService
             cardInputBO.set_cardName(card.getName());
             cardInputBO.set_cardDesc(card.getDescription());
             cardInputBO.set_cardUrl(card.getUrl());
-            cardInputBO.set_level(BigInteger.valueOf(card.getLevel()));
             cardInputBO.set_categoty(card.getCategory());
             cardInputBO.set_credit(carbonCard.getCredit());
             try
@@ -311,22 +310,25 @@ public class CarbonCardServiceImpl implements ICarbonCardService
      *
      * @param enterprise_id 企业的ID
      * @param card_id       纪念卡ID
-     * @param isCollect     是否收藏
      * @return
      */
     @Override
-    public AjaxResult enterpriseCollectCard(Integer enterprise_id, Integer card_id, Boolean isCollect) {
+    public AjaxResult enterpriseCollectCard(Integer enterprise_id, Integer card_id) {
         if (enterprise_id == 0 || card_id == 0)
         {
             return AjaxResult.error("企业和纪念卡不能为空");
         }
+        CarbonCard carbonCard = carbonCardMapper.selectCarbonCardById(Long.valueOf(card_id));
+        Integer liked = carbonCard.getLiked();
         // 收藏
         String key = RedisContacts.COLLECT_KEY + enterprise_id;
-        if (isCollect){
-            CarbonCollect carbonCollect = new CarbonCollect();
-            carbonCollect.setCardId(Long.valueOf(card_id));
-            carbonCollect.setEnterpriseId(Long.valueOf(enterprise_id));
-            int code = carbonCollectService.insertCarbonCollect(carbonCollect);
+
+        Boolean isHasValue = redisCache.isSetMember(key, card_id.toString());
+        System.out.println(isHasValue);
+        if (BooleanUtils.isFalse(isHasValue)){
+            // 添加收藏
+            carbonCard.setLiked(liked + 1);
+            int code = carbonCardMapper.updateCarbonCard(carbonCard);
             if (code > 0)
             {
                 // 添加到缓存中
@@ -335,16 +337,11 @@ public class CarbonCardServiceImpl implements ICarbonCardService
             }
         }else {
             // 取消收藏
-            CarbonCollect carbonCollect = carbonCollectService
-                    .selectCarbonCollectByEnterpriseIdAndCardId(Long.valueOf(enterprise_id), Long.valueOf(card_id));
-            if (!Objects.isNull(carbonCollect))
-            {
-                int code = carbonCollectService.deleteCarbonCollectById(Long.valueOf(carbonCollect.getId()));
-                if (code > 0)
-                {
-                    redisCache.deleteSetValue(key,card_id.toString());
-                    return AjaxResult.error("取消收藏成功");
-                }
+            carbonCard.setLiked(liked - 1);
+            int code = carbonCardMapper.updateCarbonCard(carbonCard);
+            if (code > 0) {
+                redisCache.deleteSetValue(key, card_id.toString());
+                return AjaxResult.success("取消收藏成功");
             }
         }
         return AjaxResult.error("收藏失败");
@@ -374,6 +371,24 @@ public class CarbonCardServiceImpl implements ICarbonCardService
 
     @Override
     public AjaxResult getEnterpriseShopInfo(String enterprise) {
+        SouvenirCardQueryEnterpriseCardNumberInputBO numberInputBO = new SouvenirCardQueryEnterpriseCardNumberInputBO();
+        numberInputBO.setEnterpriseName(enterprise);
+        CarbonEnterprise carbonEnterprise = enterpriseService.selectByEnterpriseName(enterprise);
+        String key = RedisContacts.COLLECT_KEY + carbonEnterprise.getEnterpriseId();
+        Set enterpriseCollectCards = redisCache.getSetValue(key);
+        try {
+            TransactionResponse transactionResponse = souvenirCardService.QueryEnterpriseCardNumber(numberInputBO);
+            if (transactionResponse.getReturnMessage().equals("Success"))
+            {
+                Object HasCount = transactionResponse.getReturnObject().get(0);
+                AjaxResult success = AjaxResult.success();
+                success.put("hasCount",HasCount);
+                success.put("collectLength",enterpriseCollectCards.size());
+                return success;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return AjaxResult.success();
     }
 }

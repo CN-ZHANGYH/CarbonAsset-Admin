@@ -322,6 +322,10 @@ public class RedisCache
         return redisTemplate.opsForSet().add(key,value);
     }
 
+    public <T> Boolean isSetMember(final String key,final Object value) {
+        return redisTemplate.opsForSet().isMember(key,value);
+    }
+
 
     /**
      * 返回集合

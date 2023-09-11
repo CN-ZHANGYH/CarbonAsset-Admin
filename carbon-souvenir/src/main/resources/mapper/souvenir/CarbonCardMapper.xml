@@ -12,10 +12,11 @@
         <result property="url"    column="url"    />
         <result property="category"    column="category"    />
         <result property="credit"    column="credit"    />
+        <result property="liked"    column="liked"    />
     </resultMap>
 
     <sql id="selectCarbonCardVo">
-        select id, level, name, description, url, category, credit from carbon_card
+        select id, level, name, description, url, category, credit,liked from carbon_card
     </sql>
 
     <select id="selectCarbonCardList" parameterType="CarbonCard" resultMap="CarbonCardResult">
@@ -27,6 +28,7 @@
             <if test="url != null  and url != ''"> and url = #{url}</if>
             <if test="category != null  and category != ''"> and category = #{category}</if>
             <if test="credit != null "> and credit = #{credit}</if>
+            <if test="liked != null "> and liked = #{liked}</if>
         </where>
     </select>
 
@@ -44,6 +46,7 @@
             <if test="url != null">url,</if>
             <if test="category != null and category != ''">category,</if>
             <if test="credit != null">credit,</if>
+            <if test="liked != null">liked,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="level != null">#{level},</if>
@@ -52,6 +55,7 @@
             <if test="url != null">#{url},</if>
             <if test="category != null and category != ''">#{category},</if>
             <if test="credit != null">#{credit},</if>
+            <if test="liked != null">#{liked},</if>
         </trim>
     </insert>
 
@@ -64,6 +68,7 @@
             <if test="url != null">url = #{url},</if>
             <if test="category != null and category != ''">category = #{category},</if>
             <if test="credit != null">credit = #{credit},</if>
+            <if test="liked != null">liked = #{liked},</if>
         </trim>
         where id = #{id}
     </update>

@@ -48,5 +48,7 @@ public class CarbonCard extends BaseEntity
     @Excel(name = "积分")
     private BigInteger credit;
 
+    @Excel(name = "收藏人数")
+    private Integer liked;
 
 }
