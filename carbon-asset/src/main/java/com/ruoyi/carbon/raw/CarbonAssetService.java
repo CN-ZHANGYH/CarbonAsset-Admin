@@ -155,6 +155,7 @@ public class CarbonAssetService extends Contract {
             Arrays.<TypeReference<?>>asList(new TypeReference<Uint256>(true) {}, new TypeReference<Uint256>(true) {}));
     ;
 
+
     public static final Event TRANSFEREMISSIONLIMIT_EVENT = new Event("TransferEmissionLimit",
             Arrays.<TypeReference<?>>asList(new TypeReference<Address>(true) {}, new TypeReference<Address>(true) {}, new TypeReference<Uint256>(true) {}));
     ;

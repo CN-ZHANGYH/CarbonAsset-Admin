@@ -322,16 +322,14 @@ public class CarbonCardServiceImpl implements ICarbonCardService
         Integer liked = carbonCard.getLiked();
         // 收藏
         String key = RedisContacts.COLLECT_KEY + enterprise_id;
-
         Boolean isHasValue = redisCache.isSetMember(key, card_id.toString());
-        System.out.println(isHasValue);
         if (BooleanUtils.isFalse(isHasValue)){
             // 添加收藏
             carbonCard.setLiked(liked + 1);
             int code = carbonCardMapper.updateCarbonCard(carbonCard);
+            // 添加到缓存中
             if (code > 0)
             {
-                // 添加到缓存中
                 redisCache.setSetValue(key, card_id.toString());
                 return AjaxResult.success("收藏成功");
             }
