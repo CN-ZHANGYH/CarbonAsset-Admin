@@ -288,10 +288,9 @@ public class CarbonCardServiceImpl implements ICarbonCardService
                             CarbonCard card = new CarbonCard();
                             card.setId(row.getLongValue(0));
                             card.setLevel(row.getLongValue(1));
-                            System.out.println(row);
                             card.setName(row.getString(2));
-                            card.setUrl(row.getString(3));
-                            card.setDescription(row.getString(4));
+                            card.setUrl(row.getString(4));
+                            card.setDescription(row.getString(3));
                             card.setCategory(row.getString(5));
                             card.setCredit(row.getBigInteger(6));
                             return card;
